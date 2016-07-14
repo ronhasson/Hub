@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Moo</title>
+    <link href="stylesheet.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" media="screen" href="css/style.css">
+</head>
+<script src="server.js"></script>
+
+<body>
+    <div id="particles-js" class="notselectable">
+        <div id="masterDisplay">
+            <div class="mainbar">
+                <center><span id="titleName">Console Test v0.0.3</span>
+                    <div id="close-btn" class="exitbutton">
+                        <span style="font-size:400%">X</span>
+                    </div>
+                </center>
+            </div>
+            <center>
+                
+            </center>
+        </div>
+    </div>
+</body>
+<script>
+    var remote = require('remote');
+    document.getElementById("close-btn").addEventListener("click", function(e) {
+        var window = remote.getCurrentWindow();
+        closeServer();
+        window.close();
+    });
+    updateIPtext("ipDisp");
+    generateQRforIP("qr");
+</script>
+<script src="js\particles.js"></script>
+<script src="js\app.js"></script>
+
+</html>

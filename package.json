@@ -1,0 +1,27 @@
+{
+  "name": "electron-music-player",
+  "version": "0.1.0",
+  "description": "A minimal Electron application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "keywords": [
+    "Electron",
+    "Music",
+    "Cats",
+    "Bla"
+  ],
+  "author": "Ron Hasson",
+  "homepage": "https://google.com",
+  "devDependencies": {
+    "electron-prebuilt": "^0.36.0"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "q": "^1.4.1",
+    "qr-image": "^3.1.0",
+    "request": "^2.72.0",
+    "socket.io": "^1.4.5"
+  }
+}
