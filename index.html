@@ -6,7 +6,7 @@
     <title>Moo</title>
     <link href="stylesheet.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" media="screen" href="css/style.css">
-    <link id="importMenu" rel="import" href="mainMenu.html">
+    <link id="importMenu" rel="import" href="templates/mainMenu.html">
 </head>
 <script src="server.js"></script>
 <script src="hangedMan.js"></script>
@@ -47,6 +47,8 @@
 </body>
 <script>
     var remote = require('remote');
+    var pjsonVersion = require('./package.json').version;
+    document.getElementById("titleName").innerHTML = "Hub - v" + pjsonVersion;
     document.getElementById("close-btn").addEventListener("click", function(e) {
         var window = remote.getCurrentWindow();
         closeServer();

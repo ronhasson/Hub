@@ -14,7 +14,7 @@ var qr = require('qr-image');
 const port = 25565;
 
 expr.get('/', function(req, res) {
-    res.sendFile(__dirname + '/remotePages/changeColor.html');
+    res.sendFile(__dirname + '/remotePages/remoteMainPage.html');
 });
 
 io.on('connection', function(socket) {

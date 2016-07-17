@@ -1,19 +1,19 @@
 {
   "name": "electron-music-player",
-  "version": "0.1.0",
-  "description": "A minimal Electron application",
+  "version": "0.3.0",
+  "description": "An Electron application for your tv",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
   "keywords": [
     "Electron",
-    "Music",
-    "Cats",
-    "Bla"
+    "tv",
+    "phone controlled",
+    "entertainment"
   ],
   "author": "Ron Hasson",
-  "homepage": "https://google.com",
+  "homepage": "",
   "devDependencies": {
     "electron-prebuilt": "^0.36.0"
   },
