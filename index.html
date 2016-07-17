@@ -57,6 +57,11 @@
     updateIPtext("ipDisp");
     generateQRforIP("qr");
 
+    document.addEventListener("keydown", function(e) {
+        if (e.which === 117) { // F6
+            require('remote').getCurrentWindow().toggleDevTools();
+    });
+
     function getInput(button) {
         if (document.getElementById("ipBox").style.display != 'none') {
             qrShowState();
