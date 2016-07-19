@@ -12,6 +12,10 @@
     "phone controlled",
     "entertainment"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ronhasson/Hub.git"
+  },
   "author": "Ron Hasson",
   "homepage": "",
   "devDependencies": {
