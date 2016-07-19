@@ -25,14 +25,14 @@
                         <center>
                             <div style="margin-bottom:11%">
                                 <center>
-                                    <img src="ronLogo.png" width="42%" />
+                                    <img src="radio.png" width="42%" />
                                 </center>
                             </div>
                         </center>
                         <center>
                             <div>
                                 <center>
-                                    <span style="font-size:230%;">bitch2</span>
+                                    <span style="font-size:230%;">Radio</span>
                                 </center>
                             </div>
                         </center>
@@ -81,7 +81,7 @@
         var currentRow = 0;
         var currentCell = 0;
         var table = document.getElementById("menu");
-        //highlightCell();
+        highlightCell();
         function transferInputs(raw) {
             switch (raw) {
                 case "left":
@@ -105,6 +105,10 @@
                     highlightCell();
                     break;
                 case "A":
+                    if(currentRow ==0 && currentCell == 1)
+                    {
+                      switchPage("importRadio");
+                    }
                     break;
                 case "B":
                     break;
@@ -115,10 +119,12 @@
         function highlightCell() {
             var x = document.getElementById("menu").rows[currentRow].cells[currentCell].getElementsByTagName('div')[0];
             x.style.background = "rgba(255, 255, 255, 0.85)";
+            x.style.color = "rgb(101, 101, 101)";
         }
         function unHighlightCell() {
             var x = document.getElementById("menu").rows[currentRow].cells[currentCell].getElementsByTagName('div')[0];
             x.style.background = "rgba(255, 255, 255, 0.3)";
+            x.style.color = "rgb(255, 255, 255)";
         }
     </script>
 </template>

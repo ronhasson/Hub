@@ -1,0 +1,37 @@
+<template>
+    <center>
+        <h1>99FM</h1>
+        <video controls="" autoplay="" name="media">
+            <source src="http://99.livecdn.biz/99fm_aac" type="audio/aac">
+        </video>
+    </center>
+    <script>
+        var currentRow = 0;
+        var currentCell = 0;
+        var table = document.getElementById("menu");
+        highlightCell();
+
+        function transferInputs(raw) {
+            switch (raw) {
+                case "left":
+
+                    break;
+                case "right":
+
+                    break;
+                case "up":
+
+                    break;
+                case "down":
+
+                    break;
+                case "A":
+                    break;
+                case "B":
+                    switchPage("importMenu");
+                    break;
+            }
+            console.log(currentRow + ":" + currentCell);
+        }
+    </script>
+</template>
