@@ -9,7 +9,7 @@ var io = require('socket.io')(httpr);
 
 var qr = require('qr-image');
 
-const port = 25565;
+const port = 64242;
 
 expr.get('/', function(req, res) {
     res.sendFile(__dirname + '/remotePages/remoteMainPage.html');
@@ -17,6 +17,10 @@ expr.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
     console.log(socket.request.connection.remoteAddress + ' connected');
+
+    socket.on('enter', function(username) {
+      addUser(username);
+    });
 
     socket.on('changeColor', function(color) {
         console.log('color: ' + color);

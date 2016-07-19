@@ -1,0 +1,58 @@
+<template>
+    <center>
+        <h1></h1>
+        <input type="button" value="התחל!" />
+        <p id="users">
+
+        </p>
+    </center>
+    <script>
+        var currentRow = 0;
+        var currentCell = 0;
+        var table = document.getElementById("menu");
+        highlightCell();
+
+        function transferInputs(raw) {
+            switch (raw) {
+                case "left":
+                    break;
+
+                case "right":
+                    break;
+
+                case "up":
+                    break;
+
+                case "down":
+                    break;
+
+                case "A":
+                    break;
+
+                case "B":
+                    switchPage("importMenu");
+                    break;
+            }
+            console.log(currentRow + ":" + currentCell);
+        }
+    </script>
+
+    <script>
+        var expr = require('express')();
+        expr.get('/', function(req, res) {
+            res.sendFile(__dirname + '/remotePages/tos_remote.html');
+        });
+
+
+        var users = [];
+
+        function addUser(username) {
+            users.add(username);
+            displayUsers();
+        }
+
+        function displayUsers(){
+            document.getElementById("users").value=users.toString();
+        }
+    </script>
+</template>

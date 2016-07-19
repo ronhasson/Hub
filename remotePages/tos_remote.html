@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Remote Controller</title>
+    <meta id="addressbarColorAndroid" name="theme-color" content="#013b9a">
+    <meta id="addressbarColorIOS" name="apple-mobile-web-app-status-bar-style" content="#013b9a">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
+    <style>
+        body {
+            overflow-y: hidden;
+            background-color: rgb(151, 161, 175);
+            margin: 0;
+        }
+
+        #trackpad {
+            background: linear-gradient(to bottom, #444f67, #333440);
+            : : background: radial-gradient(black 15%, transparent 16%) 0 0, radial-gradient(black 15%, transparent 16%) 8px 8px, radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 0 1px, radial-gradient(rgba(255, 255, 255, .1) 15%, transparent 20%) 8px 9px;
+            width: 100%;
+            border: 0;
+            padding: 0;
+            margin: 0%;
+            height: 35vh;
+        }
+
+        .clean {
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        a {
+            position: relative;
+            color: rgba(255, 255, 255, 1);
+            text-decoration: none;
+            font-family: 'Lucida Sans Unicode';
+            font-size: 3em;
+            display: inline-block;
+            -webkit-user-select: none;
+            padding: 4px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            margin: 100px auto;
+            text-align: center;
+            -webkit-transition: all .1s ease;
+            -moz-transition: all .1s ease;
+            transition: all .1s ease;
+
+        }
+
+        #buttonA {
+            background-color: rgba(48, 203, 9, 1);
+            box-shadow: 0px 9px 0px rgba(8, 171, 44, 1), 0px 9px 25px rgba(0, 0, 0, .7);
+            height: 11vh;
+            width: 40vw;
+            line-height: 11vh;
+        }
+
+        #buttonB {
+            background-color: rgba(219, 70, 5, 1);
+            box-shadow: 0px 9px 0px rgba(193, 28, 5, 1), 0px 9px 25px rgba(0, 0, 0, .7);
+            height: 11vh;
+            width: 40vw;
+            line-height: 11vh;
+        }
+
+        #buttonA:active {
+            box-shadow: 0px 3px 0px rgba(8, 171, 44, 1), 0px 3px 6px rgba(0, 0, 0, .9);
+        }
+
+        #buttonB:active {
+            box-shadow: 0px 3px 0px rgba(193, 28, 5, 1), 0px 3px 6px rgba(0, 0, 0, .9);
+        }
+        .navBT{
+          background-color: rgba(31, 106, 219, 1);
+          box-shadow: 0px 9px 0px rgba(5, 74, 193, 1), 0px 9px 25px rgba(0, 0, 0, .7);
+        }
+        .navBT:active{
+          box-shadow: 0px 3px 0px rgba(5, 74, 193, 1), 0px 3px 6px rgba(0, 0, 0, .9);
+        }
+        #Bars{
+          float: left;
+        }
+        #colorPicker{
+          background-color:inherit;
+          border: 0;
+          padding-bottom: 0.7vw
+        }
+        .navB{
+          height:10vw; width:10vw;
+          font-size: 10vw;
+          padding: 0.3vw
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+      <h1>Pick name!</h1>
+        <input id="username" />
+        <input type="button" onclick="enter()" />
+    </center>
+</body>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+    var socket = io();
+    var username;
+
+    function enter()
+    {
+      username = document.getElementById("username").value;
+      socket.emit("enter",username);
+    }
+
+    function sendChangeColor()
+    {
+        var color = document.getElementById("colorPicker").value;
+        socket.emit('changeColor', color);
+    }
+
+    function sendButtonPress(button)
+    {
+      socket.emit('buttonPress', button);
+    }
+</script>
+
+<script>
+    var socket = io();
+
+    function getcolorBar() {
+        var bla = [document.getElementById("addressbarColorAndroid").content, document.getElementById("addressbarColorIOS").content];
+        var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'violet'];
+        //bla.content = "#f502b8";
+    }
+</script>
+<script>
+    var socket = io();
+    document.getElementById("trackpad").addEventListener('touchstart', handleTouchStart, false);
+    document.getElementById("trackpad").addEventListener('touchmove', handleTouchMove, false);
+
+    var xDown = null;
+    var yDown = null;
+
+    var queue = [];
+    var konami = false;
+
+    function handleTouchStart(evt) {
+        xDown = evt.touches[0].clientX;
+        yDown = evt.touches[0].clientY;
+    };
+
+    function handleTouchMove(evt) {
+        if (!xDown || !yDown) {
+            return;
+        }
+
+        var xUp = evt.touches[0].clientX;
+        var yUp = evt.touches[0].clientY;
+
+        var xDiff = xDown - xUp;
+        var yDiff = yDown - yUp;
+
+        if (Math.abs(xDiff) > Math.abs(yDiff)) { /*most significant*/
+            if (xDiff > 0) {
+                /* left swipe */
+                queue.push("left");
+                socket.emit('slideEvent', "left");
+                console.log("left");
+            } else {
+                /* right swipe */
+                queue.push("right");
+                socket.emit('slideEvent', "right");
+                console.log("right");
+            }
+        } else {
+            if (yDiff > 0) {
+                /* up swipe */
+                queue.push("up");
+                socket.emit('slideEvent', "up");
+                console.log("up");
+            } else {
+                /* down swipe */
+                queue.push("down");
+                socket.emit('slideEvent', "down");
+                console.log("down");
+            }
+        }
+        /* reset values */
+        xDown = null;
+        yDown = null;
+        checkKonami();
+    };
+
+    function checkKonami() {
+        while (queue.length > 8) {
+            queue.shift();
+        }
+        if (queue.length == 8) {
+            if (queue[0] == "up" && queue[1] == "up" && queue[2] == "down" && queue[3] == "down" && queue[4] == "left" && queue[5] == "right" && queue[6] == "left" && queue[7] == "right") {
+                console.log("konami Code activated!!!!!!!!!!!!");
+                konami = !konami;
+                socket.emit('secretColor', konami);
+            }
+        }
+    }
+</script>
+</html>
