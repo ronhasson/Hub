@@ -1,34 +1,6 @@
 <template>
-    <script>
-        var currentRow = 0;
-        var currentCell = 0;
-
-        function transferInputs(raw) {
-            switch (raw) {
-                case "left":
-                    break;
-                case "right":
-                    break;
-                case "up":
-                    break;
-                case "down":
-                    break;
-                case "A":
-                    break;
-                case "B":
-                    break;
-            }
-        }
-
-        function ChangeCurrentCell() {
-            var tableRow = document.getElementsByTagName("tr")[currentRow];
-            var tableCell = tableRow.childNodes[currentCell];
-            tableCell.focus();
-            tableCell.style.color = "Green";
-        }
-    </script>
     <center>
-        <table>
+        <table id="menu">
             <tr>
                 <td>
                     <div class="Box">
@@ -105,4 +77,48 @@
             </tr>
         </table>
     </center>
+    <script>
+        var currentRow = 0;
+        var currentCell = 0;
+        var table = document.getElementById("menu");
+        //highlightCell();
+        function transferInputs(raw) {
+            switch (raw) {
+                case "left":
+                    unHighlightCell();
+                    currentCell = (currentCell>0 && currentCell< table.rows[currentRow].cells.length) ? currentCell-1:currentCell;
+                    highlightCell();
+                    break;
+                case "right":
+                    unHighlightCell();
+                    currentCell++;
+                    highlightCell();
+                    break;
+                case "up":
+                    unHighlightCell();
+                    currentRow--;
+                    highlightCell();
+                    break;
+                case "down":
+                    unHighlightCell();
+                    currentRow++;
+                    highlightCell();
+                    break;
+                case "A":
+                    break;
+                case "B":
+                    break;
+            }
+            console.log(currentRow + ":" + currentCell);
+        }
+
+        function highlightCell() {
+            var x = document.getElementById("menu").rows[currentRow].cells[currentCell].getElementsByTagName('div')[0];
+            x.style.background = "rgba(255, 255, 255, 0.85)";
+        }
+        function unHighlightCell() {
+            var x = document.getElementById("menu").rows[currentRow].cells[currentCell].getElementsByTagName('div')[0];
+            x.style.background = "rgba(255, 255, 255, 0.3)";
+        }
+    </script>
 </template>

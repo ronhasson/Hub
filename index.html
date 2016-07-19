@@ -55,6 +55,8 @@
     });
     updateIPtext("ipDisp");
     generateQRforIP("qr");
+    document.getElementById("cont").style.display = 'none';
+    switchPage("importMenu");
 
     document.addEventListener("keydown", function(e) {
         if (e.which === 117) { // F6
@@ -65,24 +67,12 @@
     function getInput(button) {
         if (document.getElementById("ipBox").style.display != 'none') {
             qrShowState();
-            if(document.getElementById("cont").innerHTML == "")
-            {
-              switchPage("importMenu");
-            }
         } else {
-            transferInputs(button);
-            /*switch (button) {
-                case 'A':
-                    console.log('A');
-                    switchPage("importMenu");
-                    break;
-                case 'B':
-                    cleanPage();
-                    break;
-                case 'QR':
-                    qrShowState();
-                    break;
-            }*/
+            if (button == "QR") {
+                qrShowState();
+            } else {
+                transferInputs(button);
+            }
         }
     }
 
