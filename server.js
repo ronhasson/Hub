@@ -32,17 +32,7 @@ io.on('connection', function(socket) {
     });
 
     socket.on('buttonPress', function(button) {
-        switch (button) {
-          case 'A':
-            getInput('B');
-            break;
-          case 'B':
-            getInput('B');
-            break;
-          case 'QR':
-            getInput('QR');
-            break;
-        }
+    getInput(button);
     });
 });
 /*var server = expr.listen(port,function(){
