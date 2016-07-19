@@ -36,14 +36,10 @@
             console.log(currentRow + ":" + currentCell);
         }
     </script>
-
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script>
-        var expr = require('express')();
-        expr.get('/', function(req, res) {
-            res.sendFile(__dirname + '/remotePages/tos_remote.html');
-        });
-
-
+        var socket = io();
+        socket.emit("changePageRemote", "tos");
         var users = [];
 
         function addUser(username) {
@@ -51,8 +47,8 @@
             displayUsers();
         }
 
-        function displayUsers(){
-            document.getElementById("users").value=users.toString();
+        function displayUsers() {
+            document.getElementById("users").value = users.toString();
         }
     </script>
 </template>

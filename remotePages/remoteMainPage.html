@@ -47,7 +47,6 @@
             -webkit-transition: all .1s ease;
             -moz-transition: all .1s ease;
             transition: all .1s ease;
-
         }
 
         #buttonA {
@@ -73,25 +72,31 @@
         #buttonB:active {
             box-shadow: 0px 3px 0px rgba(193, 28, 5, 1), 0px 3px 6px rgba(0, 0, 0, .9);
         }
-        .navBT{
-          background-color: rgba(31, 106, 219, 1);
-          box-shadow: 0px 9px 0px rgba(5, 74, 193, 1), 0px 9px 25px rgba(0, 0, 0, .7);
+
+        .navBT {
+            background-color: rgba(31, 106, 219, 1);
+            box-shadow: 0px 9px 0px rgba(5, 74, 193, 1), 0px 9px 25px rgba(0, 0, 0, .7);
         }
-        .navBT:active{
-          box-shadow: 0px 3px 0px rgba(5, 74, 193, 1), 0px 3px 6px rgba(0, 0, 0, .9);
+
+        .navBT:active {
+            box-shadow: 0px 3px 0px rgba(5, 74, 193, 1), 0px 3px 6px rgba(0, 0, 0, .9);
         }
-        #Bars{
-          float: left;
+
+        #Bars {
+            float: left;
         }
-        #colorPicker{
-          background-color:inherit;
-          border: 0;
-          padding-bottom: 0.7vw
+
+        #colorPicker {
+            background-color: inherit;
+            border: 0;
+            padding-bottom: 0.7vw
         }
-        .navB{
-          height:10vw; width:10vw;
-          font-size: 10vw;
-          padding: 0.3vw
+
+        .navB {
+            height: 10vw;
+            width: 10vw;
+            font-size: 10vw;
+            padding: 0.3vw
         }
     </style>
 </head>
@@ -101,7 +106,9 @@
         <div style="height: 12vw; margin:1.3vw">
             <a id="Bars" class="navBT" style="margin:0"><i  class="fa fa-bars navB" aria-hidden="true"></i></a>
             <a id="homeBT" class="navBT" style="margin:0"><i  class="fa fa-home navB" aria-hidden="true"></i></a>
-            <a id="ColorCont" class="navBT" style="margin:0"><input class="navB" id="colorPicker" type="color" onchange="sendChangeColor()"/></a>
+            <a id="ColorCont" class="navBT" style="margin:0">
+                <input class="navB" id="colorPicker" type="color" onchange="sendChangeColor()" />
+            </a>
             <a id="qrBT" class="navBT" style="margin:0" onclick="sendButtonPress('QR')"><i  class="fa fa-qrcode navB" aria-hidden="true"></i></a>
             <a id="Bars" class="navBT" style="margin:0;float:right;visibility: hidden;"><i  class="fa fa-bars navB" aria-hidden="true"></i></a>
         </div>
@@ -124,20 +131,20 @@
         var color = document.getElementById("colorPicker").value;
         socket.emit('changeColor', color);
     }
-    function sendButtonPress(button)
-    {
-      socket.emit('buttonPress', button);
+
+    function sendButtonPress(button) {
+        socket.emit('buttonPress', button);
     }
 </script>
 
-<script>
+<script>/////////////////MAKE THIS SHIT WORK
     var socket = io();
-
-    function getcolorBar() {
-        var bla = [document.getElementById("addressbarColorAndroid").content, document.getElementById("addressbarColorIOS").content];
-        var colors = ['red', 'orange', 'yellow', 'green', 'blue', 'violet'];
-        //bla.content = "#f502b8";
-    }
+    io.on('connection', function(socket) {
+        socket.on('changePageRemote', function(page) {
+            document.location.href = "/" + page;
+            console.log("TEst");
+        });
+    });
 </script>
 <script>
     var socket = io();

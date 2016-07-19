@@ -9,11 +9,15 @@ var io = require('socket.io')(httpr);
 
 var qr = require('qr-image');
 
-const port = 64242;
+const port = 25565;
 
 expr.get('/', function(req, res) {
     res.sendFile(__dirname + '/remotePages/remoteMainPage.html');
 });
+expr.get('/tos', function(req, res) {
+    res.sendFile(__dirname + '/remotePages/tos_remote.html');
+});
+
 
 io.on('connection', function(socket) {
     console.log(socket.request.connection.remoteAddress + ' connected');
@@ -29,7 +33,6 @@ io.on('connection', function(socket) {
 
     socket.on('secretColor', function(state) {
         console.log('secret color');
-
         document.getElementById("particles-js").className = (state) ? "rainbow" : "notselectable";
     });
 
