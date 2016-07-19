@@ -39,7 +39,6 @@
                     </center>
                 </div>
                 <div id="cont">
-
                 </div>
             </div>
         </div>
@@ -66,6 +65,10 @@
     function getInput(button) {
         if (document.getElementById("ipBox").style.display != 'none') {
             qrShowState();
+            if(document.getElementById("cont").innerHTML == "")
+            {
+              switchPage("importMenu");
+            }
         } else {
             switch (button) {
                 case 'A':
