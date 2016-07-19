@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
     socket.on('buttonPress', function(button) {
         switch (button) {
           case 'A':
-            getInput('A');
+            getInput('B');
             break;
           case 'B':
             getInput('B');
