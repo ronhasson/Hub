@@ -1,5 +1,3 @@
-//var remote = require('remote');
-//var app = remote.app;
 var fs = require('fs');
 var os = require('os');
 var ifaces = os.networkInterfaces();
