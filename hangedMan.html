@@ -29,7 +29,7 @@
     </div>
 </body>
 <script>
-    var remote = require('remote');
+    var remote = require('electron').remote;
     document.getElementById("close-btn").addEventListener("click", function(e) {
         var window = remote.getCurrentWindow();
         closeServer();

@@ -1,5 +1,5 @@
 {
-  "name": "electron-music-player",
+  "name": "electron-hub",
   "version": "0.3.0",
   "description": "An Electron application for your tv",
   "main": "main.js",
@@ -15,7 +15,7 @@
   "author": "Ron Hasson",
   "homepage": "",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^1.2.7"
   },
   "dependencies": {
     "express": "^4.13.4",

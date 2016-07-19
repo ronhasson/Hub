@@ -46,7 +46,7 @@
     </div>
 </body>
 <script>
-    var remote = require('remote');
+    var remote = require('electron').remote;
     var pjsonVersion = require('./package.json').version;
     document.getElementById("titleName").innerHTML = "Hub - v" + pjsonVersion;
     document.getElementById("close-btn").addEventListener("click", function(e) {
@@ -59,7 +59,8 @@
 
     document.addEventListener("keydown", function(e) {
         if (e.which === 117) { // F6
-            require('remote').getCurrentWindow().toggleDevTools();
+            remote.getCurrentWindow().toggleDevTools();
+        }
     });
 
     function getInput(button) {
