@@ -170,20 +170,24 @@
             if (xDiff > 0) {
                 /* left swipe */
                 queue.push("left");
+                socket.emit('slideEvent', "left");
                 console.log("left");
             } else {
                 /* right swipe */
                 queue.push("right");
+                socket.emit('slideEvent', "right");
                 console.log("right");
             }
         } else {
             if (yDiff > 0) {
                 /* up swipe */
                 queue.push("up");
+                socket.emit('slideEvent', "up");
                 console.log("up");
             } else {
                 /* down swipe */
                 queue.push("down");
+                socket.emit('slideEvent', "down");
                 console.log("down");
             }
         }

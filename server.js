@@ -34,6 +34,9 @@ io.on('connection', function(socket) {
     socket.on('buttonPress', function(button) {
     getInput(button);
     });
+    socket.on('slideEvent', function(dir) {
+    getInput(dir);
+    });
 });
 /*var server = expr.listen(port,function(){
     console.log("We have started our server on port "+port);
