@@ -1,22 +1,53 @@
 <template>
     <center>
         <h1></h1>
-        <input type="button" value="התחל!" />
-        <p id="users">
+        <input type="button" value="Start!" />
+        <div id="usersInGame">
 
-        </p>
+        </div>
     </center>
     <script>
         requestChangeRemotePage("tos");
-        var users = [];
+        var players = [];
 
-        function addUser(username) {
-            users.push(username);
+        function addPlayer(uid) {
+            var player = new Object();
+            player.username = "";
+            players[uid] = player;
+        }
+
+        function checkUserName(data) {
+            for (var uid in players) {
+                var player = players[uid]
+                if (player.username == data.usr) {
+                    sendEmit("requestUserNCallBack", {
+                        flag: true,
+                        usr: data.usr,
+                        uid: data.uid
+                    });
+                    return false;
+                }
+            }
+            players[uid].username = data.usr;
+            sendEmit("requestUserNCallBack", {
+                flag: false,
+                usr: data.usr,
+                uid: data.uid
+            });
             displayUsers();
         }
 
         function displayUsers() {
-            document.getElementById("users").innerHTML = users.toString();
+            var disp = document.getElementById("usersInGame");
+            disp.innerHTML = "";
+            for (var uid in players) {
+                let player = players[uid];
+                disp.innerHTML += "<a class='playerWait' onclick='removePlayer(\"" + uid + "\")'>" + player.username + "</a></br>";
+            }
+        }
+        function removePlayer(uid)
+        {
+          
         }
     </script>
 </template>

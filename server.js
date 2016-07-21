@@ -22,8 +22,11 @@ expr.get('/tos', function(req, res) {
 io.on('connection', function(socket) {
     console.log(socket.request.connection.remoteAddress + ' connected');
 
-    socket.on('enter', function(username) {
-        addUser(username);
+    socket.on('join', function(uid) {
+        addPlayer(uid);
+    });
+    socket.on('requestUserN', function(data) {
+        checkUserName(data);
     });
 
     socket.on('changeColor', function(color) {
@@ -43,8 +46,13 @@ io.on('connection', function(socket) {
         getInput(dir);
     });
 });
-function changeRemotePage(page){
-  io.emit("changePageRemote", page);
+
+function changeRemotePage(page) {
+    io.emit("changePageRemote", page);
+}
+
+function sendEmit(_event, data) {
+    io.emit(_event, data);
 }
 /*var server = expr.listen(port,function(){
     console.log("We have started our server on port "+port);

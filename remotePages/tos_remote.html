@@ -10,21 +10,44 @@
 </head>
 
 <body>
-    <center>
-        <h1>Pick name!</h1>
-        <input id="username" />
-        <input type="button" onclick="enter()" />
-    </center>
+    <div id="start">
+        <center>
+            <h1>Pick name!</h1>
+            <input id="usernameInput" required />
+            <input type="button" value="join" onclick="requestUsername()" />
+        </center>
+    </div>
+    <div id="waiting" style="display:none">
+        <h1 id="userView"></h1>
+    </div>
 </body>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
     var socket = io();
+    var uid = guid();
     var username;
 
-    function enter() {
-        username = document.getElementById("username").value;
-        socket.emit("enter", username);
+    socket.emit("join", uid);
+
+    function requestUsername() {
+        var TEMP_username = document.getElementById("usernameInput").value;
+        socket.emit("requestUserN", {
+            usr: TEMP_username,
+            uid: uid
+        });
     }
+    socket.on('requestUserNCallBack', function(data) {
+        if (!data.flag && uid == data.uid) {
+            username = data.username;
+            document.getElementById("start").style.display = 'none';
+            document.getElementById("usernameInput").setCustomValidity("");
+            document.getElementById("waiting").style.display = '';
+            document.getElementById("userView").innerHTML = "Hello " + username;
+        }
+        if (data.flag && uid == data.uid) {
+            document.getElementById("usernameInput").setCustomValidity("Darling, the username is unavailable 💃");
+        }
+    });
 
     function sendButtonPress(button) {
         socket.emit('buttonPress', button);
@@ -34,6 +57,16 @@
         document.location.href = "/" + page;
         alert("Fun.");
     });
+
+    function guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
 </script>
 
 </html>
