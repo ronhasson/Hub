@@ -1,6 +1,6 @@
 {
   "name": "electron-hub",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "An Electron application for your tv",
   "main": "main.js",
   "scripts": {
