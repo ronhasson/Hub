@@ -91,17 +91,17 @@
                     break;
                 case "right":
                     unHighlightCell();
-                    currentCell++;
+                    currentCell = (currentCell>0 && currentCell< table.rows[currentRow].cells.length) ? currentCell+1:currentCell;
                     highlightCell();
                     break;
                 case "up":
                     unHighlightCell();
-                    currentRow--;
+                    currentRow = (currentRow>0 && currentRow< table.rows.length) ? currentRow-1:currentRow;
                     highlightCell();
                     break;
                 case "down":
                     unHighlightCell();
-                    currentRow++;
+                    currentRow = (currentRow>0 && currentRow< table.rows.length) ? currentRow+1:currentRow;
                     highlightCell();
                     break;
                 case "A":
