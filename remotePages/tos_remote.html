@@ -31,8 +31,12 @@
     {
       socket.emit('buttonPress', button);
     }
-</script>
 
+    socket.on('changePageRemote', function(page) {
+        document.location.href = "/" + page;
+        alert("Fun.");
+    });
+</script>
 
 <script>
     var socket = io();

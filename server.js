@@ -23,7 +23,7 @@ io.on('connection', function(socket) {
     console.log(socket.request.connection.remoteAddress + ' connected');
 
     socket.on('enter', function(username) {
-      addUser(username);
+        addUser(username);
     });
 
     socket.on('changeColor', function(color) {
@@ -37,12 +37,15 @@ io.on('connection', function(socket) {
     });
 
     socket.on('buttonPress', function(button) {
-    getInput(button);
+        getInput(button);
     });
     socket.on('slideEvent', function(dir) {
-    getInput(dir);
+        getInput(dir);
     });
 });
+function changeRemotePage(page){
+  io.emit("changePageRemote", page);
+}
 /*var server = expr.listen(port,function(){
     console.log("We have started our server on port "+port);
 });*/

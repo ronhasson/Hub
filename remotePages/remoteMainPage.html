@@ -135,15 +135,11 @@
     function sendButtonPress(button) {
         socket.emit('buttonPress', button);
     }
-</script>
 
-<script>/////////////////MAKE THIS SHIT WORK
-    var socket = io();
-        socket.on('changePageRemote', function(page) {
-            document.location.href = "/" + page;
-            console.log("TEst");
-            alert("Fun.");
-        });
+    socket.on('changePageRemote', function(page) {
+        document.location.href = "/" + page;
+        alert("Fun.");
+    });
 </script>
 <script>
     var socket = io();
