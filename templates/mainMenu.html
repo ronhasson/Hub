@@ -86,22 +86,22 @@
             switch (raw) {
                 case "left":
                     unHighlightCell();
-                    currentCell = (currentCell>0) ? currentCell-1:currentCell;
+                    currentCell = (currentCell > 0) ? currentCell-1:currentCell;
                     highlightCell();
                     break;
                 case "right":
                     unHighlightCell();
-                    currentCell = (currentCell< table.rows[currentRow].cells.length) ? currentCell+1:currentCell;
+                    currentCell = (currentCell < table.rows[currentRow].cells.length-1) ? currentCell+1:currentCell;
                     highlightCell();
                     break;
                 case "up":
                     unHighlightCell();
-                    currentRow = (currentRow>0) ? currentRow-1:currentRow;
+                    currentRow = (currentRow > 0) ? currentRow-1:currentRow;
                     highlightCell();
                     break;
                 case "down":
                     unHighlightCell();
-                    currentRow = (currentRow< table.rows.length) ? currentRow+1:currentRow;
+                    currentRow = (currentRow < table.rows.length-1) ? currentRow+1:currentRow;
                     highlightCell();
                     break;
                 case "A":
