@@ -45,7 +45,9 @@
             document.getElementById("userView").innerHTML = "Hello " + username;
         }
         if (data.flag && uid == data.uid) {
-            document.getElementById("usernameInput").setCustomValidity("Darling, the username is unavailable 💃");
+            document.getElementById("usernameInput").setCustomValidity("Darling, the username is unavailable");
+            alert("yo mama is fat");
+            document.getElementById("usernameInput").value = "";
         }
     });
 
@@ -55,7 +57,6 @@
 
     socket.on('changePageRemote', function(page) {
         document.location.href = "/" + page;
-        alert("Fun.");
     });
 
     function guid() {
