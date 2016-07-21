@@ -7,39 +7,6 @@
         </p>
     </center>
     <script>
-        var currentRow = 0;
-        var currentCell = 0;
-        var table = document.getElementById("menu");
-        highlightCell();
-
-        function transferInputs(raw) {
-            switch (raw) {
-                case "left":
-                    break;
-
-                case "right":
-                    break;
-
-                case "up":
-                    break;
-
-                case "down":
-                    break;
-
-                case "A":
-                    break;
-
-                case "B":
-                    switchPage("importMenu");
-                    break;
-            }
-            console.log(currentRow + ":" + currentCell);
-        }
-    </script>
-    <!--<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>!-->
-    <script>
-        //var socket = io();
-        //socket.emit("changePageRemote", "tos");
         requestChangeRemotePage("tos");
         var users = [];
 
