@@ -16,7 +16,7 @@ function createWindow () {
     width: 580, height: 610,
     fullscreen: true,
     frame: false, transparent: true,
-    icon: 'ronLogo.png'
+    icon: 'hubIcon.png'
   });
   //appIcon = new Tray('Ron logo184_184.png');
   // and load the index.html of the app.
