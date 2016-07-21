@@ -38,7 +38,7 @@
     }
     socket.on('requestUserNCallBack', function(data) {
         if (!data.flag && uid == data.uid) {
-            username = data.username;
+            username = data.usr;
             document.getElementById("start").style.display = 'none';
             document.getElementById("usernameInput").setCustomValidity("");
             document.getElementById("waiting").style.display = '';

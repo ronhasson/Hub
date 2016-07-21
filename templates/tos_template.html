@@ -42,12 +42,14 @@
             disp.innerHTML = "";
             for (var uid in players) {
                 let player = players[uid];
-                disp.innerHTML += "<a class='playerWait' onclick='removePlayer(\"" + uid + "\")'>" + player.username + "</a></br>";
+                if (player.username != "") {
+                    disp.innerHTML += "<a class='playerWait' onclick='removePlayer(\"" + uid + "\")'>" + player.username + "</a></br>";
+                }
             }
         }
-        function removePlayer(uid)
-        {
-          
+
+        function removePlayer(uid) {
+
         }
     </script>
 </template>
