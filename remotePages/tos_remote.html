@@ -14,6 +14,7 @@
         <center>
             <h1>Pick name!</h1>
             <input id="usernameInput" required />
+            <p id="error"></p><br />
             <input type="button" value="join" onclick="requestUsername()" />
         </center>
     </div>
@@ -40,14 +41,11 @@
         if (!data.flag && uid == data.uid) {
             username = data.usr;
             document.getElementById("start").style.display = 'none';
-            document.getElementById("usernameInput").setCustomValidity("");
             document.getElementById("waiting").style.display = '';
             document.getElementById("userView").innerHTML = "Hello " + username;
         }
         if (data.flag && uid == data.uid) {
-            document.getElementById("usernameInput").setCustomValidity("Darling, the username is unavailable");
-            alert("yo mama is fat");
-            document.getElementById("usernameInput").value = "";
+            document.getElementById("error").innerHTML = "Darling, the username is unavailable 💃";
         }
     });
 
