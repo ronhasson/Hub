@@ -7,61 +7,120 @@
     <meta id="addressbarColorAndroid" name="theme-color" content="#69019a">
     <meta id="addressbarColorIOS" name="apple-mobile-web-app-status-bar-style" content="#69019a">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
-    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
 </head>
 
-<body>
-    <div id="start" >
+<style>
+    /* The side navigation menu */
+
+    .sidenav {
+        height: 100%;
+        /* 100% Full-height */
+        width: 0;
+        /* 0 width - change this with JavaScript */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Stay on top */
+        top: 0;
+        left: 0;
+        background-color: #d7d7d7;
+        /* Black*/
+        overflow-x: hidden;
+        /* Disable horizontal scroll */
+        padding-top: 60px;
+        /* Place content 60px from the top */
+        transition: 0.5s;
+        /* 0.5 second transition effect to slide in the sidenav */
+    }
+    /* The navigation menu links */
+
+    .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #1f1f1f;
+        display: block;
+        transition: 0.3s;
+        border: 5px;
+    }
+    /* When you mouse over the navigation links, change their color */
+
+    .sidenav a:hover,
+    .offcanvas a:focus {
+        color: #18436b;
+    }
+    /* Position and style the close button (top right corner) */
+
+    .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px !important;
+        margin-left: 50px;
+    }
+    /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+
+    #main {
+        transition: margin-left .5s;
+        padding: 20px;
+    }
+    /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+
+    @media screen and (max-height: 450px) {
+        .sidenav {
+            padding-top: 15px;
+        }
+        .sidenav a {
+            font-size: 18px;
+        }
+    }
+</style>
+
+<body style="background-color: #aee3f7;">
+    <div id="start" style="display:none">
         <center>
-            <h1>Pick name!</h1>
-            <input id="usernameInput" required />
-            <input type="button" value="join" onclick="requestUsername()" />
-            <br />
-            <span id="error"></span>
+            <div style="height: 50vh;width:75vw;background-color:rgba(106, 34, 247, 0.8);margin-top: 13vh;">
+                <h1 style="font-family: serif;font-size: 6vh;padding-top: 7vh; padding-bottom: 5vh;"><i>Your name:</i></h1>
+                <input id="usernameInput" required style="width: 28vw;height: 3vh;font-size: 2.5vh;margin-bottom: 4vh;" />
+                <br />
+                <input type="button" value="join" onclick="requestUsername()" style="height: 3vh;width: 13vw;border-radius: 15px;font-size: 2vh;" />
+                <br />
+                <span id="error"></span>
+            </div>
         </center>
     </div>
     <div id="waiting" style="display:none">
         <h1 id="userView"></h1>
     </div>
 
-    <div id="inGame" style="display:none" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <header class="mdl-layout__header">
-            <div class="mdl-layout__header-row">
-                <!-- Title -->
-                <span class="mdl-layout-title">ToS</span>
-                <!-- Add spacer, to align navigation to the right -->
-                <div class="mdl-layout-spacer"></div>
-                <!-- Navigation. We hide it in small screens. -->
-                <nav class="mdl-navigation mdl-layout-">
-                    <a class="mdl-navigation__link" href="">Will</a>
-                    <a class="mdl-navigation__link" href="">DeathNote</a>
-                    <a class="mdl-navigation__link" href="">Sun</a>
-                </nav>
-            </div>
-        </header>
-        <div class="mdl-layout__drawer">
-            <span class="mdl-layout-title">Name</span>
-            <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" href="">Chat</a>
-                <a class="mdl-navigation__link" href="">Actions</a>
-                <a class="mdl-navigation__link" href="">Role</a>
-            </nav>
+    <div id="inGame" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Clients</a>
+            <a href="#">Contact</a>
         </div>
-        <main class="mdl-layout__content">
-            <div class="page-content">sad
-                <br>
-                <br>
-                <br>bla
-                <br>
-                <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>shitpost
-                <br>
-            </div>
-        </main>
+
+        <!-- Use any element to open the sidenav -->
+        <span onclick="openNav()">open</span>
+
+        <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+        <div id="main">
+            ...
+        </div>
     </div>
 
 </body>
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+</script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script>
     var socket = io();
