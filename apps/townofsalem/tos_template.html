@@ -17,8 +17,8 @@
         }
 
         function checkUserName(data) {
-            for (var uid in players) {
-                var player = players[uid]
+            for (let uid in players) {
+                let player = players[uid]
                 if (player.username == data.usr) {
                     sendEmit("requestUserNCallBack", {
                         flag: true,
@@ -28,13 +28,14 @@
                     return false;
                 }
             }
-            players[uid].username = data.usr;
+            players[data.uid].username = data.usr;
             sendEmit("requestUserNCallBack", {
                 flag: false,
                 usr: data.usr,
                 uid: data.uid
             });
             displayUsers();
+            console.log(players);
         }
 
         function displayUsers() {
