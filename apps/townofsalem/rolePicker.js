@@ -1,27 +1,29 @@
-function getRoles(num)
-{
-  switch(num)
-  {
-    case 7:
-      return new Role[] {
-        randomizeTownInvestigative(),
-        randomizeTownSupport(),
-        randomizeTownKilling(),
-        randomizeRandomTown(),
-        Role.Godfather,
-        Role.Mafioso,
-        randomizeRandomBenignOrEvil()
-      };
-  }
+function getRoles(num) {
+    switch (num) {
+        case 7:
+            return new [] {
+                randomizeTownInvestigative(),
+                    randomizeTownSupport(),
+                    randomizeTownKilling(),
+                    randomizeRandomTown(),
+                    Role.Godfather,
+                    Role.Mafioso,
+                    randomizeRandomBenignOrEvil()
+            };
+    }
 }
 
-function randomizeTownInvestigative()
-{
-  Random r = new Random();
-  switch(r.getNext(3))
-  {
-    case 0: return Role.Investigator;
-    case 1: return Role.Sheriff;
-    case 2: return Role.Spy;
-  }
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function randomizeTownInvestigative() {
+    switch (randomInt(0, 2)) {
+        case 0:
+            return Role.Investigator;
+        case 1:
+            return Role.Sheriff;
+        case 2:
+            return Role.Spy;
+    }
 }
