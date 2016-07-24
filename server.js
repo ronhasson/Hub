@@ -12,10 +12,10 @@ var qr = require('qr-image');
 const port = 25565;
 
 expr.get('/', function(req, res) {
-    res.sendFile(__dirname + '/remotePages/remoteMainPage.html');
+    res.sendFile(__dirname + '/remoteMainPage.html');
 });
 expr.get('/tos', function(req, res) {
-    res.sendFile(__dirname + '/remotePages/tos_remote.html');
+    res.sendFile(__dirname + '/apps/townofsalem/tos_remote.html');
 });
 
 
