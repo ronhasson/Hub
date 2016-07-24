@@ -1,5 +1,5 @@
 <template>
-    <script src="apps/townofsalem/rolePicker.js"></script>
+
     <center>
         <h1></h1>
         <input type="button" value="Start!" />
@@ -8,7 +8,8 @@
         </div>
     </center>
     <script>
-        console.log(six());
+        var api = require("./apps/townofsalem/rolePicker.js")
+        console.log(api.getRoles());
         requestChangeRemotePage("tos");
         var players = [];
 

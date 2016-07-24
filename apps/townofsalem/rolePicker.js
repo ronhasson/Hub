@@ -1,7 +1,8 @@
-function getRoles(num) {
+exports.getRoles = function getRoles(num) {
+  alert("hi")
     switch (num) {
         case 7:
-            return new [] {
+            return new [
                 randomizeTownInvestigative(),
                     randomizeTownSupport(),
                     randomizeTownKilling(),
@@ -9,7 +10,7 @@ function getRoles(num) {
                     Role.Godfather,
                     Role.Mafioso,
                     randomizeRandomBenignOrEvil()
-            };
+            ];
     }
 }
 
