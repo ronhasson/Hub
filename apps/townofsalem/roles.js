@@ -1,4 +1,5 @@
 var Role = {
+<<<<<<< HEAD
     Bodyguard: "Bodyguard",
     Doctor: "Doctor",
     Escort: "Escort",
@@ -33,6 +34,42 @@ var Role = {
     Werewolf: "Werewolf",
     Witch: "Witch",
     Troll: "Troll"
+=======
+    Bodyguard: 1,
+    Doctor: 2,
+    Escort: 3,
+    Investigator: 4,
+    Jailor: 5,
+    Lookout: 6,
+    Mayor: 7,
+    Medium: 8,
+    Retributionist: 9,
+    Sheriff: 10,
+    Spy: 11,
+    Transporter: 12,
+    VampireHunter: 13,
+    Veteran: 14,
+    Vigilante: 15,
+    Blackmailer: 16,
+    Consigliere: 17,
+    Consort: 18,
+    Disguiser: 19,
+    Forger: 20,
+    Framer: 21,
+    Godfather: 22,
+    Janitor: 23,
+    Mafioso: 24,
+    Amnesiac: 25,
+    Arsonist: 26,
+    Executioner: 27,
+    Jester: 28,
+    SerialKiller: 29,
+    Survivor: 30,
+    Vampire: 31,
+    Werewolf: 32,
+    Witch: 33,
+    Troll: 34
+>>>>>>> 54a707bd7c8c385f0dcff9411bf7d3d218152236
 };
 
 module.exports = Role;
