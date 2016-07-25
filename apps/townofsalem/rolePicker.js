@@ -1,16 +1,17 @@
+var Role = require('./roles');
 exports.getRoles = function getRoles(num) {
-  alert("hi")
     switch (num) {
         case 7:
-            return new [
+            return [
                 randomizeTownInvestigative(),
-                    randomizeTownSupport(),
-                    randomizeTownKilling(),
-                    randomizeRandomTown(),
-                    Role.Godfather,
-                    Role.Mafioso,
-                    randomizeRandomBenignOrEvil()
+                randomizeTownSupport(),
+                randomizeTownKilling(),
+                randomizeRandomTown(),
+                Role.Godfather,
+                Role.Mafioso
+                randomizeRandomBenignOrEvil()
             ];
+            break;
     }
 }
 
