@@ -8,8 +8,23 @@
         </div>
     </center>
     <script>
-        var api = require("./apps/townofsalem/rolePicker.js")
-        console.log(api.getRoles());
+        var rolePicker = require("./apps/townofsalem/rolePicker.js");
+        var roleList = rolePicker.getRoles(15);
+        roleList = rolePicker.checkValidation(roleList);
+        console.log(roleList);
+        roleList = rolePicker.getRoles(15);
+        roleList = rolePicker.checkValidation(roleList);
+        console.log(roleList);
+        roleList = rolePicker.getRoles(15);
+        roleList = rolePicker.checkValidation(roleList);
+        console.log(roleList);
+        roleList = rolePicker.getRoles(15);
+        roleList = rolePicker.checkValidation(roleList);
+        console.log(roleList);
+        roleList = rolePicker.getRoles(15);
+        roleList = rolePicker.checkValidation(roleList);
+        console.log(roleList);
+
         requestChangeRemotePage("tos");
         var players = [];
 
