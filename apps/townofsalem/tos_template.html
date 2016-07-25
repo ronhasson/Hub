@@ -9,21 +9,13 @@
     </center>
     <script>
         var rolePicker = require("./apps/townofsalem/rolePicker.js");
-        var roleList = rolePicker.getRoles(15);
-        roleList = rolePicker.checkValidation(roleList);
-        console.log(roleList);
+        var roleList;
+
         roleList = rolePicker.getRoles(15);
+        //console.log("pre list:  " +roleList);
         roleList = rolePicker.checkValidation(roleList);
-        console.log(roleList);
-        roleList = rolePicker.getRoles(15);
-        roleList = rolePicker.checkValidation(roleList);
-        console.log(roleList);
-        roleList = rolePicker.getRoles(15);
-        roleList = rolePicker.checkValidation(roleList);
-        console.log(roleList);
-        roleList = rolePicker.getRoles(15);
-        roleList = rolePicker.checkValidation(roleList);
-        console.log(roleList);
+        //console.log("after list:  "+roleList);
+
 
         requestChangeRemotePage("tos");
         var players = [];

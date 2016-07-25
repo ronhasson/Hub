@@ -2,37 +2,41 @@
     <center>
         <h1>99FM</h1>
         <video controls="" autoplay="" name="media">
-            <source src="http://99.livecdn.biz/99fm_aac" type="audio/aac">
+            <source id="Vsrc" src="http://99.livecdn.biz/99fm_aac">
         </video>
     </center>
     <script>
-        var currentRow = 0;
-        var currentCell = 0;
-        var table = document.getElementById("menu");
-        highlightCell();
+        var stations = [{
+            name: "99fm",
+            short: "99fm",
+            url: "http://99.livecdn.biz/99fm_aac"
+        }, {
+            name: "galgalatz",
+            short: "glglz",
+            url: "http://glglzicelv01.vds-is.bynetcdn.com/glglz.mp3"
+        }];
 
         function transferInputs(raw) {
             switch (raw) {
                 case "left":
-                break;
+                    break;
 
                 case "right":
-                break;
+                    break;
 
                 case "up":
-                break;
+                    break;
 
                 case "down":
-                break;
+                    break;
 
                 case "A":
-                break;
+                    break;
 
                 case "B":
                     switchPage("importMenu");
                     break;
             }
-            console.log(currentRow + ":" + currentCell);
         }
     </script>
 </template>

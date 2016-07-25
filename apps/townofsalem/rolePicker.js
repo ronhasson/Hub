@@ -129,46 +129,52 @@ var getRoles = function getRoles(num) {
             ];
     }
 }
-
+var list;
 var checkValidation = function checkValidation(roleList) {
-    if (!checkUniqueRoles(roleList, Role.Veteran)) {
-        roleList = getRoles(roleList.length);
-        checkValidation(roleList);
+    list = roleList;
+    if (!checkUniqueRoles(list, Role.Veteran)) {
+        list = getRoles(list.length);
+        checkValidation(list);
     }
-    if (!checkUniqueRoles(roleList, Role.Mayor)) {
-        roleList = getRoles(roleList.length);
-        checkValidation(roleList);
+    else if (!checkUniqueRoles(list, Role.Mayor)) {
+        list = getRoles(list.length);
+        checkValidation(list);
     }
-    if (!checkUniqueRoles(roleList, Role.Retributionist)) {
-        roleList = getRoles(roleList.length);
-        checkValidation(roleList);
+    else if (!checkUniqueRoles(list, Role.Retributionist)) {
+        list = getRoles(list.length);
+        checkValidation(list);
     }
-    if (!checkUniqueRoles(roleList, Role.Werewolf)) {
-        roleList = getRoles(roleList.length);
-        checkValidation(roleList);
+    else if (!checkUniqueRoles(list, Role.Werewolf)) {
+        list = getRoles(list.length);
+        checkValidation(list);
     }
-    if (!checkVampireRoles(roleList)) {
-        roleList = getRoles(roleList.length);
-        checkValidation(roleList);
+    else if (!checkVampireRoles(list)) {
+        list = getRoles(list.length);
+        //console.log("new list:  "+list);
+        checkValidation(list);
     }
-    return roleList;
+    return list;
 }
 
 function checkVampireRoles(roleList) {
     var vampire = 0;
     var vampireHunter = 0;
+    //console.log("checkVampire");
     for (let role in roleList) {
         if (roleList[role] == Role.Vampire) {
             vampire++;
+            //console.log("v++ ," + vampire);
         }
         if (roleList[role] == Role.VampireHunter) {
             vampireHunter++;
+            //console.log("vh++ ," + vampireHunter);
         }
     }
-    if ((vampire > 0 && vampireHunter > 0) || (vampire == 0 && vampireHunter == 0)) {
-        console.log(vampireHunter + " " + vampire);
+    if ((vampire > 0) || (vampire == 0 && vampireHunter == 0)) {
+        //console.log("true  -  " +vampire + ":" + vampireHunter);
         return true;
     }
+    //console.log("false  -  " +vampire + ":" + vampireHunter);
     return false;
 }
 
@@ -315,6 +321,7 @@ function randomizeBenign() {
     switch (randomInt(0, 1)) {
         case 0:
             return Role.Amnesiac;
+            //return Role.Vampire;
         case 1:
             return Role.Survivor;
     }
