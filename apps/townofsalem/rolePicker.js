@@ -165,8 +165,8 @@ function checkVampireRoles(roleList) {
             vampireHunter++;
         }
     }
-    alert(vampire + " " + vampireHunter);
     if ((vampire > 0 && vampireHunter > 0) || (vampire == 0 && vampireHunter == 0)) {
+        console.log(vampireHunter + " " + vampire);
         return true;
     }
     return false;
@@ -430,6 +430,6 @@ function randomizeBenignOrEvil() {
 }
 
 module.exports = {
-  checkValidation: checkValidation,
-  getRoles : getRoles
+    checkValidation: checkValidation,
+    getRoles: getRoles
 }
