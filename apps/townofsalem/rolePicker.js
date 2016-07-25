@@ -8,10 +8,9 @@ exports.getRoles = function getRoles(num) {
                 randomizeTownKilling(),
                 randomizeRandomTown(),
                 Role.Godfather,
-                Role.Mafioso
+                Role.Mafioso,
                 randomizeBenignOrEvil()
             ];
-            break;
     }
 }
 
@@ -53,7 +52,7 @@ function randomizeRandomTown() {
 }
 
 function randomizeTownInvestigative() {
-    switch (randomInt(0, 2)) {
+    switch (randomInt(0, 3)) {
         case 0:
             return Role.Investigator;
         case 1:
@@ -88,5 +87,22 @@ function randomizeTownKilling() {
             return Role.Veteran;
         case 2:
             return Role.Vigilante;
+    }
+}
+
+function randomizeBenignOrEvil() {
+    switch (randomInt(0, 5)) {
+        case 0:
+            return Role.Amnesiac;
+        case 1:
+            return Role.Survivor;
+        case 2:
+            return Role.Executioner;
+        case 3:
+            return Role.Jester;
+        case 4:
+            return Role.Witch;
+        case 5:
+            return Role.Troll;
     }
 }
