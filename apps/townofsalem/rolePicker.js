@@ -1,5 +1,5 @@
 var Role = require('./roles');
-exports.getRoles = function getRoles(num) {
+var getRoles = function getRoles(num) {
     switch (num) {
         case 7:
             return [
@@ -130,7 +130,7 @@ exports.getRoles = function getRoles(num) {
     }
 }
 
-exports.checkValidation = function checkValidation(roleList) {
+var checkValidation = function checkValidation(roleList) {
     if (!checkUniqueRoles(roleList, Role.Veteran)) {
         roleList = getRoles(roleList.length);
         checkValidation(roleList);
@@ -427,4 +427,9 @@ function randomizeBenignOrEvil() {
         case 5:
             return Role.Troll;
     }
+}
+
+module.exports = {
+  checkValidation: checkValidation,
+  getRoles : getRoles
 }
