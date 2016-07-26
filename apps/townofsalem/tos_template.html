@@ -14,10 +14,16 @@
         var players = [];
 
         function start() {
-            //  var roleList;
-            // roleList = rolePicker.getRoles(15);
-            // roleList = rolePicker.checkValidation(roleList);
-
+            var roleList;
+            roleList = rolePicker.getRoles(players.length);
+            roleList = rolePicker.checkValidation(roleList);
+            keys = Object.keys(players);
+            keys.sort();
+            var i = 0;
+            for(let uid in players){
+              players[uid].role = roleList[i];
+              i++;
+            } 
         }
 
         function addPlayer(uid) {
