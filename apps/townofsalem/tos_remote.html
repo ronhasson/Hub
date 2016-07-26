@@ -137,6 +137,7 @@
     var socket = io();
     var uid = guid();
     var username;
+    var myRole;
 
     var enableDeathNote;
     var enableSun;
@@ -147,7 +148,8 @@
     var inJail;
 
     var allPlayers;
-
+    var roles = require("./tosRoles");
+    console.log(roles);
 
     socket.emit("join", uid);
 
@@ -188,7 +190,8 @@
             s4() + '-' + s4() + s4() + s4();
     }
     socket.on('startGame', function(arr){
-
+        myRole = findMyRole(arr);
+        if(myRole == roles.Godfather || )
     });
 </script>
 
