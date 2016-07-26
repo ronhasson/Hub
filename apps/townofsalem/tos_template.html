@@ -2,27 +2,28 @@
 
     <center>
         <h1></h1>
-        <input type="button" value="Start!" />
+        <input type="button" value="Start!" onclick="start()" />
         <div id="usersInGame">
 
         </div>
     </center>
     <script>
         var rolePicker = require("./apps/townofsalem/rolePicker.js");
-        var roleList;
-
-        roleList = rolePicker.getRoles(15);
-        //console.log("pre list:  " +roleList);
-        roleList = rolePicker.checkValidation(roleList);
-        //console.log("after list:  "+roleList);
-
 
         requestChangeRemotePage("tos");
         var players = [];
 
+        function start() {
+            //  var roleList;
+            // roleList = rolePicker.getRoles(15);
+            // roleList = rolePicker.checkValidation(roleList);
+          
+        }
+
         function addPlayer(uid) {
             var player = new Object();
             player.username = "";
+            player.role = "";
             players[uid] = player;
         }
 
