@@ -129,7 +129,6 @@ var getRoles = function getRoles(num) {
             ];
     }
 }
-
 var list;
 var checkValidation = function checkValidation(roleList) {
     list = roleList;

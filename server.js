@@ -17,6 +17,9 @@ expr.get('/', function(req, res) {
 expr.get('/tos', function(req, res) {
     res.sendFile(__dirname + '/apps/townofsalem/tos_remote.html');
 });
+expr.get('/tosRoles', function(req, res) {
+    res.sendFile(__dirname + '/apps/townofsalem/roles.js');
+});
 
 
 io.on('connection', function(socket) {

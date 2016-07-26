@@ -10,29 +10,18 @@
 </head>
 
 <style>
-    /* The side navigation menu */
-
     .sidenav {
         height: 100%;
-        /* 100% Full-height */
         width: 0;
-        /* 0 width - change this with JavaScript */
         position: fixed;
-        /* Stay in place */
         z-index: 1;
-        /* Stay on top */
         top: 0;
         left: 0;
         background-color: #d7d7d7;
-        /* Black*/
         overflow-x: hidden;
-        /* Disable horizontal scroll */
         padding-top: 9.5vh;
-        /* Place content 60px from the top */
         transition: 0.5s;
-        /* 0.5 second transition effect to slide in the sidenav */
     }
-    /* The navigation menu links */
 
     .sidenav a {
         padding: 8px 8px 8px 32px;
@@ -44,13 +33,11 @@
         border: 5px;
         font-family: sans-serif;
     }
-    /* When you mouse over the navigation links, change their color */
 
     .sidenav a:hover,
     .offcanvas a:focus {
         color: #18436b;
     }
-    /* Position and style the close button (top right corner) */
 
     .closebtn {
         position: absolute;
@@ -58,7 +45,6 @@
         right: 25px;
         margin-left: 50px;
     }
-    /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 
     #main {
         transition: margin-left .5s;
@@ -121,7 +107,6 @@
             <a href="#">Role</a>
         </div>
 
-        <!-- Use any element to open the sidenav -->
         <div id="topBar">
             <span onclick="openNav()" class="opener"><i class="fa fa-bars" aria-hidden="true"></i></span>
             <span class="inTopBar" style="color:rgb(250, 255, 0)"><i class="fa fa-sun-o" aria-hidden="true"></i></span>
@@ -130,9 +115,10 @@
         </div>
 
 
-        <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
-        <div id="main">
-            test
+        <div id="chatMenu">
+            <!--
+              all, mafia, vamp, jailor,dead, siance
+             !-->
         </div>
     </div>
 
@@ -151,6 +137,17 @@
     var socket = io();
     var uid = guid();
     var username;
+
+    var enableDeathNote;
+    var enableSun;
+    var mafiaChat;
+    var vampireChat;
+    var sianceChat;
+    var isDead;
+    var inJail;
+
+    var allPlayers;
+
 
     socket.emit("join", uid);
 
@@ -190,6 +187,9 @@
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     }
+    socket.on('startGame', function(arr){
+
+    });
 </script>
 
 </html>
