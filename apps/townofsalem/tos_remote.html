@@ -150,7 +150,7 @@
 
     var allPlayers;
     var roles;
-    console.log(roles);
+    //console.log(roles);
 
     socket.emit("join", uid);
 
@@ -195,7 +195,7 @@
             s4() + '-' + s4() + s4() + s4();
     }
     socket.on('startGame', function(arr) {
-        console.log(myRole);
+        //console.log(myRole);
         console.log(arr);
         myRole = findMyRole(arr);
         if (myRole.team == "mafia") {
@@ -217,12 +217,12 @@
     });
 
     function findMyRole(arr) {
-        console.log("findMyRole")
+        //console.log("findMyRole")
         for (let uidKey in arr) {
             var player = arr[uid];
-            console.log(uidKey + " == " + uid)
+            //console.log(uidKey + " == " + uid)
             if (uidKey == uid) {
-                console.log(player.role);
+                //console.log(player.role);
                 return player.role;
             }
         }

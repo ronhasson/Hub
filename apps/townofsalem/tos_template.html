@@ -12,12 +12,14 @@
         var roles = require("./apps/townofsalem/roles.js");
 
         requestChangeRemotePage("tos");
-        var players = [];
+        var players = {};
 
         function start() {
             var roleList;
             roleList = rolePicker.getRoles(Object.keys(players).length);
             roleList = rolePicker.checkValidation(roleList);
+            //console.log("s start - ");
+            //console.log(players);
             keys = Object.keys(players);
             keys.sort();
             var i = 0;
@@ -25,7 +27,9 @@
               players[uid].role = roleList[i];
               i++;
             }
-            console.log("start - " + players)
+            console.log("start - ");
+            console.log(players);
+
             sendEmit("startGame", players);
         }
 
@@ -35,14 +39,14 @@
             player.role = "";
             players[uid] = player;
             sendEmit("getRoles", roles);
-            console.log("add player - " + player);
+            //console.log("add player - " + player);
         }
 
         function checkUserName(data) {
-            console.log(players);
+            //console.log(players);
             for (let uid in players) {
                 let player = players[uid];
-                console.log(player);
+                //console.log(player);
                 if (player.username == data.usr) {
                     sendEmit("requestUserNCallBack", {
                         flag: true,
@@ -52,7 +56,7 @@
                     return false;
                 }
             }
-            console.log("pass - " +players[data.uid]);
+            //console.log("pass - " +players[data.uid]);
             players[data.uid].username = data.usr;
             sendEmit("requestUserNCallBack", {
                 flag: false,
@@ -60,7 +64,7 @@
                 uid: data.uid
             });
             displayUsers();
-            console.log(players);
+            //console.log(players);
         }
 
         function displayUsers() {
