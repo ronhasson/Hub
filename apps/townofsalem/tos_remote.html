@@ -149,7 +149,7 @@
     var mafList = [];
 
     var allPlayers;
-    var roles = require("./tosRoles");
+    var roles;
     console.log(roles);
 
     socket.emit("join", uid);
@@ -181,6 +181,10 @@
         document.location.href = "/" + page;
     });
 
+    socket.on('getRoles', function(senRoles) {
+        roles = senRoles;
+    });
+
     function guid() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
@@ -191,6 +195,8 @@
             s4() + '-' + s4() + s4() + s4();
     }
     socket.on('startGame', function(arr) {
+        console.log(myRole);
+        console.log(arr);
         myRole = findMyRole(arr);
         if (myRole.team == "mafia") {
             mafiaChat = true;
@@ -211,17 +217,20 @@
     });
 
     function findMyRole(arr) {
+        console.log("findMyRole")
         for (let uidKey in arr) {
-            let player = arr[uid];
+            var player = arr[uid];
+            console.log(uidKey + " == " + uid)
             if (uidKey == uid) {
-                myRole = player.role;
+                console.log(player.role);
+                return player.role;
             }
         }
     }
 
     function findMafia(arr) {
         for (let uidKey in arr) {
-            let player = arr[uid];
+            var player = arr[uid];
             if (uidKey != uid && player.role.team == "mafia") {
                 mafList.push({
                     name: player.username,

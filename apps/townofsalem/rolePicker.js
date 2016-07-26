@@ -139,23 +139,23 @@ var list;
 var checkValidation = function checkValidation(roleList) {
     list = roleList;
     if (!checkUniqueRoles(list, Role.Veteran)) {
-        list = getRoles(list.length);
+        list = getRoles(Object.keys(list).length);
         checkValidation(list);
     }
     else if (!checkUniqueRoles(list, Role.Mayor)) {
-        list = getRoles(list.length);
+        list = getRoles(Object.keys(list).length);
         checkValidation(list);
     }
     else if (!checkUniqueRoles(list, Role.Retributionist)) {
-        list = getRoles(list.length);
+        list = getRoles(Object.keys(list).length);
         checkValidation(list);
     }
     else if (!checkUniqueRoles(list, Role.Werewolf)) {
-        list = getRoles(list.length);
+        list = getRoles(Object.keys(list).length);
         checkValidation(list);
     }
     else if (!checkVampireRoles(list)) {
-        list = getRoles(list.length);
+        list = getRoles(Object.keys(list).length);
         //console.log("new list:  "+list);
         checkValidation(list);
     }
