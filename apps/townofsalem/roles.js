@@ -120,52 +120,52 @@ var Role = {
         team: "mafia"
     },
     Amnesiac: {
-        name: "Amnesiac"
+        name: "Amnesiac",
         canKill: false,
         team: "neutral"
     },
     Arsonist: {
-        name: "Arsonist"
+        name: "Arsonist",
         canKill: true,
         team: "neutral"
     },
     Executioner: {
-        name: "Executioner"
+        name: "Executioner",
         canKill: false,
         team: "neutral"
     },
     Jester: {
-        name: "Jester"
+        name: "Jester",
         canKill: false,
         team: "neutral"
     },
     SerialKiller: {
-        name: "Serial Killer"
+        name: "Serial Killer",
         canKill: true,
         team: "neutral"
     },
     Survivor: {
-        name: "Survivor"
+        name: "Survivor",
         canKill: false,
         team: "neutral"
     },
     Vampire: {
-        name: "Vampire"
+        name: "Vampire",
         canKill: false,
         team: "neutral"
     },
     Werewolf: {
-        name: "Werewolf"
+        name: "Werewolf",
         canKill: true,
         team: "neutral"
     },
     Witch: {
-        name: "Witch"
+        name: "Witch",
         canKill: false,
         team: "neutral"
     },
     Troll: {
-        name: "Troll"
+        name: "Troll",
         canKill: false,
         team: "neutral"
     }

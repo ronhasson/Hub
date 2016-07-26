@@ -1,6 +1,12 @@
 var Role = require('./roles');
 var getRoles = function getRoles(num) {
     switch (num) {
+        case 3:
+            return [
+                Role.Mayor,
+                Role.Mafioso,
+                Role.Framer
+          ];
         case 7:
             return [
                 randomizeTownInvestigative(),

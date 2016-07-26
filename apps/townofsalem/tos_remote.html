@@ -81,7 +81,7 @@
 </style>
 
 <body style="background-color: #d0e0e7;margin:0">
-    <div id="start" style="display:none">
+    <div id="start" >
         <center>
             <div style="height: 50vh;width:75vw;background-color:rgba(106, 34, 247, 0.8);margin-top: 13vh;">
                 <h1 style="font-family: serif;font-size: 6vh;padding-top: 7vh; padding-bottom: 5vh;"><i>Your name:</i></h1>
@@ -97,7 +97,7 @@
         <h1 id="userView"></h1>
     </div>
 
-    <div id="inGame" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <div id="inGame" style="display:none" class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" style="font-size: 5.5vh" onclick="closeNav()">
                 <span id="nameView" style="font-size: 3.5vh;float: left;padding-top: 1vh;position: absolute ; left: -25vw;">name</span><span>&times;</span>
@@ -139,13 +139,14 @@
     var username;
     var myRole;
 
-    var enableDeathNote;
-    var enableSun;
-    var mafiaChat;
-    var vampireChat;
-    var sianceChat;
-    var isDead;
-    var inJail;
+    var enableDeathNote = false;
+    var enableSun = false;
+    var mafiaChat = false;
+    var vampireChat = false;
+    var sianceChat = false;
+    var isDead = false;
+    var inJail = false;
+    var mafList = [];
 
     var allPlayers;
     var roles = require("./tosRoles");
@@ -189,10 +190,46 @@
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     }
-    socket.on('startGame', function(arr){
+    socket.on('startGame', function(arr) {
         myRole = findMyRole(arr);
-        if(myRole == roles.Godfather || )
+        if (myRole.team == "mafia") {
+            mafiaChat = true;
+            findMafia(arr);
+            console.log(mafList);
+            //get other mafia and display them
+        }
+        if (myRole.canKill == true) {
+            enableDeathNote = true;
+        }
+        isDead = false;
+        if (myRole == roles.Jailor || myRole == roles.Mayor) {
+            enableSun = true;
+        }
+        if (myRole == roles.Vampire) {
+            vampireChat = true;
+        }
     });
+
+    function findMyRole(arr) {
+        for (let uidKey in arr) {
+            let player = arr[uid];
+            if (uidKey == uid) {
+                myRole = player.role;
+            }
+        }
+    }
+
+    function findMafia(arr) {
+        for (let uidKey in arr) {
+            let player = arr[uid];
+            if (uidKey != uid && player.role.team == "mafia") {
+                mafList.push({
+                    name: player.username,
+                    role: player.role.name
+                });
+            }
+        }
+    }
 </script>
 
 </html>

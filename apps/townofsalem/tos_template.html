@@ -23,7 +23,8 @@
             for(let uid in players){
               players[uid].role = roleList[i];
               i++;
-            } 
+            }
+            sendEmit("startGame", players);
         }
 
         function addPlayer(uid) {
@@ -35,7 +36,7 @@
 
         function checkUserName(data) {
             for (let uid in players) {
-                let player = players[uid]
+                let player = players[uid];
                 if (player.username == data.usr) {
                     sendEmit("requestUserNCallBack", {
                         flag: true,
