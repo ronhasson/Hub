@@ -4,8 +4,8 @@ var getRoles = function getRoles(num) {
         case 3:
             return [
                 Role.Mayor,
-                Role.Mafioso,
-                Role.Framer
+                Role.Jailor,
+                Role.Jailor
           ];
         case 7:
             return [
