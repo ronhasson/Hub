@@ -192,6 +192,7 @@
             s4() + '-' + s4() + s4() + s4();
     }
     socket.on('startGame', function(arr) {
+        document.getElementById("nameView").innerHTML = username;
         console.log(arr);
         myRole = findMyRole(arr);
         if (myRole.team == "mafia") {

@@ -15,17 +15,27 @@
         var players = {};
 
         function start() {
+            for (let uid in players) {
+                let player = players[uid];
+                if (player.username == "") {
+                    delete players[uid];
+                }
+            }
             var roleList;
             roleList = rolePicker.getRoles(Object.keys(players).length);
             roleList = rolePicker.checkValidation(roleList);
             //console.log("s start - ");
             //console.log(players);
+            console.log("Before random:");
+            console.log(players);
             keys = Object.keys(players);
             keys.sort();
+            console.log("After random:");
+            console.log(players);
             var i = 0;
-            for(let uid in players){
-              players[uid].role = roleList[i];
-              i++;
+            for (let uid in players) {
+                players[uid].role = roleList[i];
+                i++;
             }
             console.log("start - ");
             console.log(players);
