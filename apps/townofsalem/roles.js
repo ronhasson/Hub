@@ -1,89 +1,75 @@
 class Any {
 	name: "Any",
-	canKill: true,
+	canKill: false
 }
 class Town extends Any {
+	alignment: "Town (Random)"
 }
 class TownProtective extends Town {
-
-	info: {
-		Alignment: "Town (Protective)"
-	}
+	alignment: "Town (Protective)"
 }
 class TownInvestigative extends Town {
-
+	alignment: "Town (Investigative)"
 }
 class TownSupport extends Town {
-
+	alignment: "Town (Support)"
 }
 class TownKilling extends Town {
-
+	alignment: "Town (Killing)"
 }
 class Mafia extends Any {
-
+	alignment: "Mafia (Random)"
 }
 class MafiaKilling extends Mafia {
-
+	alignment: "Mafia (Killing)"
 }
 class MafiaDeception extends Mafia {
-
+	alignment: "Mafia (Deception)"
 }
 class MafiaSupport extends Mafia {
-
+	alignment: "Mafia (Support)"
 }
 class Neutral extends Any {
-
+	alignment: "Neutral (Random)"
 }
 class NeutralKilling extends Neutral {
-
+	alignment: "Neutral (Killing)"
 }
 class NeutralChaos extends Neutral {
-
+	alignment: "Neutral (Chaos)"
 }
 class NeutralEvil extends Neutral {
-
+	alignment: "Neutral (Evil)"
 }
 class NeutralBenign extends Neutral {
-
+	alignment: "Neutral (Benign)"
+}
+class Bodyguard extends TownProtective {
+	name: "Bodyguard",
+	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
+	canKill: true
+	abilities: "Protect one person from death each night.",
+	attributes: "If your target is attacked, both you and your attacker will die instead.\nIf you successfully protect someone, you can't be saved from death.\nYour counterattack ignores night immunity.",
+	goal: "Lynch every criminal and evildoer."
+}
+class Doctor extends TownProtective {
+	name: "Doctor",
+	canKill: false,
+	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Doctor.png",
+	abilities: "Heal one person each night, preventing them from dying.",
+	attributes: "You may only heal yourself once.\nYou will know if your target is attacked.",
+	goal: "Lynch every criminal and evildoer."
 }
 
-var Role = {
-    Bodyguard: {
-        name: "Bodyguard",
-        canKill: true,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
-          Alignment: "Town (Protective)",
-          Abilities: "Protect one person from death each night.",
-          Attributes: "If your target is attacked, both you and your attacker will die instead.\nIf you successfully protect someone, you can't be saved from death.\nYour counterattack ignores night immunity.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Doctor: {
-        name: "Doctor",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Doctor.png",
-          Alignment: "Town (Protective)",
-          Abilities: "Heal one person each night, preventing them from dying.",
-          Attributes: "You may only heal yourself once.\nYou will know if your target is attacked.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Escort: {
-        name: "Escort",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Escort.png",
-          Alignment: "Town (Support)",
-          Abilities: "Distract someone each night.",
-          Attributes: "Distraction blocks your target from using their role's night ability.\nYou are immune to role blocks.\nIf you target a Serial Killer, they will attack you.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
+class Escort extends TownSupport {
+    name: "Escort",
+    canKill: false,
+	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Escort.png",
+	alignment: "Town (Support)",
+    abilities: "Distract someone each night.",
+    attributes: "Distraction blocks your target from using their role's night ability.\nYou are immune to role blocks.\nIf you target a Serial Killer, they will attack you.",
+    goal: "Lynch every criminal and evildoer."
+}
     Investigator: {
         name: "Investigator",
         canKill: false,
