@@ -1,9 +1,11 @@
 class Any {
 	name: "Any",
-	canKill: false
+	canKill: false,
+	goal: "Win."
 }
 class Town extends Any {
 	alignment: "Town (Random)"
+    goal: "Lynch every criminal and evildoer."
 }
 class TownProtective extends Town {
 	alignment: "Town (Protective)"
@@ -18,7 +20,8 @@ class TownKilling extends Town {
 	alignment: "Town (Killing)"
 }
 class Mafia extends Any {
-	alignment: "Mafia (Random)"
+	alignment: "Mafia (Random)",
+	goal: "Kill anyone that will not submit to the Mafia."
 }
 class MafiaKilling extends Mafia {
 	alignment: "Mafia (Killing)"
@@ -50,7 +53,6 @@ class Bodyguard extends TownProtective {
 	canKill: true
 	abilities: "Protect one person from death each night.",
 	attributes: "If your target is attacked, both you and your attacker will die instead.\nIf you successfully protect someone, you can't be saved from death.\nYour counterattack ignores night immunity.",
-	goal: "Lynch every criminal and evildoer."
 }
 class Doctor extends TownProtective {
 	name: "Doctor",
@@ -58,271 +60,161 @@ class Doctor extends TownProtective {
 	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Doctor.png",
 	abilities: "Heal one person each night, preventing them from dying.",
 	attributes: "You may only heal yourself once.\nYou will know if your target is attacked.",
-	goal: "Lynch every criminal and evildoer."
 }
 
 class Escort extends TownSupport {
     name: "Escort",
     canKill: false,
 	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Escort.png",
-	alignment: "Town (Support)",
-    abilities: "Distract someone each night.",
+	abilities: "Distract someone each night.",
     attributes: "Distraction blocks your target from using their role's night ability.\nYou are immune to role blocks.\nIf you target a Serial Killer, they will attack you.",
-    goal: "Lynch every criminal and evildoer."
 }
-    Investigator: {
-        name: "Investigator",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
-          Alignment: "Town (Investigative)",
-          Abilities: "Investigate one person each night for a clue to their role.",
-          Attributes: "None",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Jailor: {
-        name: "Jailor",
-        canKill: true,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jailor.png",
-          Alignment: "Town (Killing)",
-          Abilities: "You may choose one person during the day to jail for the night.",
-          Attributes: "You may anonymously talk with your prisoner.\nYou may choose to execute your prisoner.\nThe jailed target cannot perform their night ability.\nWhile jailed the prisoner is safe from all attacks.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Lookout: {
-        name: "Lookout",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Lookout.png",
-          Alignment: "Town (Investigative)",
-          Abilities: "Watch one person at night to see who visits them.",
-          Attributes: "None",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Mayor: {
+class Investigator extends TownInvestigative {
+    name: "Investigator",
+    canKill: false,
+	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
+	abilities: "Investigate one person each night for a clue to their role.",
+    attributes: "None",
+}
+class Jailor extends TownKilling {
+    name: "Jailor",
+    canKill: true,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jailor.png",
+    abilities: "You may choose one person during the day to jail for the night.",
+    attributes: "You may anonymously talk with your prisoner.\nYou may choose to execute your prisoner.\nThe jailed target cannot perform their night ability.\nWhile jailed the prisoner is safe from all attacks.",
+}
+class Lookout extends TownInvestigative {
+    name: "Lookout",
+    canKill: false,
+	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Lookout.png",
+    abilities: "Watch one person at night to see who visits them.",
+    attributes: "None",
+}
+class Mayor extends TownSupport {
         name: "Mayor",
         canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mayor.png",
-          Alignment: "Town (Support)",
-          Abilities: "You may reveal yourself as the Mayor of the Town.",
-          Attributes: "Once you have revealed yourself as the Mayor your vote counts as 3 votes.\nYou may not be healed once you have revealed.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Medium: {
-        name: "Medium",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Medium.png",
-          Alignment: "Town (Support)",
-          Abilities: "Speak with a dead person at night.",
-          Attributes: "You will speak to your target anonymously.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Retributionist: {
-        name: "Retributionist",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Retributionist.png",
-          Alignment: "Town (Support)",
-          Abilities: "You may revive a dead Town member.",
-          Attributes: "You may only resurrect one person.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Sheriff: {
-        name: "Sheriff",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Sheriff.png",
-          Alignment: "Town (Investigative)",
-          Abilities: "Check one person each night for suspicious activity.",
-          Attributes: "You will know if your target is a member of the Mafia, except for the Godfather.\nYou will know if your target is a Serial Killer.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Spy: {
-        name: "Spy",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Spy.png",
-          Alignment: "Town (Investigative)",
-          Abilities: "You can secretly listen to the Mafia at night.",
-          Attributes: "You can hear private messages.\nYou will know who the Mafia visit at night.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Transporter: {
-        name: "Transporter",
-        canKill: false,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Transporter.png",
-          Alignment: "Town (Support)",
-          Abilities: "Choose two people to transport at night.",
-          Attributes: "Transporting two people swaps all targets against them.\nYou may transport yourself.\nYour targets will know they were transported.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-
-    },
-    VampireHunter: {
-        name: "Vampire Hunter",
-        canKill: true,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/VampireHunter.png",
-          Alignment: "Town (Killing)",
-          Abilities: "Check for Vampires each night.",
-          Attributes: "If you find a Vampire you will stake them in the heart.\nIf a Vampire visits you they will be staked.\nYou can hear Vampires at night.\nIf you kill all Vampires you will become a Vigilante.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Veteran: {
-        name: "Veteran",
-        canKill: true,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Veteran.png",
-          Alignment: "Town (Killing)",
-          Abilities: "Decide if you will go on alert.",
-          Attributes: "While on alert you can not be killed at night.\nIf anyone visits you while you are on alert they will be shot.\nYou can only go on alert 3 times.\nYou are immune to role blocks.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Vigilante: {
-        name: "Vigilante",
-        canKill: true,
-        team: "town",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vigilante.png",
-          Alignment: "Town (Killing)",
-          Abilities: "Choose to take justice into your own hands and shoot someone.",
-          Attributes: "If you shoot another Town member you will commit suicide over the guilt.\nYou can only shoot your gun 3 times.",
-          Goal: "Lynch every criminal and evildoer."
-        }
-    },
-    Blackmailer: {
-        name: "Blackmailer",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Blackmailer.png",
-          Alignment: "Mafia (Support)",
-          Abilities: "Choose one person each night to blackmail.",
-          Attributes: "Blackmailed targets can not talk during the day.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Consigliere: {
-        name: "Consigliere",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consigliere.png",
-          Alignment: "Mafia (Support)",
-          Abilities: "Check one person for their exact role each night.",
-          Attributes: "If there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Consort: {
-        name: "Consort",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consort.png",
-          Alignment: "Mafia (Support)",
-          Abilities: "Distract someone each night.",
-          Attributes: "Distraction blocks your target from using their role's night ability.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Disguiser: {
-        name: "Disguiser",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Disguiser.png",
-          Alignment: "Mafia (Deception)",
-          Abilities: "Choose a target to disguise yourself as.",
-          Attributes: "If your target dies you will appear to be them.\nYou can only use your night ability three times.\nAfter disguising your name, position and character will be swapped with your targets.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Forger: {
-        name: "Forger",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Forger.png",
-          Alignment: "Mafia (Deception)",
-          Abilities: "Choose a person and rewrite their last will at night.",
-          Attributes: "If your target dies their last will is replaced with your forgery.\nYou may only perform 3 forgeries.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Framer: {
-        name: "Framer",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
-          Alignment: "Mafia (Deception)",
-          Abilities: "Choose someone to frame at night.",
-          Attributes: "If your target is investigated they will appear to be a member of the Mafia.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Godfather: {
-        name: "Godfather",
-        canKill: true,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Godfather.png",
-          Alignment: "Mafia (Killing)",
-          Abilities: "Kill someone each night.",
-          Attributes: "You can't be killed at night.\nIf there is a Mafioso he will attack the target instead of you.\nYou will appear to be a Town member to the Sheriff.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Janitor: {
-        name: "Janitor",
-        canKill: false,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
-          Alignment: "Mafia (Deception)",
-          Abilities: "Choose a person to clean at night.",
-          Attributes: "If your target dies their role and last will won't be revealed to the town.\nOnly you will see the cleaned targets role and last will.\nYou may only perform 3 cleanings.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
-    Mafioso: {
-        name: "Mafioso",
-        canKill: true,
-        team: "mafia",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mafioso.png",
-          Alignment: "Mafia (Killing)",
-          Abilities: "Carry out the Godfather's orders.",
-          Attributes: "You can kill if the Godfather doesn't give you orders.\nIf the Godfather dies you will become the next Godfather.\nYou can talk with the other Mafia at night.",
-          Goal: "Kill anyone that will not submit to the Mafia."
-        }
-    },
+        img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mayor.png",
+        abilities: "You may reveal yourself as the Mayor of the Town.",
+        attributes: "Once you have revealed yourself as the Mayor your vote counts as 3 votes.\nYou may not be healed once you have revealed.",
+}
+class Medium extends TownSupport {
+    name: "Medium",
+    canKill: false,
+    team: "town",
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Medium.png",
+    abilities: "Speak with a dead person at night.",
+	attributes: "You will speak to your target anonymously.",
+class Retributionist extends TownSupport {
+    name: "Retributionist",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Retributionist.png",
+    abilities: "You may revive a dead Town member.",
+    attributes: "You may only resurrect one person.",
+}
+class Sheriff extends TownInvestigative {
+    name: "Sheriff",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Sheriff.png",
+    abilities: "Check one person each night for suspicious activity.",
+    attributes: "You will know if your target is a member of the Mafia, except for the Godfather.\nYou will know if your target is a Serial Killer.",
+}
+class Spy extends TownInvestigative {
+    name: "Spy",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Spy.png",
+    abilities: "You can secretly listen to the Mafia at night.",
+	attributes: "You can hear private messages.\nYou will know who the Mafia visit at night.",
+class Transporter extends TownSupport {
+    name: "Transporter",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Transporter.png",
+    abilities: "Choose two people to transport at night.",
+    attributes: "Transporting two people swaps all targets against them.\nYou may transport yourself.\nYour targets will know they were transported."
+}
+class VampireHunter extends TownKilling {
+    name: "Vampire Hunter",
+    canKill: true,
+	img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/VampireHunter.png",
+    abilities: "Check for Vampires each night.",
+    attributes: "If you find a Vampire you will stake them in the heart.\nIf a Vampire visits you they will be staked.\nYou can hear Vampires at night.\nIf you kill all Vampires you will become a Vigilante.",
+}
+class Veteran extends TownKilling {
+    name: "Veteran",
+    canKill: true,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Veteran.png",
+    abilities: "Decide if you will go on alert.",
+    attributes: "While on alert you can not be killed at night.\nIf anyone visits you while you are on alert they will be shot.\nYou can only go on alert 3 times.\nYou are immune to role blocks.",
+}
+class Vigilante extends TownKilling {
+    name: "Vigilante",
+    canKill: true,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vigilante.png",
+    abilities: "Choose to take justice into your own hands and shoot someone.",
+	attributes: "If you shoot another Town member you will commit suicide over the guilt.\nYou can only shoot your gun 3 times.",
+}
+class Blackmailer extends MafiaSupport {
+    name: "Blackmailer",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Blackmailer.png",
+    abilities: "Choose one person each night to blackmail.",
+    attributes: "Blackmailed targets can not talk during the day.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Consigliere extends MafiaSupport {
+    name: "Consigliere",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consigliere.png",
+    abilities: "Check one person for their exact role each night.",
+    attributes: "If there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Consort extends MafiaSupport {
+    name: "Consort",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consort.png",
+    abilities: "Distract someone each night.",
+    attributes: "Distraction blocks your target from using their role's night ability.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Disguiser extends MafiaDeception {
+    name: "Disguiser",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Disguiser.png",
+    abilities: "Choose a target to disguise yourself as.",
+    attributes: "If your target dies you will appear to be them.\nYou can only use your night ability three times.\nAfter disguising your name, position and character will be swapped with your targets.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Forger extends MafiaDeception {
+    name: "Forger",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Forger.png",
+    abilities: "Choose a person and rewrite their last will at night.",
+    attributes: "If your target dies their last will is replaced with your forgery.\nYou may only perform 3 forgeries.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Framer extends MafiaDeception {
+    name: "Framer",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
+    abilities: "Choose someone to frame at night.",
+    attributes: "If your target is investigated they will appear to be a member of the Mafia.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Godfather extends MafiaKilling {
+    name: "Godfather",
+    canKill: true,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Godfather.png",
+    abilities: "Kill someone each night.",
+	attributes: "You can't be killed at night.\nIf there is a Mafioso he will attack the target instead of you.\nYou will appear to be a Town member to the Sheriff.\nYou can talk with the other Mafia at night.",
+}
+class Janitor extends MafiaDeception {
+    name: "Janitor",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
+    abilities: "Choose a person to clean at night.",
+    attributes: "If your target dies their role and last will won't be revealed to the town.\nOnly you will see the cleaned targets role and last will.\nYou may only perform 3 cleanings.\nIf there are no kill capable Mafia roles left you will become a Mafioso.\nYou can talk with the other Mafia at night.",
+}
+class Mafioso extends MafiaKilling {
+    name: "Mafioso",
+    canKill: true,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mafioso.png",
+    abilities: "Carry out the Godfather's orders.",
+    attributes: "You can kill if the Godfather doesn't give you orders.\nIf the Godfather dies you will become the next Godfather.\nYou can talk with the other Mafia at night.",
+}
     Amnesiac: {
         name: "Amnesiac",
         canKill: false,
