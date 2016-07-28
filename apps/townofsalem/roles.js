@@ -1,8 +1,23 @@
 module.exports = {
+	listTownProtective = [Bodyguard, Doctor]
+	listTownKilling = [Vigilante, Veteran, VampireHunter, Jailor]
+	listTownSupport = [Escort, Retributionist, Medium, Mayor, Transporter]
+	listTownInvestigative = [Sheriff, Investigator, Spy, Lookout]
+	listTown = listTownProtective.concat(listTownKilling).concat(listTownSupport).concat(listTownInvestigative)
+	listMafiaSupport = [Consigliere, Blackmailer, Consort]
+	listMafiaDeception = [Framer, Forger, Jailor, Disguiser]
+	listMafiaKilling = [Mafioso, Godfather]
+	listMafia = listMafiaSupport.concat(listMafiaDeception).concat(listMafiaKilling)
+	listNeutralKilling = [Werewolf, Arsonist, SerialKiller]
+	listNeutralChaos = [Vampire]
+	listNeutralEvil = [Witch, Jester, Executioner]
+	listNeutralBenign = [Troll, Survivor, Amnesiac]
+	listNeutral = listNeutralKilling.concat(listNeutralChaos).concat(listNeutralEvil).concat(listNeutralBenign)
+	listAny = listTown.concat(listMafia).concat(listNeutral)
 	class Any {
 	    name: "Any",
-	        canKill: false,
-	        goal: "Win."
+	    canKill: false,
+	    goal: "Win."
 	}
 	class Town extends Any {
 	    alignment: "Town (Random)"

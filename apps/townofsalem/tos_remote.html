@@ -275,7 +275,7 @@
         document.getElementById("nameView").innerHTML = username;
         console.log(arr);
         myRole = findMyRole(arr);
-        if (myRole.team == "mafia") {
+        if (myRole instanceof roles.Mafia) {
             mafiaChat = true;
             findMafia(arr);
             console.log(mafList);
@@ -310,7 +310,7 @@
     function findMafia(arr) {
         for (let uidKey in arr) {
             var player = arr[uidKey];
-            if (uidKey != uid && player.role.team == "mafia") {
+            if (uidKey != uid && player.role instanceof roles.Mafia) {
                 mafList.push({
                     name: player.username,
                     role: player.role.name
