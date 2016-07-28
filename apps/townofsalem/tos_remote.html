@@ -119,8 +119,9 @@
             <!--
               all, mafia, vamp, jailor,dead, siance
              !-->
-            <textarea readonly style="resize: none" rows="20" cols="50"></textarea>
+            <textarea id="log" readonly style="resize: none" rows="20" cols="50"></textarea>
             <input type="text" id="message" />
+            <input type="button" onclick="sendMessageToServer()" />
         </div>
     </div>
 
@@ -146,6 +147,7 @@
     var sianceChat = false;
     var isDead = false;
     var inJail = false;
+    var isday = false;
     var mafList = [];
 
     var allPlayers;
@@ -155,33 +157,32 @@
 
     socket.on('getMessage', function(data) {
         if (data.mafiaChat && mafiaChat) {
-            // send message
+            document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        } else if (data.vampireChat && vampireChat) {
+            document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        } else if (data.sianceChat && sianceChat) {
+            document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        } else if (data.isDead && isDead) {
+            document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        } else if (data.inJail && inJail) {
+            document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        } else if (isday) {
+            document.getElementById("log").value += data.username + ": " + data.message + "\n";
         }
-        if (data.vampireChat && vampireChat) {
-            // send message
-        }
-        if (data.sianceChat && sianceChat) {
-            // send message
-        }
-        if (data.isDead && isDead) {
-            // send message
-        }
-        if (data.inJail && inJail) {
-            // send message
-        }
+
     });
 
     function sendMessageToServer() {
         var message = document.getElementById("message").value;
-        if (mafiaChat)
-            socket.emit("sendMessage", {
-                message: message,
-                mafiaChat: mafiaChat,
-                vampireChat: vampireChat,
-                sianceChat: sianceChat,
-                isDead: isDead,
-                inJail: inJail
-            });
+        socket.emit("sendMessage", {
+            message: message,
+            username: username,
+            mafiaChat: mafiaChat,
+            vampireChat: vampireChat,
+            sianceChat: sianceChat,
+            isDead: isDead,
+            inJail: inJail
+        });
     }
 
     function requestUsername() {
