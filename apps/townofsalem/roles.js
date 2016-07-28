@@ -1,3 +1,52 @@
+class Any {
+	name: "Any",
+	canKill: true,
+}
+class Town extends Any {
+}
+class TownProtective extends Town {
+
+	info: {
+		Alignment: "Town (Protective)"
+	}
+}
+class TownInvestigative extends Town {
+
+}
+class TownSupport extends Town {
+
+}
+class TownKilling extends Town {
+
+}
+class Mafia extends Any {
+
+}
+class MafiaKilling extends Mafia {
+
+}
+class MafiaDeception extends Mafia {
+
+}
+class MafiaSupport extends Mafia {
+
+}
+class Neutral extends Any {
+
+}
+class NeutralKilling extends Neutral {
+
+}
+class NeutralChaos extends Neutral {
+
+}
+class NeutralEvil extends Neutral {
+
+}
+class NeutralBenign extends Neutral {
+
+}
+
 var Role = {
     Bodyguard: {
         name: "Bodyguard",
