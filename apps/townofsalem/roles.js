@@ -323,126 +323,86 @@ class Escort extends TownSupport {
           Goal: "Kill anyone that will not submit to the Mafia."
         }
     },
-    Amnesiac: {
-        name: "Amnesiac",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Amnesiac.png",
-          Alignment: "Neutral (Benign)",
-          Abilities: "Remember who you were by selecting a graveyard role.",
-          Attributes: "When you choose a role it will be revealed to the Town.\nYou can't choose a unique role.",
-          Goal: "Remember who you were and complete that roles objectives."
-        }
-    },
-    Arsonist: {
-        name: "Arsonist",
-        canKill: true,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Arsonist.png",
-          Alignment: "Neutral (Killing)",
-          Abilities: "Douse someone in gasoline or ignite all doused targets.",
-          Attributes: "Targets will know that they are doused in gasoline.\nDeath from fire can't be prevented by healing or night immunities.\nSelect yourself to ignite doused people.\nYou can take no action to undouse yourself.",
-          Goal: "Live to see everyone burn."
-        }
-    },
-    Executioner: {
-        name: "Executioner",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Executioner.png",
-          Alignment: "Neutral (Evil)",
-          Abilities: "Trick the Town into lynching your target.",
-          Attributes: "If your target is killed at night you will become a Jester.\nYour target is always a Town member.",
-          Goal: "Get your target lynched at any cost."
-        }
-    },
-    Jester: {
-        name: "Jester",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jester.png",
-          Alignment: "Neutral (Evil)",
-          Abilities: "Trick the Town into voting against you.",
-          Attributes: "If you are lynched you may kill one of your guilty voters the following night.",
-          Goal: "Get yourself lynched by any means necessary."
-        }
-    },
-    SerialKiller: {
-        name: "Serial Killer",
-        canKill: true,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/SerialKiller.png",
-          Alignment: "Neutral (Killing)",
-          Abilities: "Kill someone each night.",
-          Attributes: "If you are role blocked you will attack the role blocker instead of your target.\nYou can not be killed at night.",
-          Goal: "Kill everyone who would oppose you."
-        }
-    },
-    Survivor: {
-        name: "Survivor",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Survivor.png",
-          Alignment: "Neutral (Benign)",
-          Abilities: "Put on a bulletproof vest at night, protecting you from attacks.",
-          Attributes: "You can only use the bulletproof vest 4 times.",
-          Goal: "Live to the end of the game."
-        }
-    },
-    Vampire: {
-        name: "Vampire",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vampire.png",
-          Alignment: "Neutral (Chaos)",
-          Abilities: "Convert others to Vampires at night.",
-          Attributes: "Vampires vote at night to bite a target.\nThe youngest Vampire will visit the target at night.\nYou must wait 1 night between conversions.",
-          Goal: "Convert everyone who would oppose you."
-        }
-    },
-    Werewolf: {
-        name: "Werewolf",
-        canKill: true,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Werewolf.png",
-          Alignment: "Neutral (Killing)",
-          Abilities: "Transform into a Werewolf during the full moon.",
-          Attributes: "As a Werewolf you can not be killed at night.\nAs a Werewolf you will attack your victim and anyone that visits them.\nYour attack goes through night immunity.\nAs a Werewolf you may choose to stay home and attack anyone who visits you.",
-          Goal: "Kill everyone who would oppose you."
-        }
-    },
-    Witch: {
-        name: "Witch",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Witch.png",
-          Alignment: "Neutral (Evil)",
-          Abilities: "Control someone each night.",
-          Attributes: "You can only control targetable actions such as detection and killing.\nYou can force people to target themselves.\nYour victim will know they are being controlled.",
-          Goal: "Survive to see the Town lose the game."
-        }
-    },
-    Troll: {
-        name: "Troll",
-        canKill: false,
-        team: "neutral",
-        info: {
-          img: "http://en.wikifur.com/w/images/f/f3/Troll.png",
-          Alignment: "Neutral (Benign)",
-          Abilities: "You can drive people insane",
-          Attributes: "You have lost the game, but you have fun trolling them all.\nYou can't be killed at night.",
-          Goal: "Have fun."
-        }
+    class Amnesiac extends NeutralBenign{
+      name: "Amnesiac",
+      canKill: false,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Amnesiac.png",
+      Abilities: "Remember who you were by selecting a graveyard role.",
+      Attributes: "When you choose a role it will be revealed to the Town.\nYou can't choose a unique role.",
+      Goal: "Remember who you were and complete that roles objectives."
     }
-};
+    class Arsonist extends NeutralKilling{
+      name: "Arsonist",
+      canKill: true,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Arsonist.png",
+      Abilities: "Douse someone in gasoline or ignite all doused targets.",
+      Attributes: "Targets will know that they are doused in gasoline.\nDeath from fire can't be prevented by healing or night immunities.\nSelect yourself to ignite doused people.\nYou can take no action to undouse yourself.",
+      Goal: "Live to see everyone burn."
+    }
+    class Executioner extends NeutralEvil{
+      name: "Executioner",
+      canKill: false,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Executioner.png",
+      Abilities: "Trick the Town into lynching your target.",
+      Attributes: "If your target is killed at night you will become a Jester.\nYour target is always a Town member.",
+      Goal: "Get your target lynched at any cost."
+    }
+    class Jester extends NeutralEvil{
+      name: "Jester",
+      canKill: false,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jester.png",
+      Abilities: "Trick the Town into voting against you.",
+      Attributes: "If you are lynched you may kill one of your guilty voters the following night.",
+      Goal: "Get yourself lynched by any means necessary."
+    }
+    class SerialKiller extends NeutralKilling{
+      name: "Serial Killer",
+      canKill: true,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/SerialKiller.png",
+      Abilities: "Kill someone each night.",
+      Attributes: "If you are role blocked you will attack the role blocker instead of your target.\nYou can not be killed at night.",
+      Goal: "Kill everyone who would oppose you."
+    }
+    class Survivor extends NeutralBenign{
+      name: "Survivor",
+      canKill: false,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Survivor.png",
+      Abilities: "Put on a bulletproof vest at night, protecting you from attacks.",
+      Attributes: "You can only use the bulletproof vest 4 times.",
+      Goal: "Live to the end of the game."
+    }
+    class Vampire extends NeutralChaos{
+      name: "Vampire",
+      canKill: false,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vampire.png",
+      Abilities: "Convert others to Vampires at night.",
+      Attributes: "Vampires vote at night to bite a target.\nThe youngest Vampire will visit the target at night.\nYou must wait 1 night between conversions.",
+      Goal: "Convert everyone who would oppose you."
+    }
+    class Werewolf extends NeutralKilling{
+      name: "Werewolf",
+      canKill: true,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Werewolf.png",
+      Abilities: "Transform into a Werewolf during the full moon.",
+      Attributes: "As a Werewolf you can not be killed at night.\nAs a Werewolf you will attack your victim and anyone that visits them.\nYour attack goes through night immunity.\nAs a Werewolf you may choose to stay home and attack anyone who visits you.",
+      Goal: "Kill everyone who would oppose you."
+    }
+    class Witch extends NeutralEvil{
+      name: "Witch",
+      canKill: false,
+      img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Witch.png",
+      Abilities: "Control someone each night.",
+      Attributes: "You can only control targetable actions such as detection and killing.\nYou can force people to target themselves.\nYour victim will know they are being controlled.",
+      Goal: "Survive to see the Town lose the game."
+    }
+    class Troll extends NeutralBenign{
+      name: "Troll",
+      canKill: false,
+      img: "http://en.wikifur.com/w/images/f/f3/Troll.png",
+      Abilities: "You can drive people insane",
+      Attributes: "You have lost the game, but you have fun trolling them all.\nYou can't be killed at night.",
+      Goal: "Have fun."
+    }
+
 
 module.exports = Role;
