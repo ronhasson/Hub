@@ -25,6 +25,10 @@ expr.get('/tosRoles', function(req, res) {
 io.on('connection', function(socket) {
     console.log(socket.request.connection.remoteAddress + ' connected');
 
+    socket.on('sendMessage', function(data) {
+        sendMessageToPlayers(data);
+    });
+
     socket.on('join', function(uid) {
         addPlayer(uid);
         console.log("on join")

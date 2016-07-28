@@ -14,6 +14,10 @@
         requestChangeRemotePage("tos");
         var players = {};
 
+        function sendMessageToPlayers(data){
+          sendEmit('getMessage', data);
+        }
+
         function start() {
             for (let uid in players) {
                 let player = players[uid];

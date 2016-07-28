@@ -119,6 +119,8 @@
             <!--
               all, mafia, vamp, jailor,dead, siance
              !-->
+            <textarea readonly style="resize: none" rows="20" cols="50"></textarea>
+            <input type="text" id="message" />
         </div>
     </div>
 
@@ -150,6 +152,37 @@
     var roles;
 
     socket.emit("join", uid);
+
+    socket.on('getMessage', function(data) {
+        if (data.mafiaChat && mafiaChat) {
+            // send message
+        }
+        if (data.vampireChat && vampireChat) {
+            // send message
+        }
+        if (data.sianceChat && sianceChat) {
+            // send message
+        }
+        if (data.isDead && isDead) {
+            // send message
+        }
+        if (data.inJail && inJail) {
+            // send message
+        }
+    });
+
+    function sendMessageToServer() {
+        var message = document.getElementById("message").value;
+        if (mafiaChat)
+            socket.emit("sendMessage", {
+                message: message,
+                mafiaChat: mafiaChat,
+                vampireChat: vampireChat,
+                sianceChat: sianceChat,
+                isDead: isDead,
+                inJail: inJail
+            });
+    }
 
     function requestUsername() {
         var TEMP_username = document.getElementById("usernameInput").value;
@@ -207,10 +240,10 @@
         isDead = false;
         console.log(roles);
         console.log(myRole);
-        if (myRole.name == roles.Jailor.name || myRole.name == roles.Mayor.name) {
+        if (myRole == roles.Jailor || myRole == roles.Mayor) {
             document.getElementById("sun").style.display = '';
         }
-        if (myRole.name == roles.Vampire.name) {
+        if (myRole == roles.Vampire) {
             vampireChat = true;
         }
         document.getElementById("inGame").style.display = '';
