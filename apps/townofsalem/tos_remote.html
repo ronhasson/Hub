@@ -102,9 +102,9 @@
             <a href="javascript:void(0)" class="closebtn" style="font-size: 5.5vh" onclick="closeNav()">
                 <span id="nameView" style="font-size: 3.5vh;float: left;padding-top: 1vh;position: absolute ; left: -25vw;">name</span><span>&times;</span>
             </a>
-            <a href="#">Chat</a>
-            <a href="#">Actions</a>
-            <a href="#">Role</a>
+            <a onclick="changeTab('chat')">Chat</a>
+            <a onclick="changeTab('actions')">Actions</a>
+            <a onclick="changeTab('role')">Role</a>
         </div>
 
         <div id="topBar">
@@ -114,7 +114,6 @@
             <span class="inTopBar" style="color:rgb(245, 231, 184)" id="will"><i class="fa fa-sticky-note" aria-hidden="true"></i></span>
         </div>
 
-
         <div id="chatMenu">
             <!--
               all, mafia, vamp, jailor,dead, siance
@@ -122,6 +121,14 @@
             <textarea id="log" readonly style="resize: none" rows="20" cols="50"></textarea>
             <input type="text" id="message" />
             <input type="button" onclick="sendMessageToServer()" />
+        </div>
+
+        <div id="actions" style="display: none">
+
+        </div>
+
+        <div id="role" style="display: none">
+            
         </div>
     </div>
 
@@ -147,7 +154,7 @@
     var sianceChat = false;
     var isDead = false;
     var inJail = false;
-    var isday = false;
+    var isday = true;
     var mafList = [];
 
     var allPlayers;
@@ -172,6 +179,21 @@
 
     });
 
+    function changeTab(tab) {
+        document.getElementById("chatMenu").style.display = 'none';
+        document.getElementById("actions").style.display = 'none';
+        document.getElementById("role").style.display = 'none';
+        if (tab == "chat") {
+            document.getElementById("chatMenu").style.display = '';
+        }
+        if (tab == "actions") {
+            document.getElementById("actions").style.display = '';
+        }
+        if (tab == "role") {
+            document.getElementById("role").style.display = '';
+        }
+    }
+
     function sendMessageToServer() {
         var message = document.getElementById("message").value;
         socket.emit("sendMessage", {
@@ -183,6 +205,7 @@
             isDead: isDead,
             inJail: inJail
         });
+        document.getElementById("message").value = "";
     }
 
     function requestUsername() {
