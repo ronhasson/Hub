@@ -5,7 +5,7 @@ var getRoles = function getRoles(num) {
             return [
                 Role.Mafioso,
                 Role.Godfather
-          ];
+            ];
         case 7:
             return [
                 randomizeTownInvestigative(),
@@ -140,20 +140,16 @@ var checkValidation = function checkValidation(roleList) {
     if (!checkUniqueRoles(list, Role.Veteran)) {
         list = getRoles(Object.keys(list).length);
         checkValidation(list);
-    }
-    else if (!checkUniqueRoles(list, Role.Mayor)) {
+    } else if (!checkUniqueRoles(list, Role.Mayor)) {
         list = getRoles(Object.keys(list).length);
         checkValidation(list);
-    }
-    else if (!checkUniqueRoles(list, Role.Retributionist)) {
+    } else if (!checkUniqueRoles(list, Role.Retributionist)) {
         list = getRoles(Object.keys(list).length);
         checkValidation(list);
-    }
-    else if (!checkUniqueRoles(list, Role.Werewolf)) {
+    } else if (!checkUniqueRoles(list, Role.Werewolf)) {
         list = getRoles(Object.keys(list).length);
         checkValidation(list);
-    }
-    else if (!checkVampireRoles(list)) {
+    } else if (!checkVampireRoles(list)) {
         list = getRoles(Object.keys(list).length);
         //console.log("new list:  "+list);
         checkValidation(list);
@@ -310,25 +306,24 @@ function randomizeRandomNeutral() {
 }
 
 function randomizeEvil() {
-    switch (randomInt(0, 3)) {
+    switch (randomInt(0, 2)) {
         case 0:
             return Role.Executioner;
         case 1:
             return Role.Jester;
         case 2:
             return Role.Witch;
-        case 3:
-            return Role.Troll;
     }
 }
 
 function randomizeBenign() {
-    switch (randomInt(0, 1)) {
+    switch (randomInt(0, 2)) {
         case 0:
             return Role.Amnesiac;
-            //return Role.Vampire;
         case 1:
             return Role.Survivor;
+        case 2:
+            return Role.Troll;
     }
 }
 
