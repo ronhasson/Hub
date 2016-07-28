@@ -258,46 +258,46 @@ class SerialKiller extends NeutralKilling {
     Attributes: "If you are role blocked you will attack the role blocker instead of your target.\nYou can not be killed at night.",
     Goal: "Kill everyone who would oppose you."
 }
-    class Survivor extends NeutralBenign {
-        name: "Survivor",
-        canKill: false,
-        img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Survivor.png",
-        Abilities: "Put on a bulletproof vest at night, protecting you from attacks.",
-        Attributes: "You can only use the bulletproof vest 4 times.",
-        Goal: "Live to the end of the game."
-    }
-    class Vampire extends NeutralChaos {
-        name: "Vampire",
-        canKill: false,
-        img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vampire.png",
-        Abilities: "Convert others to Vampires at night.",
-        Attributes: "Vampires vote at night to bite a target.\nThe youngest Vampire will visit the target at night.\nYou must wait 1 night between conversions.",
-        Goal: "Convert everyone who would oppose you."
-    }
-    class Werewolf extends NeutralKilling {
-        name: "Werewolf",
-        canKill: true,
-        img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Werewolf.png",
-        Abilities: "Transform into a Werewolf during the full moon.",
-        Attributes: "As a Werewolf you can not be killed at night.\nAs a Werewolf you will attack your victim and anyone that visits them.\nYour attack goes through night immunity.\nAs a Werewolf you may choose to stay home and attack anyone who visits you.",
-        Goal: "Kill everyone who would oppose you."
-    }
-    class Witch extends NeutralEvil {
-        name: "Witch",
-        canKill: false,
-        img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Witch.png",
-        Abilities: "Control someone each night.",
-        Attributes: "You can only control targetable actions such as detection and killing.\nYou can force people to target themselves.\nYour victim will know they are being controlled.",
-        Goal: "Survive to see the Town lose the game."
-    }
-    class Troll extends NeutralBenign {
-        name: "Troll",
-        canKill: false,
-        img: "http://en.wikifur.com/w/images/f/f3/Troll.png",
-        Abilities: "You can drive people insane",
-        Attributes: "You have lost the game, but you have fun trolling them all.\nYou can't be killed at night.",
-        Goal: "Have fun."
-    }
+class Survivor extends NeutralBenign {
+    name: "Survivor",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Survivor.png",
+    Abilities: "Put on a bulletproof vest at night, protecting you from attacks.",
+    Attributes: "You can only use the bulletproof vest 4 times.",
+    Goal: "Live to the end of the game."
+}
+class Vampire extends NeutralChaos {
+    name: "Vampire",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vampire.png",
+    Abilities: "Convert others to Vampires at night.",
+    Attributes: "Vampires vote at night to bite a target.\nThe youngest Vampire will visit the target at night.\nYou must wait 1 night between conversions.",
+    Goal: "Convert everyone who would oppose you."
+}
+class Werewolf extends NeutralKilling {
+    name: "Werewolf",
+    canKill: true,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Werewolf.png",
+    Abilities: "Transform into a Werewolf during the full moon.",
+    Attributes: "As a Werewolf you can not be killed at night.\nAs a Werewolf you will attack your victim and anyone that visits them.\nYour attack goes through night immunity.\nAs a Werewolf you may choose to stay home and attack anyone who visits you.",
+    Goal: "Kill everyone who would oppose you."
+}
+class Witch extends NeutralEvil {
+    name: "Witch",
+    canKill: false,
+    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Witch.png",
+    Abilities: "Control someone each night.",
+    Attributes: "You can only control targetable actions such as detection and killing.\nYou can force people to target themselves.\nYour victim will know they are being controlled.",
+    Goal: "Survive to see the Town lose the game."
+}
+class Troll extends NeutralBenign {
+    name: "Troll",
+    canKill: false,
+    img: "http://en.wikifur.com/w/images/f/f3/Troll.png",
+    Abilities: "You can drive people insane",
+    Attributes: "You have lost the game, but you have fun trolling them all.\nYou can't be killed at night.",
+    Goal: "Have fun."
+}
 
 
-    module.exports = Role;
+module.exports = Role;
