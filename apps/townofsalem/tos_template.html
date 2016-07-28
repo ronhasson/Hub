@@ -26,12 +26,7 @@
             roleList = rolePicker.checkValidation(roleList);
             //console.log("s start - ");
             //console.log(players);
-            console.log("Before random:");
-            console.log(players);
-            keys = Object.keys(players);
-            keys.sort();
-            console.log("After random:");
-            console.log(players);
+            roleList.shuffle();
             var i = 0;
             for (let uid in players) {
                 players[uid].role = roleList[i];
@@ -41,6 +36,20 @@
             console.log(players);
 
             sendEmit("startGame", players);
+        }
+
+        Array.prototype.shuffle = function() {
+            var input = this;
+
+            for (var i = input.length - 1; i >= 0; i--) {
+
+                var randomIndex = Math.floor(Math.random() * (i + 1));
+                var itemAtIndex = input[randomIndex];
+
+                input[randomIndex] = input[i];
+                input[i] = itemAtIndex;
+            }
+            return input;
         }
 
         function addPlayer(uid) {
