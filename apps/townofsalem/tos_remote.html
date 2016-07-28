@@ -57,24 +57,25 @@
         background-color: rgb(45, 110, 236);
         width: 100vw;
         margin: 0;
-        height: 7vh;
+        height: 11vw;
+        box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.75);
     }
 
     .opener {
         vertical-align: middle;
-        font-size: 4vh;
-        margin-left: 2vh;
+        font-size: 6.5vw;
+        margin-left: 3vw;
         position: absolute;
-        margin-top: 1vh;
+        margin-top: 1.5vw;
         cursor: pointer;
     }
 
     .inTopBar {
         vertical-align: middle;
-        font-size: 3.5vh;
-        margin-left: 1.5vh;
-        margin-right: 2vh;
-        margin-top: 1.5vh;
+        font-size: 6vw;
+        margin-left: 1.5vw;
+        margin-right: 4vw;
+        margin-top: 2vw;
         float: right;
         cursor: pointer;
     }
@@ -118,17 +119,25 @@
             <!--
               all, mafia, vamp, jailor,dead, siance
              !-->
-            <textarea id="log" readonly style="resize: none" rows="20" cols="50"></textarea>
-            <input type="text" id="message" />
-            <input type="button" onclick="sendMessageToServer()" />
+            <center>
+                <textarea id="log" readonly style="resize: none;width:83vw;height:72vh;margin-top:3vh;font-size:3.3vw;" rows="20" cols="50"></textarea>
+                <br />
+                <input type="text" id="message" style="height:8vw;font-size:4.2vw;width:78vw;bottom:0;left:0;position:fixed;" />
+                <button type="button" onclick="sendMessageToServer()" style="height:9vw;font-size:5vw;width:22vw;bottom:0;right:0;position:fixed;color:rgb(255,255,255);background-color:rgb(45, 110, 236)"><i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+            </center>
         </div>
 
         <div id="actions" style="display: none">
 
         </div>
 
-        <div id="role" style="display: none">
-            
+        <div id="role" style="font-family: sans-serif;white-space: pre-line;padding:27px; display: none">
+            <center><img id="RoleImage" style="height:27vh;" /></center>
+            <h1 id="RoleName" style="text-align: center;margin:0"></h1>
+            <p id="AlignmentRole" style="margin:0;"></p>
+            <p id="AbilitiesRole" style="margin:0;"></p>
+            <p id="AttributesRole" style="margin:0;"></p>
+            <p id="GoalRole" style="margin:0;"></p>
         </div>
     </div>
 
@@ -140,6 +149,15 @@
 
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
+    }
+
+    function updateRoleText() {
+        document.getElementById('RoleName').innerHTML = myRole.name;
+        document.getElementById('RoleImage').src = myRole.info.img;
+        document.getElementById('AlignmentRole').innerHTML = "<b>Alignment:</b>\n " + myRole.info.Alignment;
+        document.getElementById('AbilitiesRole').innerHTML = "<b>Abilities:</b>\n " + myRole.info.Abilities;
+        document.getElementById('AttributesRole').innerHTML = "<b>Attributes:</b>\n " + myRole.info.Attributes;
+        document.getElementById('GoalRole').innerHTML = "<b>Goal:</b>\n " + myRole.info.Goal;
     }
 </script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -196,6 +214,11 @@
 
     function sendMessageToServer() {
         var message = document.getElementById("message").value;
+        document.getElementById("message").focus();
+        if(message == "")
+        {
+          return false;
+        }
         socket.emit("sendMessage", {
             message: message,
             username: username,
@@ -272,6 +295,7 @@
         }
         document.getElementById("inGame").style.display = '';
         document.getElementById("waiting").style.display = 'none';
+        updateRoleText();
     });
 
     function findMyRole(arr) {
