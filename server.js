@@ -22,9 +22,9 @@ io.on('connection', function (socket) {
         sendMessageToPlayers(data);
     });
 
-    socket.on('join', function (uid) {
-        addPlayer(uid);
-        console.log("on join");
+    socket.on('join', function(uid) {
+        addPlayer(uid, socket.request.connection.remoteAddress);
+        console.log("on join")
     });
     socket.on('requestUserN', function (data) {
         checkUserName(data);

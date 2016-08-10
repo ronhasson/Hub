@@ -41,7 +41,7 @@
             console.log(players);
 
             sendEmit("startGame", players);
-            tos.firstDayStart();
+            tos.discussion();
         }
 
         Array.prototype.shuffle = function() {
@@ -58,10 +58,11 @@
             return input;
         }
 
-        function addPlayer(uid) {
+        function addPlayer(uid, ip) {
             var player = new Object();
             player.username = "";
             player.role = "";
+            player.ip = ip;
             players[uid] = player;
             sendEmit("getRoles", roles);
             //console.log("add player - " + player);
