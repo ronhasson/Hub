@@ -26,10 +26,11 @@
                 }
             }
             var roleList;
-            roleList = rolePicker.getRoles(Object.keys(players).length);
+            //roleList = rolePicker.getRoles(Object.keys(players).length);
+            roleList = rolePicker.getRoles(15);
             roleList = rolePicker.checkValidation(roleList);
-            //console.log("s start - ");
-            //console.log(players);
+            console.log("s start - ");
+            console.log(roleList);
             roleList.shuffle();
             var i = 0;
             for (let uid in players) {

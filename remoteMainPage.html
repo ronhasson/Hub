@@ -82,6 +82,15 @@
             box-shadow: 0px 3px 0px rgba(5, 74, 193, 1), 0px 3px 6px rgba(0, 0, 0, .9);
         }
 
+        .navVolBT {
+            background-color: rgba(154, 74, 209, 1);
+            box-shadow: 0px 9px 0px rgba(126, 35, 189, 1), 0px 9px 25px rgba(0, 0, 0, .7);
+        }
+
+        .navVolBT:active {
+            box-shadow: 0px 3px 0px rgba(126, 35, 189, 1), 0px 3px 6px rgba(0, 0, 0, .9);
+        }
+
         #Bars {
             float: left;
         }
@@ -98,6 +107,12 @@
             font-size: 10vw;
             padding: 0.3vw
         }
+        #insideMenu{
+          background-color: rgb(97, 97, 97);
+          padding-top: 1vh;
+          padding-bottom: 3vh;
+          transition: 0.5s;
+        }
     </style>
 </head>
 
@@ -111,6 +126,15 @@
             </a>
             <a id="qrBT" class="navBT" style="margin:0" onclick="sendButtonPress('QR')"><i  class="fa fa-qrcode navB" aria-hidden="true"></i></a>
             <a id="Bars" class="navBT" style="margin:0;float:right;visibility: hidden;"><i  class="fa fa-bars navB" aria-hidden="true"></i></a>
+        </div>
+        <br />
+        <div id="insideMenu">
+          <a class="navVolBT" style="margin:0"><i  class="fa fa-volume-down navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" style="margin:0; margin-left:3vw"><i  class="fa fa-backward navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" style="margin:0; margin-left:1.5vw;margin-right:0.25vw;"><i  class="fa fa-pause navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" style="margin:0; margin-right:1.5vw;margin-left:0.25vw"><i  class="fa fa-play navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" style="margin:0; margin-right:3vw"><i  class="fa fa-forward navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" style="margin:0"><i  class="fa fa-volume-up navB" aria-hidden="true"></i></a>
         </div>
         <br />
         <div style="margin:0.8vw">
