@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var Role = {
     Bodyguard: {
         name: "Bodyguard",
@@ -142,6 +143,72 @@ var Role = {
           Attributes: "Transporting two people swaps all targets against them.\nYou may transport yourself.\nYour targets will know they were transported.",
           Goal: "Lynch every criminal and evildoer."
         }
+=======
+module.exports = {
+	class Any {
+	    name: "Any",
+	        canKill: false,
+	        goal: "Win."
+	}
+	class Town extends Any {
+	    alignment: "Town (Random)"
+	    goal: "Lynch every criminal and evildoer."
+	}
+	class TownProtective extends Town {
+	    alignment: "Town (Protective)"
+	}
+	class TownInvestigative extends Town {
+	    alignment: "Town (Investigative)"
+	}
+	class TownSupport extends Town {
+	    alignment: "Town (Support)"
+	}
+	class TownKilling extends Town {
+	    alignment: "Town (Killing)"
+	}
+	class Mafia extends Any {
+	    alignment: "Mafia (Random)",
+	    goal: "Kill anyone that will not submit to the Mafia."
+	}
+	class MafiaKilling extends Mafia {
+	    alignment: "Mafia (Killing)"
+	}
+	class MafiaDeception extends Mafia {
+	    alignment: "Mafia (Deception)"
+	}
+	class MafiaSupport extends Mafia {
+	    alignment: "Mafia (Support)"
+	}
+	class Neutral extends Any {
+	    alignment: "Neutral (Random)"
+	}
+	class NeutralKilling extends Neutral {
+	    alignment: "Neutral (Killing)"
+	}
+	class NeutralChaos extends Neutral {
+	    alignment: "Neutral (Chaos)"
+	}
+	class NeutralEvil extends Neutral {
+	    alignment: "Neutral (Evil)"
+	}
+	class NeutralBenign extends Neutral {
+	    alignment: "Neutral (Benign)"
+	}
+	class Bodyguard extends TownProtective {
+	    name: "Bodyguard",
+	    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
+	    canKill: true
+	    abilities: "Protect one person from death each night.",
+	    attributes: "If your target is attacked, both you and your attacker will die instead.\nIf you successfully protect someone, you can't be saved from death.\nYour counterattack ignores night immunity.",
+	}
+	class Doctor extends TownProtective {
+	    name: "Doctor",
+	    canKill: false,
+	    img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Doctor.png",
+	    abilities: "Heal one person each night, preventing them from dying.",
+	    attributes: "You may only heal yourself once.\nYou will know if your target is attacked.",
+	}
+>>>>>>> parent of c57d037... I fixed everythingggggg. but it needs testing. so test shit. also notice I changed ALL the names so it looks good and feels good and is shorter. bye im sleeping now
 
     },
     VampireHunter: {
