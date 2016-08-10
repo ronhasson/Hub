@@ -6,6 +6,19 @@ var getRoles = function getRoles(num) {
                 Role.Mafioso,
                 Role.Godfather
             ];
+            case 3:
+            [
+              Role.Mafioso,
+              Role.Consort,
+              Role.Vampire
+            ];
+            case 4:
+            return [
+              Role.Mafioso,
+              Role.Consort,
+              Role.Vampire,
+              Role.Vampire
+            ];
         case 7:
             return [
                 randomizeTownInvestigative(),

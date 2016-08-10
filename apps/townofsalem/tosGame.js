@@ -1,9 +1,7 @@
-function firstDayStart() {
-    setTimeout(function() {}, 5000);
-}
-
 function discussion(){
-  setTimeout(function() {}, 45000);
+  setTimeout(function() {
+    night();
+  }, 45000);
 }
 
 function voting(){
@@ -23,5 +21,6 @@ function lastWords(){
 }
 
 function night(){
+  isDay = false;
   setTimeout(function() {}, 40000);
 }
