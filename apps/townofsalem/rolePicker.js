@@ -151,7 +151,6 @@ var checkValidation = function checkValidation(roleList) {
         checkValidation(list);
     } else if (!checkVampireRoles(list)) {
         list = getRoles(Object.keys(list).length);
-        //console.log("new list:  "+list);
         checkValidation(list);
     }
     return list;
@@ -160,22 +159,17 @@ var checkValidation = function checkValidation(roleList) {
 function checkVampireRoles(roleList) {
     var vampire = 0;
     var vampireHunter = 0;
-    //console.log("checkVampire");
     for (let role in roleList) {
         if (roleList[role] == Role.Vampire) {
             vampire++;
-            //console.log("v++ ," + vampire);
         }
         if (roleList[role] == Role.VampireHunter) {
             vampireHunter++;
-            //console.log("vh++ ," + vampireHunter);
         }
     }
     if ((vampire > 0) || (vampire == 0 && vampireHunter == 0)) {
-        //console.log("true  -  " +vampire + ":" + vampireHunter);
         return true;
     }
-    //console.log("false  -  " +vampire + ":" + vampireHunter);
     return false;
 }
 
