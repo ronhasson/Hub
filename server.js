@@ -2,15 +2,15 @@ var fs = require('fs');
 var os = require('os');
 var ifaces = os.networkInterfaces();
 
-
+var expr = require('express')();
 var httpr = require('http').Server(expr);
 var http = require('http');
 var io = require('socket.io')(httpr);
 
 var qr = require('qr-image');
+var file_loader = require("./apps/townofsalem/js/file_loader.js");
 
-
-file_loader.init(require('express')());
+file_loader.init(expr);
 file_loader.load_files();
 
 const port = 25565;
