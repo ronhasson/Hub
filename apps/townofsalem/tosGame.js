@@ -1,5 +1,4 @@
 
-var isDay = true;
 var dayOne = true;
 var voteCounter = 0;
 function discussion(){
@@ -58,6 +57,6 @@ function lastWords(){
 }
 
 function night(){
-  isDay = false;
+	
   setTimeout(function() {}, 40000);
 }

@@ -24,7 +24,7 @@ io.on('connection', function (socket) {
 
     socket.on('join', function(uid) {
         addPlayer(uid, socket.request.connection.remoteAddress);
-        console.log("on join")
+        console.log("on join");
     });
     socket.on('requestUserN', function (data) {
         checkUserName(data);
