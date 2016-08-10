@@ -182,6 +182,8 @@
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
+        if(!isday)
+        {
         if (data.mafiaChat && mafiaChat) {
             document.getElementById("log").value += data.username + ": " + data.message + "\n";
         } else if (data.vampireChat && vampireChat) {
@@ -192,9 +194,10 @@
             document.getElementById("log").value += data.username + ": " + data.message + "\n";
         } else if (data.inJail && inJail) {
             document.getElementById("log").value += data.username + ": " + data.message + "\n";
-        } else if (isday) {
-            document.getElementById("log").value += data.username + ": " + data.message + "\n";
         }
+        }
+        else 
+        document.getElementById("log").value += data.username + ": " + data.message + "\n";
 
     });
 
@@ -228,9 +231,7 @@
             vampireChat: vampireChat,
             sianceChat: sianceChat,
             isDead: isDead,
-            inJail: inJail,
-            isDay: isDay
-
+            inJail: inJail
         });
         document.getElementById("message").value = "";
     }

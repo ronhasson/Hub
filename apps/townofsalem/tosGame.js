@@ -1,23 +1,60 @@
+
+var isDay = true;
+var dayOne = true;
+var voteCounter = 0;
 function discussion(){
+	console.log("now in discussion");
+	voteCounter = 0;
+	var timer;
+	if(dayOne)
+		timer = 15000;
+	else 
+		timer = 45000;
   setTimeout(function() {
-    night();
-  }, 45000);
+    if(dayOne)
+	{
+    	night();
+		dayOne = false;
+	}
+	else 
+	{
+		voting();
+	}
+  }, timer);
 }
 
-function voting(){
-  setTimeout(function() {}, 30000);
+function voting(){ //everyone alive can vote
+	if(voteCounter < 6)
+	{
+		console.log("NOW VOTING for the: " + voteCounter + "time");
+	}
+	else 
+	{
+		console.log("voting ended, nightime");
+		night();
+	}
+  setTimeout(function() {
+	  defense();
+  }, 30000);
 }
 
-function defense(){
-  setTimeout(function() {}, 20000);
+function defense(){ //only trailled person can talk
+  setTimeout(function() {
+	  judgement();
+  }, 20000);
 }
 
-function judgement(){
-  setTimeout(function() {}, 20000);
+function judgement(){ //everyone alive can vote
+  setTimeout(function() {
+	  //if(guilty) last words
+	  //else voting
+  }, 20000);
 }
 
 function lastWords(){
-  setTimeout(function() {}, 5000);
+  setTimeout(function() {
+	  night();
+  }, 5000);
 }
 
 function night(){
