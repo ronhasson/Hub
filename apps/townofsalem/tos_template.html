@@ -10,6 +10,7 @@
     <script>
         var rolePicker = require("./apps/townofsalem/rolePicker.js");
         var roles = require("./apps/townofsalem/roles.js");
+        var tos = require("./apps/townofsalem/tosGame.js");
 
         requestChangeRemotePage("tos");
         var players = {};
@@ -41,6 +42,7 @@
             console.log(players);
 
             sendEmit("startGame", players);
+            tos.firstDayStart();
         }
 
         Array.prototype.shuffle = function() {
