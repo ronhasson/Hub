@@ -8,10 +8,20 @@ var http = require('http');
 var io = require('socket.io')(httpr);
 
 var qr = require('qr-image');
-var file_loader = require("./apps/townofsalem/js/file_loader.js");
+//var file_loader = require("./apps/townofsalem/js/file_loader.js");
 
-file_loader.init(expr);
-file_loader.load_files();
+
+expr.get('/', function(req, res) {
+    res.sendFile(__dirname + '/remoteMainPage.html');
+});
+expr.get('/tos', function(req, res) {
+    res.sendFile(__dirname + '/apps/townofsalem/tos_remote.html');
+});
+expr.get('/tosRoles', function(req, res) {
+    res.sendFile(__dirname + '/apps/townofsalem/roles.js');
+});
+//file_loader.init(expr);
+//file_loader.load_files();
 
 const port = 25565;
 
