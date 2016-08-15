@@ -16,14 +16,14 @@ file_loader.load_files();
 const port = 25565;
 
 io.on('connection', function (socket) {
-    console.log(socket.request.connection.remoteAddress + ' connected');
+    console.log(socket.request.connection.remoteAddress + ' connected, and socket id is: ' + socket.id);
 
     socket.on('sendMessage', function (data) {
         sendMessageToPlayers(data);
     });
 
     socket.on('join', function(uid) {
-        addPlayer(uid, socket.request.connection.remoteAddress);
+        addPlayer(uid, socket.id);
         console.log("on join");
     });
     socket.on('requestUserN', function (data) {
@@ -54,6 +54,15 @@ function changeRemotePage(page) {
 
 function sendEmit(_event, data) {
     io.emit(_event, data);
+}
+function sendToIpList(_event, socketidlist, username, message) {
+    for (let socketid in socketidlist) {
+                let temp_socketid = socketidlist[socketid];
+                io.clients[temp_socketid].emit(_event, {
+                    username : username,
+                    message : message
+                });
+            }
 }
 /*var server = expr.listen(port,function(){
     console.log("We have started our server on port "+port);

@@ -14,9 +14,67 @@
 
         requestChangeRemotePage("tos");
         var players = {};
+        isDay = false;
+
 
         function sendMessageToPlayers(data){
-          sendEmit('getMessage', data);
+          //sendEmit('getMessage', data);
+          socketidlist = [];
+          var sender_player = data.player;
+            for (let uid in players) {
+                let temp_player = players[uid];
+                if(!isDay)
+                {
+                    if(sender_player.isded)
+                    {
+                        if(temp_player.isded)
+                            socketidlist.push(temp_player.socketid);
+                        else if(temp_player.role == roles.Medium)
+                            socketidlist.push(temp_player.socketid);
+                        else if(sender_player.role == roles.Medium && temp_player.Seancing == sender_player)
+                        {
+                            sender_player.username = "Medium";
+                            socketidlist.push(temp_player.socketid);
+                        }
+                    }
+                    else if(sender_player.Seancing == temp_player)
+                        socketidlist.push(temp_player.socketid);
+                    else if(sender_player.role == roles.Medium && temp_player.isded)
+                    {
+                        sender_player.username = "Medium";
+                        socketidlist.push(temp_player.socketid);
+                    }
+                    else if(sender_player.role == roles.Jailor && temp_player.isJailed)
+                    {
+                        sender_player.username = "Jailor";
+                        socketidlist.push(temp_player.socketid);
+                    }
+                    else if(sender_player.isJailed && temp_player.role == roles.Jailor)
+                        socketidlist.push(temp_player.socketid);
+                    else if(sender_player.role.team == "mafia" && temp_player.role.team == "mafia")
+                        socketidlist.push(temp_player.socketid);
+                    else if(sender_player.role.team == "mafia" && temp_player.role == roles.Spy)
+                    {
+                        sender_player.username = "Mafia";
+                        socketidlist.push(temp_player.socketid);
+                    }
+                    else if(sender_player.role == roles.Vampire && temp_player.role == roles.Vampire)
+                        socketidlist.push(temp_player.socketid);
+                }
+                else 
+                {
+                    if(!sender_player.isded)
+                        socketidlist.push(temp_player.socketid);
+                    else if(temp_player.isded)
+                        socketidlist.push(temp_player.socketid);
+                }
+            }
+        data.player = sender_player;
+        sendToIpList('getMessage', socketidlist, data.username, data.message);
+        }
+
+        function FilterPlayers(player){
+            
         }
 
         function start() {
@@ -58,15 +116,21 @@
             return input;
         }
 
-        function addPlayer(uid, ip) {
+        function addPlayer(uid, socketid) {
             var player = new Object();
+            player.Seancing = null; //will contain the playing you're curently seancing
+            player.isJailed = false;
             player.username = "";
             player.role = "";
-            player.ip = ip;
+            player.abilitycounter = 0; //only ++ when ability counter is limited
+            player.isded = false;
+            player.socketid = socketid;
             players[uid] = player;
             sendEmit("getRoles", roles);
             //console.log("add player - " + player);
         }
+
+
 
         function checkUserName(data) {
             //console.log(players);
