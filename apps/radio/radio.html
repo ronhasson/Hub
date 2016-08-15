@@ -1,10 +1,12 @@
 <template>
-    <center>
-        <h1>99FM</h1>
-        <video controls="" autoplay="" name="media">
-            <source id="Vsrc" src="http://99.livecdn.biz/99fm_aac">
-        </video>
-    </center>
+    <div class="Box">
+        <center>
+            <h1 id="dispName">99FM</h1>
+            <video controls="" autoplay="" name="media">
+                <source id="Vsrc" src="http://99.livecdn.biz/99fm_aac">
+            </video>
+        </center>
+    </div>
     <script>
         var stations = [{
             name: "99fm",
@@ -15,13 +17,26 @@
             short: "glglz",
             url: "http://glglzicelv01.vds-is.bynetcdn.com/glglz.mp3"
         }];
+        console.log(stations);
+
+        var station = 0;
+
+        function changeChannel(next){ //if nexe == false then prev
+            var vSRC = document.getElementById('Vsrc').src;
+            station += (next) ? 1:-1;
+            station = station % stations.length;
+            vSRC = stations[station].url;
+            document.getElementById("dispName").innerHTML = station[station].name;
+        }
 
         function transferInputs(raw) {
             switch (raw) {
                 case "left":
+                    changeChannel(false);
                     break;
 
                 case "right":
+                    changeChannel(true);
                     break;
 
                 case "up":
