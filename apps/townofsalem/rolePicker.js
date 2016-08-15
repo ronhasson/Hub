@@ -10,7 +10,7 @@ var getRoles = function getRoles(num) {
             [
               Role.Mafioso,
               Role.Consort,
-              Role.Vampire
+              Role.Lookout
             ];
             case 4:
             return [
