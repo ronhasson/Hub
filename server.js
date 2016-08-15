@@ -65,14 +65,23 @@ function changeRemotePage(page) {
 function sendEmit(_event, data) {
     io.emit(_event, data);
 }
-function sendToIpList(_event, socketidlist, username, message) {
+function sendToSocketIDList(_event, socketidlist, data) {
+    /*for (let socketid in socketidlist) {
+                io.clients[socketid].emit(_event, data);
+            }*/
     for (let socketid in socketidlist) {
-                let temp_socketid = socketidlist[socketid];
-                io.clients[temp_socketid].emit(_event, {
-                    username : username,
-                    message : message
-                });
-            }
+        let id1234567890 = socketidlist[socketid];
+        if (io.sockets.connected[id1234567890]) {
+            io.sockets.connected[id1234567890].emit(_event, data);
+        }
+    }
+}
+function sendToSocketId(_event, data, targetsocket) {
+    if (io.sockets.connected[targetsocket]) {
+        io.sockets.connected[targetsocket].emit(_event, data);
+    }
+
+    //io.clients[targetsocket].emit(_event, data);
 }
 /*var server = expr.listen(port,function(){
     console.log("We have started our server on port "+port);

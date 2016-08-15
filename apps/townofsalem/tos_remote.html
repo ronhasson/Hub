@@ -154,12 +154,12 @@
     }
 
     function updateRoleText() {
-        document.getElementById('RoleName').innerHTML = myRole.name;
-        document.getElementById('RoleImage').src = myRole.info.img;
-        document.getElementById('AlignmentRole').innerHTML = "<b>Alignment:</b>\n " + myRole.info.Alignment;
-        document.getElementById('AbilitiesRole').innerHTML = "<b>Abilities:</b>\n " + myRole.info.Abilities;
-        document.getElementById('AttributesRole').innerHTML = "<b>Attributes:</b>\n " + myRole.info.Attributes;
-        document.getElementById('GoalRole').innerHTML = "<b>Goal:</b>\n " + myRole.info.Goal;
+        document.getElementById('RoleName').innerHTML = player.role.name;
+        document.getElementById('RoleImage').src = player.role.info.img;
+        document.getElementById('AlignmentRole').innerHTML = "<b>Alignment:</b>\n " + player.role.info.Alignment;
+        document.getElementById('AbilitiesRole').innerHTML = "<b>Abilities:</b>\n " + player.role.info.Abilities;
+        document.getElementById('AttributesRole').innerHTML = "<b>Attributes:</b>\n " + player.role.info.Attributes;
+        document.getElementById('GoalRole').innerHTML = "<b>Goal:</b>\n " + player.role.info.Goal;
     }
 </script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -170,10 +170,15 @@
     var player;
     var roles;
 
+    var mafiaList = {};
+    var vampireList = {};
+    var nameList = {};
+
+
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
-        ocument.getElementById("log").value += data.username + ": " + data.message + "\n";
+        document.getElementById("log").value += data.username + ": " + data.message + "\n";
     });
 
 
@@ -215,7 +220,7 @@
     }
     socket.on('requestUserNCallBack', function(data) {
         if (!data.flag && uid == data.uid) {
-            username = data.usr;
+            var username = data.usr;
             document.getElementById("start").style.display = 'none';
             document.getElementById("waiting").style.display = '';
             document.getElementById("userView").innerHTML = "Hello " + username;
@@ -246,53 +251,35 @@
         return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
             s4() + '-' + s4() + s4() + s4();
     }
-    socket.on('startGame', function(arr) {
-        document.getElementById("nameView").innerHTML = username;
-        console.log(arr);
-        myRole = findMyRole(arr);
-        if (myRole.team == "mafia") {
-            mafiaChat = true;
-            findMafia(arr);
-            console.log(mafList);
-            //get other mafia and display them
-        }
-        if (myRole.canKill == true) {
+    socket.on('startGame', function(data) {
+        player = data.player;
+        console.log(player.role.name);
+        console.log(player.username);
+        document.getElementById("nameView").innerHTML = player.username;
+        if (player.role.canKill == true) {
             document.getElementById("deathNote").style.display = '';
         }
-        isDead = false;
-        console.log(roles);
-        console.log(myRole);
-        if (myRole == roles.Jailor || myRole == roles.Mayor) {
+        if (player.role == roles.Jailor || player.role == roles.Mayor) {
             document.getElementById("sun").style.display = '';
-        }
-        if (myRole == roles.Vampire) {
-            vampireChat = true;
         }
         document.getElementById("inGame").style.display = '';
         document.getElementById("waiting").style.display = 'none';
         updateRoleText();
     });
 
-    function findMyRole(arr) {
-        for (let uidKey in arr) {
-            var player = arr[uid];
-            if (uidKey == uid) {
-                return player.role;
-            }
-        }
-    }
-
-    function findMafia(arr) {
-        for (let uidKey in arr) {
-            var player = arr[uidKey];
-            if (uidKey != uid && player.role.team == "mafia") {
-                mafList.push({
-                    name: player.username,
-                    role: player.role.name
-                });
-            }
-        }
-    }
+    socket.on('getMafia', function(data)
+    {
+        mafiaList = data.mafiaList;
+    });
+    socket.on('getVampires', function(data)
+    {
+        vampireList = data.vampireList;
+    });
+    socket.on('getNames', function(data)
+    {
+        nameList = data.nameList;
+        console.log(nameList);
+    });
 </script>
 
 </html>
