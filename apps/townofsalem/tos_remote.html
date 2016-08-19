@@ -129,7 +129,10 @@
         </div>
 
         <div id="actions" style="display: none">
-
+                <center>
+                    <table>
+                    </table>
+                </center>            
         </div>
 
         <div id="role" style="font-family: sans-serif;white-space: pre-line;padding:27px; display: none">
@@ -144,6 +147,37 @@
 
 </body>
 <script>
+    function addActionTable() { //TODO: ron do stuff
+        var table = "<table style='font-size:80px'>";
+        for(let name in nameList)
+        {
+            table += "<tr><td><span id='name_" + nameList[name] + "'>" + nameList[name] + "</span></td><td><input class='button1' type='button' id='button1_" + nameList[name] + "' onclick='ActivateAction(\"" + nameList[name] + "\")'/></td><td><input class='button2' type='button' id='button2_" + nameList[name] + "' onclick='ActivateAction2(\"" + nameList[name] + "\")'/></td></tr>";
+        }
+        table+="</table>";
+        document.getElementById("actions").innerHTML = table;
+        document.getElementsByClassName("button1").style.width = 100px;
+        document.getElementsByClassName("button2").style.width = 100px;
+    }
+    function ActivateAction(targetname) {
+        socket.emit("requestFromServer", {
+            action : "Button1",
+            data : {
+                player: player,
+                targetname : targetname
+            }
+        });
+    }
+
+    function ActivateAction2(targetname) {
+        socket.emit("requestFromServer", {
+            action : "Button2",
+            data : {
+                player: player,
+                targetname : targetname
+            }
+        });
+    }
+
     function openNav() {
         document.getElementById("mySidenav").style.width = "39vw";
     }
@@ -184,14 +218,73 @@
         startCountdown(data.time, data.phase);
     });
 
-    function startCountdown(timer, phase) {
+    function startCountdown(timer, phase, defendant = "") {
         var interval = setInterval(function() {
-            document.getElementById("phases").innerHTML = phase + ":" + timer;
+            document.getElementById("phases").innerHTML = phase + ": " + timer;
             if (--timer < 0) {
               clearInterval(interval);
               return;
             }
         }, 1000);
+        if(phase == "Discussion")
+        {
+            document.getElementsByClassName("button2").style.visibility = 'hidden';
+            document.getElementsByClassName("button1").style.visibility = 'hidden';
+        }
+        else if(phase == "Voting")
+        {
+            document.getElementsByClassName("button1").style.visibility = 'visible';
+            document.getElementsByClassName("button1").value = "Vote!";
+        }
+        else if(phase == "Defence")
+        {
+            document.getElementsByClassName("button2").style.visibility = 'hidden';
+            document.getElementsByClassName("button1").style.visibility = 'hidden';
+        }
+        else if(phase == "Judgment")
+        {
+            document.getElementById("button1_" + defendant).visibility = "visible";
+            document.getElementById("button1_" + defendant).value = "Guilty";
+            document.getElementById("button2_" + defendant).visibility = "visible";
+            document.getElementById("button2_" + defendant).value = "Innocent";
+        }
+        else if(phase == "Last Words")
+        {
+            document.getElementsByClassName("button2").style.visibility = 'hidden';
+            document.getElementsByClassName("button1").style.visibility = 'hidden';
+        }
+        else if(phase == "Night") //make sure this shit is correct (roy)
+        {
+            if(player.role.name == roles.Jailor.name && player.inJail != null)
+            {
+                document.getElementById("button1_" + player.inJail.username).visibility = "visible";
+            }
+            else if(player.role.name == roles.Transporter.name)
+            {
+                document.getElementsByClassName("button1").style.visibility = 'visible';
+                document.getElementsByClassName("button2").style.visibility = 'visible';
+            }
+            else if(player.role.name == roles.Witch.name)
+            {
+                document.getElementsByClassName("button1").style.visibility = 'visible';
+                document.getElementsByClassName("button2").style.visibility = 'visible';
+            }
+            else if(player.role.name == roles.Amnesiac.name) //add to dead people's classes "d" and for amnesiac, and print out the dead ones'
+            {
+                document.getElementsByClassName("button1d").style.visibility = 'visible';
+            }
+            else if(player.role.name == roles.Investigator.name || player.role.name == roles.Sheriff.name || player.role.name == roles.Lookout.name || player.role.name == roles.VampireHunter.name ||
+            player.role.name == roles.Escort.name || player.role.name == roles.Vigilante.name || player.role.name == roles.Consigliere.name || player.role.name == roles.Consort.name ||
+            player.role.name == roles.Consort.name || player.role.name == roles.Consort.name || player.role.name == roles.Consort.name)
+            {
+                document.getElementsByClassName("button1").style.visibility = 'visible';
+                document.getElementById("button1_" + player.username).style.visibility = 'hidden';
+            }
+            else if(player.role.team == "mafia")
+            {
+                
+            }
+        }
     }
 
     function changeTab(tab) {
@@ -215,9 +308,13 @@
         if (message == "") {
             return false;
         }
-        socket.emit("sendMessage", {
-            message: message,
-            player: player
+        socket.emit("requestFromServer", {
+            action : "sendMessageToPlayers",
+            data : {
+                message: message,
+                player: player
+            }
+            
         });
         document.getElementById("message").value = "";
     }
@@ -276,6 +373,7 @@
         document.getElementById("inGame").style.display = '';
         document.getElementById("waiting").style.display = 'none';
         updateRoleText();
+        addActionTable();
     });
 
     socket.on('getMafia', function(data) {

@@ -4,7 +4,6 @@
         <h1></h1>
         <input type="button" value="Start!" onclick="start()" />
         <div id="usersInGame">
-
         </div>
     </center>
     <script>
@@ -30,33 +29,46 @@
                             sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
                         else if(temp_player.role.name == roles.Medium.name)
                             sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                        else if(sender_player.role.name == roles.Medium.name && temp_player.Seancing == sender_player)
+                        else if(sender_player.role.name == roles.Medium.name && temp_player.Seancing == sender_player) //might need to compare usernames instead of comparing objects
                             sendToSocketId('getMessage', {username : "Medium", message : data.message}, temp_player.socketid);
                     }
                     else if(sender_player.Seancing == temp_player)
                         sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
                     else if(sender_player.role.name == roles.Medium.name && temp_player.isded)
                         sendToSocketId('getMessage', {username : "Medium", message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.name == roles.Jailor.name && temp_player.isJailed)
+                    else if(sender_player.role.name == roles.Jailor.name && sender_player.inJail == temp_player)
                         sendToSocketId('getMessage', {username : "Jailor", message : data.message}, temp_player.socketid);
-                    else if(sender_player.isJailed && temp_player.role.name == roles.Jailor.name)
+                    else if(sender_player.inJail == temp_player && temp_player.role.name == roles.Jailor.name)
                         sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
                     else if(sender_player.role.team == "mafia" && temp_player.role.team == "mafia")
                         sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
                     else if(sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name)
                         sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
                     else if(sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name)
-                        sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
+                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
+                    else if(sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name)
+                        sendToSocketId('getMessage', {username : "Vampire", message : data.message}, temp_player.socketid);
                 }
                 else
                 {
                     if(!sender_player.isded)
-                        sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
+                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
                     else if(temp_player.isded)
-                        sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
+                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
                 }
             }
         }
+
+        function Button1(data)
+        {
+            if(isDay)
+            {
+                //voting
+
+            }
+        }
+
+        
 
         function start() {
             for (let uid in players) {
@@ -144,7 +156,7 @@
         function addPlayer(uid, socketid) {
             var player = new Object();
             player.Seancing = null; //will contain the playing you're curently seancing
-            player.isJailed = false;
+            player.inJail = null;
             player.username = "";
             player.role = "";
             player.abilitycounter = 0; //only ++ when ability counter is limited

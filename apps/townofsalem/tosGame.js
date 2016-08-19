@@ -1,6 +1,7 @@
 
 var dayOne = true;
 var voteCounter = 0;
+//save which phase you're on'
 function discussion(){
 	console.log("now in discussion");
 	voteCounter = 0;
@@ -24,6 +25,7 @@ function discussion(){
 }
 
 function voting(){ //everyone alive can vote
+	sendEmit("changePhase", {time: 30, phase: "Voting"});
 	if(voteCounter < 6)
 	{
 		console.log("NOW VOTING for the: " + voteCounter + "time");
