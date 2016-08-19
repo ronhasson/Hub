@@ -1,16 +1,20 @@
 var Role = require('./roles');
 var getRoles = function getRoles(num) {
     switch (num) {
-        case 2:
+            case 1:
             return [
-                Role.Mafioso,
-                Role.Godfather
+                Role.Vampire
+            ];
+            case 2:
+            return [
+                Role.Vampire,
+                Role.Vampire
             ];
             case 3:
-            [
+            return [
               Role.Mafioso,
               Role.Consort,
-              Role.Vampire
+              Role.Spy
             ];
             case 4:
             return [
@@ -18,6 +22,23 @@ var getRoles = function getRoles(num) {
               Role.Consort,
               Role.Vampire,
               Role.Vampire
+            ];
+            case 5:
+            return [
+              Role.Mafioso,
+              Role.Consort,
+              Role.Vampire,
+              Role.Vampire,
+              Role.Medium
+            ];
+            case 6:
+            return [
+              Role.Mafioso,
+              Role.Consort,
+              Role.Vampire,
+              Role.Vampire,
+              Role.Godfather,
+              Role.Medium
             ];
         case 7:
             return [

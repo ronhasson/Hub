@@ -8,22 +8,32 @@ var http = require('http');
 var io = require('socket.io')(httpr);
 
 var qr = require('qr-image');
-var file_loader = require("./apps/townofsalem/js/file_loader.js");
+//var file_loader = require("./apps/townofsalem/js/file_loader.js");
 
-file_loader.init(expr);
-file_loader.load_files();
+
+expr.get('/', function(req, res) {
+    res.sendFile(__dirname + '/remoteMainPage.html');
+});
+expr.get('/tos', function(req, res) {
+    res.sendFile(__dirname + '/apps/townofsalem/tos_remote.html');
+});
+expr.get('/tosRoles', function(req, res) {
+    res.sendFile(__dirname + '/apps/townofsalem/roles.js');
+});
+//file_loader.init(expr);
+//file_loader.load_files();
 
 const port = 25565;
 
 io.on('connection', function (socket) {
-    console.log(socket.request.connection.remoteAddress + ' connected');
+    console.log(socket.request.connection.remoteAddress + ' connected, and socket id is: ' + socket.id);
 
     socket.on('sendMessage', function (data) {
         sendMessageToPlayers(data);
     });
 
     socket.on('join', function(uid) {
-        addPlayer(uid, socket.request.connection.remoteAddress);
+        addPlayer(uid, socket.id);
         console.log("on join");
     });
     socket.on('requestUserN', function (data) {
@@ -54,6 +64,24 @@ function changeRemotePage(page) {
 
 function sendEmit(_event, data) {
     io.emit(_event, data);
+}
+function sendToSocketIDList(_event, socketidlist, data) {
+    /*for (let socketid in socketidlist) {
+                io.clients[socketid].emit(_event, data);
+            }*/
+    for (let socketid in socketidlist) {
+        let id1234567890 = socketidlist[socketid];
+        if (io.sockets.connected[id1234567890]) {
+            io.sockets.connected[id1234567890].emit(_event, data);
+        }
+    }
+}
+function sendToSocketId(_event, data, targetsocket) {
+    if (io.sockets.connected[targetsocket]) {
+        io.sockets.connected[targetsocket].emit(_event, data);
+    }
+
+    //io.clients[targetsocket].emit(_event, data);
 }
 /*var server = expr.listen(port,function(){
     console.log("We have started our server on port "+port);
