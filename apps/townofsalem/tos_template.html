@@ -16,8 +16,7 @@
         var players = {};
         isDay = false;
 
-
-        function sendMessageToPlayers(data){ //ALWAYS USE THE FUCKING NAME PROPERTY YOU SACK OF SHIT
+        function sendMessageToPlayers(data){ //ALWAYS USE THE NAME PROPERTY
           var sender_player = data.player;
             for (let uid in players) {
                 let temp_player = players[uid];
@@ -49,7 +48,7 @@
                     else if(sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name)
                         sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
                 }
-                else 
+                else
                 {
                     if(!sender_player.isded)
                         sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
