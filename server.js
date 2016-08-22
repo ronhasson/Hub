@@ -28,8 +28,8 @@ const port = 25565;
 io.on('connection', function (socket) {
     console.log(socket.request.connection.remoteAddress + ' connected, and socket id is: ' + socket.id);
 
-    socket.on('sendMessage', function (data) {
-        sendMessageToPlayers(data);
+    socket.on('requestFromServer', function (data) {
+        window[data.action](data.data);
     });
 
     socket.on('join', function(uid) {
