@@ -7,15 +7,16 @@ function discussion(){
 	var timer;
 	if(dayOne)
 		timer = 15000;
-	else 
+	else
 		timer = 45000;
+	sendEmit("changePhase", {time: (timer / 1000), phase: "Discussion"});
   setTimeout(function() {
     if(dayOne)
 	{
     	night();
-		dayOne = false;
+			dayOne = false;
 	}
-	else 
+	else
 	{
 		voting();
 	}
@@ -27,7 +28,7 @@ function voting(){ //everyone alive can vote
 	{
 		console.log("NOW VOTING for the: " + voteCounter + "time");
 	}
-	else 
+	else
 	{
 		console.log("voting ended, nightime");
 		night();
@@ -57,6 +58,10 @@ function lastWords(){
 }
 
 function night(){
-	
+
   setTimeout(function() {}, 40000);
+}
+
+module.exports = {
+    discussion: discussion
 }

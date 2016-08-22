@@ -22,7 +22,7 @@
         padding-top: 9.5vh;
         transition: 0.5s;
     }
-    
+
     .sidenav a {
         padding: 8px 8px 8px 32px;
         text-decoration: none;
@@ -33,26 +33,26 @@
         border: 5px;
         font-family: sans-serif;
     }
-    
+
     .sidenav a:hover,
     .offcanvas a:focus {
         color: #18436b;
     }
-    
+
     .closebtn {
         position: absolute;
         top: 0;
         right: 25px;
         margin-left: 50px;
     }
-    
+
     #main {
         transition: margin-left .5s;
         padding-top: 2vh;
         padding-left: 3vw;
         font-size: 3vh;
     }
-    
+
     #topBar {
         background-color: rgb(45, 110, 236);
         width: 100vw;
@@ -60,7 +60,7 @@
         height: 11vw;
         box-shadow: 0px 0px 19px 0px rgba(0, 0, 0, 0.75);
     }
-    
+
     .opener {
         vertical-align: middle;
         font-size: 6.5vw;
@@ -69,7 +69,7 @@
         margin-top: 1.5vw;
         cursor: pointer;
     }
-    
+
     .inTopBar {
         vertical-align: middle;
         font-size: 6vw;
@@ -88,8 +88,7 @@
                 <h1 style="font-family: serif;font-size: 6vh;padding-top: 7vh; padding-bottom: 5vh;"><i>Your name:</i></h1>
                 <input id="usernameInput" required style="width: 28vw;height: 3vh;font-size: 2.5vh;margin-bottom: 4vh;" />
                 <br />
-                <input type="button" value="join" onclick="requestUsername()" style="height: 3vh;width: 13vw;border-radius: 15px;font-size: 2vh;"
-                />
+                <input type="button" value="join" onclick="requestUsername()" style="height: 3vh;width: 13vw;border-radius: 15px;font-size: 2vh;" />
                 <br />
                 <span id="error"></span>
             </div>
@@ -181,6 +180,19 @@
         document.getElementById("log").value += data.username + ": " + data.message + "\n";
     });
 
+    socket.on('changePhase', function(data) {
+        startCountdown(data.time, data.phase);
+    });
+
+    function startCountdown(timer, phase) {
+        var interval = setInterval(function() {
+            document.getElementById("phases").innerHTML = phase + ":" + timer;
+            if (--timer < 0) {
+              clearInterval(interval);
+              return;
+            }
+        }, 1000);
+    }
 
     function changeTab(tab) {
         document.getElementById("chatMenu").style.display = 'none';
@@ -200,9 +212,8 @@
     function sendMessageToServer() {
         var message = document.getElementById("message").value;
         document.getElementById("message").focus();
-        if(message == "")
-        {
-          return false;
+        if (message == "") {
+            return false;
         }
         socket.emit("sendMessage", {
             message: message,
@@ -267,16 +278,13 @@
         updateRoleText();
     });
 
-    socket.on('getMafia', function(data)
-    {
+    socket.on('getMafia', function(data) {
         mafiaList = data.mafiaList;
     });
-    socket.on('getVampires', function(data)
-    {
+    socket.on('getVampires', function(data) {
         vampireList = data.vampireList;
     });
-    socket.on('getNames', function(data)
-    {
+    socket.on('getNames', function(data) {
         nameList = data.nameList;
         console.log(nameList);
     });
