@@ -208,6 +208,7 @@
     var nameList = {};
 
 
+
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
@@ -219,6 +220,7 @@
     });
 
     function startCountdown(timer, phase, defendant = "") {
+        editActionButtons(phase, defendant);
         var interval = setInterval(function() {
             document.getElementById("phases").innerHTML = phase + ": " + timer;
             if (--timer < 0) {
@@ -226,6 +228,10 @@
               return;
             }
         }, 1000);
+    }
+
+    function editActionButtons(phase, defendant)
+    {
         if(phase == "Discussion")
         {
             document.getElementsByClassName("button2").style.visibility = 'hidden';
@@ -234,6 +240,7 @@
         else if(phase == "Voting")
         {
             document.getElementsByClassName("button1").style.visibility = 'visible';
+            document.getElementById("button1_" + player.username).style.visibility = 'hidden';
             document.getElementsByClassName("button1").value = "Vote!";
         }
         else if(phase == "Defence")
@@ -247,13 +254,15 @@
             document.getElementById("button1_" + defendant).value = "Guilty";
             document.getElementById("button2_" + defendant).visibility = "visible";
             document.getElementById("button2_" + defendant).value = "Innocent";
+            document.getElementById("button1_" + player.username).style.visibility = 'hidden';
+            document.getElementById("button2_" + player.username).style.visibility = 'hidden';
         }
         else if(phase == "Last Words")
         {
             document.getElementsByClassName("button2").style.visibility = 'hidden';
             document.getElementsByClassName("button1").style.visibility = 'hidden';
         }
-        else if(phase == "Night") //make sure this shit is correct (roy)
+        else if(phase == "Night")
         {
             if(player.role.name == roles.Jailor.name && player.inJail != null)
             {
@@ -267,22 +276,47 @@
             else if(player.role.name == roles.Witch.name)
             {
                 document.getElementsByClassName("button1").style.visibility = 'visible';
+                document.getElementById("button1_" + player.username).style.visibility = 'hidden';
                 document.getElementsByClassName("button2").style.visibility = 'visible';
             }
-            else if(player.role.name == roles.Amnesiac.name) //add to dead people's classes "d" and for amnesiac, and print out the dead ones'
+            else if(player.role.name == roles.Amnesiac.name) //when all maf's are ded you can become a mafioso
             {
                 document.getElementsByClassName("button1d").style.visibility = 'visible';
+                document.getElementsByClassName("button1dt").style.visibility = 'visible'; 
+                document.getElementsByClassName("button1dc").style.visibility = 'visible';
             }
-            else if(player.role.name == roles.Investigator.name || player.role.name == roles.Sheriff.name || player.role.name == roles.Lookout.name || player.role.name == roles.VampireHunter.name ||
-            player.role.name == roles.Escort.name || player.role.name == roles.Vigilante.name || player.role.name == roles.Consigliere.name || player.role.name == roles.Consort.name ||
-            player.role.name == roles.Consort.name || player.role.name == roles.Consort.name || player.role.name == roles.Consort.name)
+            else if(player.role.team == "mafia")
+            {
+                document.getElementsByClassName("button1").style.visibility = 'visible';
+                for(let playa in mafiaList) {
+                    document.getElementById("button1_" + mafiaList[playa].username).style.visibility = 'hidden';
+                }
+            }
+            else if(player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name || player.role.name == roles.Arsonist.name) 
+            {
+                document.getElementsByClassName("button1").style.visibility = 'visible';
+            }
+            else if(player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
+                    player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name)
             {
                 document.getElementsByClassName("button1").style.visibility = 'visible';
                 document.getElementById("button1_" + player.username).style.visibility = 'hidden';
             }
-            else if(player.role.team == "mafia")
+            else if(player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name)
             {
-                
+                document.getElementById("button1_" + player.username).style.visibility = 'visible';
+            }
+            else if(player.role.name == roles.Vampire.name)
+            {
+                document.getElementsByClassName("button1").style.visibility = 'visible';
+                for(let playa in vampireList) {
+                    document.getElementById("button1_" + vampireList[playa].username).style.visibility = 'hidden';
+                }
+            }
+            else if(player.role.name == roles.Retributionist.name)
+            {
+                document.getElementsByClassName("button1dt").style.visibility = 'visible'; 
+                document.getElementsByClassName("button1dtu").style.visibility = 'visible'; 
             }
         }
     }

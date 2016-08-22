@@ -13,6 +13,10 @@
 
         requestChangeRemotePage("tos");
         var players = {};
+        var voteInfo = new Object();
+        voteInfo.votingTo = null;
+        voteInfo.votesToMe = 0;
+        var voteList = {};
         isDay = false;
 
         function sendMessageToPlayers(data){ //ALWAYS USE THE NAME PROPERTY
@@ -59,13 +63,35 @@
             }
         }
 
-        function Button1(data)
-        {
+        function Button1(data) {
             if(isDay)
             {
-                //voting
+                if(tos.phase == "Voting") { //voting
+                    for(let uid in players) {
+                        if(players[uid].username == data.targetname) {
+                            if(voteList[data.player.uid].votingTo == null) {
+                                voteList[data.player.uid].votingTo = players[uid];
+                                voteList[uid].votesToMe++;
+                            }
+                            else if(voteList[data.player.uid].votingTo.username != data.targetname) {
+                                voteList[voteList[data.player.uid].votingTo.uid].votesToMe--;
+                                voteList[uid].votesToMe++;
+                                voteList[data.player.uid].votingTo = players[uid];
+                            }
+                        }
+                    }
+                }
+                else { //judgement
+                    
+                }
+            }
+            else { //night
 
             }
+        }
+
+        function Button2(data) {
+
         }
 
         
@@ -86,6 +112,7 @@
             var i = 0;
             for (let uid in players) {
                 players[uid].role = roleList[i];
+                voteList[uid] = voteInfo;
                 i++;
             }
             console.log("start - ");
@@ -153,7 +180,7 @@
             return input;
         }
 
-        function addPlayer(uid, socketid) {
+        function addPlayer(uid, socketid, id) {
             var player = new Object();
             player.Seancing = null; //will contain the playing you're curently seancing
             player.inJail = null;
