@@ -13,88 +13,160 @@
 
         requestChangeRemotePage("tos");
         var players = {};
+
         var voteInfo = new Object();
         voteInfo.votingTo = null;
         voteInfo.votesToMe = 0;
         var voteList = {};
+        var guilty = 0;
+        var innocent = 0;
+
         isDay = false;
 
-        function sendMessageToPlayers(data){ //ALWAYS USE THE NAME PROPERTY
-          var sender_player = data.player;
+        function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
+            var sender_player = data.player;
             for (let uid in players) {
                 let temp_player = players[uid];
-                if(temp_player.socketid == sender_player.socketid)
-                    sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, sender_player.socketid);
-                else if(!isDay)
-                {
-                    if(sender_player.isded)
-                    {
-                        if(temp_player.isded)
-                            sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                        else if(temp_player.role.name == roles.Medium.name)
-                            sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                        else if(sender_player.role.name == roles.Medium.name && temp_player.Seancing == sender_player) //might need to compare usernames instead of comparing objects
-                            sendToSocketId('getMessage', {username : "Medium", message : data.message}, temp_player.socketid);
-                    }
-                    else if(sender_player.Seancing == temp_player)
-                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.name == roles.Medium.name && temp_player.isded)
-                        sendToSocketId('getMessage', {username : "Medium", message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.name == roles.Jailor.name && sender_player.inJail == temp_player)
-                        sendToSocketId('getMessage', {username : "Jailor", message : data.message}, temp_player.socketid);
-                    else if(sender_player.inJail == temp_player && temp_player.role.name == roles.Jailor.name)
-                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.team == "mafia" && temp_player.role.team == "mafia")
-                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name)
-                        sendToSocketId('getMessage', {username : "Mafia", message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name)
-                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                    else if(sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name)
-                        sendToSocketId('getMessage', {username : "Vampire", message : data.message}, temp_player.socketid);
-                }
-                else
-                {
-                    if(!sender_player.isded)
-                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
-                    else if(temp_player.isded)
-                        sendToSocketId('getMessage', {username : sender_player.username, message : data.message}, temp_player.socketid);
+                if (temp_player.socketid == sender_player.socketid)
+                    sendToSocketId('getMessage', {
+                        username: sender_player.username,
+                        message: data.message
+                    }, sender_player.socketid);
+                else if (!isDay) {
+                    if (sender_player.isded) {
+                        if (temp_player.isded)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (temp_player.role.name == roles.Medium.name)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.name == roles.Medium.name && temp_player.Seancing == sender_player) //might need to compare usernames instead of comparing objects
+                            sendToSocketId('getMessage', {
+                            username: "Medium",
+                            message: data.message
+                        }, temp_player.socketid);
+                    } else if (sender_player.Seancing == temp_player)
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.role.name == roles.Medium.name && temp_player.isded)
+                        sendToSocketId('getMessage', {
+                            username: "Medium",
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.role.name == roles.Jailor.name && sender_player.inJail == temp_player)
+                        sendToSocketId('getMessage', {
+                            username: "Jailor",
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.inJail == temp_player && temp_player.role.name == roles.Jailor.name)
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.role.team == "mafia" && temp_player.role.team == "mafia")
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name)
+                        sendToSocketId('getMessage', {
+                            username: "Mafia",
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name)
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name)
+                        sendToSocketId('getMessage', {
+                            username: "Vampire",
+                            message: data.message
+                        }, temp_player.socketid);
+                } else {
+                    if (!sender_player.isded)
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, temp_player.socketid);
+                    else if (temp_player.isded)
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, temp_player.socketid);
                 }
             }
         }
 
         function Button1(data) {
-            if(isDay)
-            {
-                if(tos.phase == "Voting") { //voting
-                    for(let uid in players) {
-                        if(players[uid].username == data.targetname) {
-                            if(voteList[data.player.uid].votingTo == null) {
+            if (isDay) {
+                if (tos.phase == "Voting") { //voting
+                    for (let uid in players) {
+                        if (players[uid].username == data.targetname) {
+                            if (voteList[data.player.uid].votingTo == null) {
                                 voteList[data.player.uid].votingTo = players[uid];
-                                voteList[uid].votesToMe++;
-                            }
-                            else if(voteList[data.player.uid].votingTo.username != data.targetname) {
-                                voteList[voteList[data.player.uid].votingTo.uid].votesToMe--;
-                                voteList[uid].votesToMe++;
+                                if (players[data.player.uid].role == roles.Mayor) {
+                                    voteList[uid].votesToMe += 3;
+                                } else {
+                                    voteList[uid].votesToMe++;
+                                }
+                            } else if (voteList[data.player.uid].votingTo.username != data.targetname) {
+                                if (players[data.player.uid].role == roles.Mayor) {
+                                    voteList[uid].votesToMe += 3;
+                                    voteList[voteList[data.player.uid].votingTo.uid].votesToMe -= 3;
+                                } else {
+                                    voteList[uid].votesToMe++;
+                                    voteList[voteList[data.player.uid].votingTo.uid].votesToMe--;
+                                }
                                 voteList[data.player.uid].votingTo = players[uid];
+                            } else if (voteList[data.player.uid].votingTo.username == data.targetname) {
+                                if (players[data.player.uid].role == roles.Mayor) {
+                                    voteList[uid].votesToMe -= 3;
+                                } else {
+                                    voteList[uid].votesToMe--;
+                                }
+                                voteList[data.player.uid].votingTo = null;
                             }
+                            shouldGetOnTrial(uid);
                         }
                     }
+                } else if (tos.phase == "Judgement") { //judgement
+                    tos.guilty++;
                 }
-                else { //judgement
-                    
-                }
-            }
-            else { //night
+            } else { //night
 
             }
         }
 
         function Button2(data) {
+            if (isDay) {
+                if (tos.phase == "Judgement") {
+                    tos.innocent++;
+                }
+            } else { //night
 
+            }
         }
 
-        
+        function shouldGetOnTrial(playerUID) {
+            var playersAlive = 0;
+            for (let uid in players) {
+                if (!players[uid].isded) {
+                    playersAlive++;
+                }
+            }
+            if (voteList[playerUID].votesToMe > (playersAlive / 2)) {
+                tos.voteCounter++;
+                tos.stopVotingTime = true;
+                // go on trial
+            }
+        }
 
         function start() {
             for (let uid in players) {
@@ -121,49 +193,52 @@
             SendVampires();
             SendNames();
             for (let uid in players) {
-                sendToSocketId("startGame", {player : players[uid]}, players[uid].socketid);
+                sendToSocketId("startGame", {
+                    player: players[uid]
+                }, players[uid].socketid);
             }
 
             tos.discussion();
         }
 
-        function SendMafia()
-        {
+        function SendMafia() {
             var tempmafia_list = {};
             var socketidlist = {};
             for (let uid in players) {
-                if(players[uid].role.team == "mafia")
-                {
+                if (players[uid].role.team == "mafia") {
                     tempmafia_list[uid] = players[uid];
                     socketidlist[uid] = players[uid].socketid;
                 }
             }
-            sendToSocketIDList("getMafia", socketidlist, {mafiaList : tempmafia_list});
+            sendToSocketIDList("getMafia", socketidlist, {
+                mafiaList: tempmafia_list
+            });
         }
 
-        function SendVampires()
-        {
+        function SendVampires() {
             var tempvampires_list = {};
             var socketidlist = {};
             for (let uid in players) {
-                if(players[uid].role == roles.Vampire)
-                {
+                if (players[uid].role == roles.Vampire) {
                     tempvampires_list[uid] = players[uid];
                     socketidlist[uid] = players[uid].socketid;
                 }
             }
-            sendToSocketIDList("getVampires", socketidlist, {vampireList : tempvampires_list});
+            sendToSocketIDList("getVampires", socketidlist, {
+                vampireList: tempvampires_list
+            });
         }
 
-        function SendNames()
-        {
+        function SendNames() {
             var name_list = {};
             var socketidlist = {};
             for (let uid in players) {
                 name_list[uid] = players[uid].username;
                 socketidlist[uid] = players[uid].socketid;
             }
-            sendToSocketIDList("getNames", socketidlist, {nameList : name_list});
+            sendToSocketIDList("getNames", socketidlist, {
+                nameList: name_list
+            });
         }
 
         Array.prototype.shuffle = function() {
