@@ -162,6 +162,10 @@
             if (voteList[playerUID].votesToMe > (playersAlive / 2)) {
                 tos.voteCounter++;
                 tos.stopVotingTime = true;
+                for(let uid in voteList){
+                  voteList[uid].votesToMe = 0;
+                  voteList[uid].votingTo = null;
+                }
                 // go on trial
             }
         }

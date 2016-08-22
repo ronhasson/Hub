@@ -4,10 +4,13 @@ var voteCounter = 0;
 var guilty = 0;
 var innocent = 0;
 var stopVotingTime = false;
+var votingTimer = 30;
 
 var phase = "Discussion";
 //save which phase you're on
 function discussion() {
+    votingTimer = 30;
+    voteCounter = 0;
     phase = "Discussion";
     var timer;
     if (dayOne)
@@ -35,17 +38,17 @@ function discussion() {
 
 function voting() { //everyone alive can vote
     phase = "Voting";
-    voteCounter = 0;
     sendEmit("changePhase", {
         time: 30,
         phase: "Voting"
     });
-    var timer = 30;
     var interval = setInterval(function() {
         if (stopVotingTime) {
+            clearInterval(interval);
             defense();
+            return;
         }
-        if (--timer < 0 || voteCounter > 6) {
+        if (--votingTimer < 0 || voteCounter > 6) {
             clearInterval(interval);
             night();
             return;
@@ -71,7 +74,7 @@ function defense() { //only trailled person can talk
 
 function judgement() { //everyone alive can vote
     phase = "Judgement";
-		guilty = 0;
+    guilty = 0;
     innocent = 0;
     sendEmit("changePhase", {
         time: 20,
@@ -85,6 +88,7 @@ function judgement() { //everyone alive can vote
                 lastWords();
             } else {
                 stopVotingTime = false;
+                voting();
             }
             return;
         }
