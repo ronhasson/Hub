@@ -2,8 +2,7 @@
     <div class="Box">
         <center>
             <h1 id="dispName">99FM</h1>
-            <video controls="" autoplay="" name="media">
-                <source id="Vsrc" src="http://99.livecdn.biz/99fm_aac">
+            <video controls="" autoplay="" name="media" id="Vsrc" src="http://99.livecdn.biz/99fm_aac">
             </video>
         </center>
     </div>
@@ -22,11 +21,11 @@
         var station = 0;
 
         function changeChannel(next){ //if nexe == false then prev
-            var vSRC = document.getElementById('Vsrc').src;
             station += (next) ? 1:-1;
             station = station % stations.length;
-            vSRC = stations[station].url;
-            document.getElementById("dispName").innerHTML = station[station].name;
+            console.log(stations[station])
+            document.getElementById('Vsrc').src = stations[station].url;
+            document.getElementById("dispName").innerHTML = stations[station].name;
         }
 
         function transferInputs(raw) {
