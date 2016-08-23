@@ -467,4 +467,4 @@ function randomizeBenignOrEvil() {
 module.exports = {
     checkValidation: checkValidation,
     getRoles: getRoles
-}
+};

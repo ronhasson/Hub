@@ -18,88 +18,106 @@
         voteInfo.votingTo = null;
         voteInfo.votesToMe = 0;
         var voteList = {};
+        var guiltyVoters = [];
+        var innoVoters = [];
+        var playerOnTrial = null;
 
         isDay = false;
 
         function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
-            var sender_player = data.player;
-            for (let uid in players) {
-                let temp_player = players[uid];
-                if (temp_player.socketid == sender_player.socketid)
-                    sendToSocketId('getMessage', {
-                        username: sender_player.username,
+            if (tos.playerOnTrial == null) {
+                var sender_player = data.player;
+                for (let uid in players) {
+                    let temp_player = players[uid];
+                    if (temp_player.socketid == sender_player.socketid)
+                        sendToSocketId('getMessage', {
+                            username: sender_player.username,
+                            message: data.message
+                        }, sender_player.socketid);
+                    else if (!isDay) {
+                        if (sender_player.isded) {
+                            if (temp_player.isded)
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username,
+                                    message: data.message
+                                }, temp_player.socketid);
+                            else if (temp_player.role.name == roles.Medium.name)
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username,
+                                    message: data.message
+                                }, temp_player.socketid);
+                            else if (sender_player.role.name == roles.Medium.name && temp_player.Seancing == sender_player) //might need to compare usernames instead of comparing objects
+                                sendToSocketId('getMessage', {
+                                username: "Medium",
+                                message: data.message
+                            }, temp_player.socketid);
+                        } else if (sender_player.Seancing == temp_player)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.name == roles.Medium.name && temp_player.isded)
+                            sendToSocketId('getMessage', {
+                                username: "Medium",
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.name == roles.Jailor.name && sender_player.inJail == temp_player)
+                            sendToSocketId('getMessage', {
+                                username: "Jailor",
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.inJail == temp_player && temp_player.role.name == roles.Jailor.name)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.team == "mafia" && temp_player.role.team == "mafia")
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name)
+                            sendToSocketId('getMessage', {
+                                username: "Mafia",
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name)
+                            sendToSocketId('getMessage', {
+                                username: "Vampire",
+                                message: data.message
+                            }, temp_player.socketid);
+                    } else {
+                        if (!sender_player.isded)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                        else if (temp_player.isded)
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username,
+                                message: data.message
+                            }, temp_player.socketid);
+                    }
+                }
+            } else {
+                if (tos.playerOnTrial == data.player) {
+                    sendEmit('getMessage', {
+                        username: data.player.username,
                         message: data.message
-                    }, sender_player.socketid);
-                else if (!isDay) {
-                    if (sender_player.isded) {
-                        if (temp_player.isded)
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username,
-                                message: data.message
-                            }, temp_player.socketid);
-                        else if (temp_player.role.name == roles.Medium.name)
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username,
-                                message: data.message
-                            }, temp_player.socketid);
-                        else if (sender_player.role.name == roles.Medium.name && temp_player.Seancing == sender_player) //might need to compare usernames instead of comparing objects
-                            sendToSocketId('getMessage', {
-                            username: "Medium",
-                            message: data.message
-                        }, temp_player.socketid);
-                    } else if (sender_player.Seancing == temp_player)
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username,
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.role.name == roles.Medium.name && temp_player.isded)
-                        sendToSocketId('getMessage', {
-                            username: "Medium",
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.role.name == roles.Jailor.name && sender_player.inJail == temp_player)
-                        sendToSocketId('getMessage', {
-                            username: "Jailor",
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.inJail == temp_player && temp_player.role.name == roles.Jailor.name)
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username,
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.role.team == "mafia" && temp_player.role.team == "mafia")
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username,
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name)
-                        sendToSocketId('getMessage', {
-                            username: "Mafia",
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name)
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username,
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name)
-                        sendToSocketId('getMessage', {
-                            username: "Vampire",
-                            message: data.message
-                        }, temp_player.socketid);
-                } else {
-                    if (!sender_player.isded)
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username,
-                            message: data.message
-                        }, temp_player.socketid);
-                    else if (temp_player.isded)
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username,
-                            message: data.message
-                        }, temp_player.socketid);
+                    });
                 }
             }
+        }
+
+        function sendVotingMessage(username, targetUsername, message) {
+            sendEmit('getVotingMessage', {
+                message: username + message + targetUsername
+            });
         }
 
         function Button1(data) {
@@ -114,6 +132,7 @@
                                 } else {
                                     voteList[uid].votesToMe++;
                                 }
+                                sendVotingMessage(data.player.username, data.targetname + ".", " has voted against ");
                             } else if (voteList[data.player.uid].votingTo.username != data.targetname) {
                                 if (players[data.player.uid].role == roles.Mayor) {
                                     voteList[uid].votesToMe += 3;
@@ -123,6 +142,7 @@
                                     voteList[voteList[data.player.uid].votingTo.uid].votesToMe--;
                                 }
                                 voteList[data.player.uid].votingTo = players[uid];
+                                sendVotingMessage(data.player.username, data.targetname + ".", " has changed their vote to ");
                             } else if (voteList[data.player.uid].votingTo.username == data.targetname) {
                                 if (players[data.player.uid].role == roles.Mayor) {
                                     voteList[uid].votesToMe -= 3;
@@ -130,12 +150,27 @@
                                     voteList[uid].votesToMe--;
                                 }
                                 voteList[data.player.uid].votingTo = null;
+                                sendVotingMessage(data.player.username, "", " has canceled their vote.");
                             }
                             shouldGetOnTrial(uid);
                         }
                     }
                 } else if (tos.phase == "Judgement") { //judgement
-                    tos.guilty++;
+                    if (guiltyVoters.indexOf(data.player.username) == -1) {
+                        tos.guilty++;
+                        sendVotingMessage(data.player.username, "", " has voted.");
+                        guiltyVoters.push(data.player.username);
+                    } else {
+                        tos.guilty--;
+                        sendVotingMessage(data.player.username, "", " has canceled their vote.");
+                        var temp = -1;
+                        for (var i = 0; i < guiltyVoters.length; i++) {
+                            if (guiltyVoters[i] == data.player.username) {
+                                temp = i;
+                            }
+                        }
+                        guiltyVoters.splice(temp, 1);
+                    }
                 }
             } else { //night
 
@@ -145,7 +180,21 @@
         function Button2(data) {
             if (isDay) {
                 if (tos.phase == "Judgement") {
-                    tos.innocent++;
+                    if (innoVoters.indexOf(data.player.username) == -1) {
+                        tos.inno++;
+                        sendVotingMessage(data.player.username, "", " has voted.");
+                        innoVoters.push(data.player.username);
+                    } else {
+                        tos.inno--;
+                        sendVotingMessage(data.player.username, "", " has canceled their vote.");
+                        var temp = -1;
+                        for (var i = 0; i < innoVoters.length; i++) {
+                            if (innoVoters[i] == data.player.username) {
+                                temp = i;
+                            }
+                        }
+                        innoVoters.splice(temp, 1);
+                    }
                 }
             } else { //night
 
@@ -162,12 +211,35 @@
             if (voteList[playerUID].votesToMe > (playersAlive / 2)) {
                 tos.voteCounter++;
                 tos.stopVotingTime = true;
-                for(let uid in voteList){
-                  voteList[uid].votesToMe = 0;
-                  voteList[uid].votingTo = null;
+                tos.playerOnTrial = players[playerUID];
+                playerOnTrial = players[playerUID];
+                for (let uid in voteList) {
+                    voteList[uid].votesToMe = 0;
+                    voteList[uid].votingTo = null;
                 }
                 // go on trial
             }
+        }
+
+        function showJudgementResults() {
+            for (var i = 0; i < innoVoters.length; i++) {
+                sendVotingMessage(innoVoters[i], "", " voted innocent.");
+            }
+            for (var i = 0; i < guiltyVoters.length; i++) {
+                sendVotingMessage(guiltyVoters[i], "", " voted guilty.");
+            }
+            for (let uid in players) {
+                if (guiltyVoters.indexOf(players[uid].username) == -1 && innoVoters.indexOf(players[uid].username) == -1) {
+                    sendVotingMessage(players[uid].username, "", " abstained.");
+                }
+            }
+        }
+
+        function hangPlayer() {
+            playerOnTrial.isded = true;
+            // show will and role
+            // put in graveyard
+            playerOnTrial = null;
         }
 
         function start() {
@@ -271,8 +343,6 @@
             //console.log("add player - " + player);
         }
 
-
-
         function checkUserName(data) {
             //console.log(players);
             for (let uid in players) {
@@ -313,5 +383,10 @@
             players[uid].username = "";
             displayUsers();
         }
+
+        module.exports = {
+            hangPlayer: hangPlayer,
+            showJudgementResults: showJudgementResults
+        };
     </script>
 </template>

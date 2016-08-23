@@ -1,10 +1,14 @@
+var tos = require("./apps/townofsalem/tos_template.html");
+
 var dayOne = true;
 
 var voteCounter = 0;
-var guilty = 0;
-var innocent = 0;
 var stopVotingTime = false;
 var votingTimer = 30;
+var playerOnTrial = null;
+
+var inno = 0;
+var guilty = 0;
 
 var phase = "Discussion";
 //save which phase you're on
@@ -73,18 +77,21 @@ function defense() { //only trailled person can talk
 }
 
 function judgement() { //everyone alive can vote
-    phase = "Judgement";
+    inno = 0;
     guilty = 0;
-    innocent = 0;
+    phase = "Judgement";
     sendEmit("changePhase", {
         time: 20,
-        phase: "Judgement"
+        phase: "Judgement",
+        defendant: playerOnTrial.username
     });
+    playerOnTrial = null;
     var timer = 20;
     var interval = setInterval(function() {
         if (--timer < 0) {
             clearInterval(interval);
-            if (guilty > innocent) {
+            tos.showJudgementResults();
+            if (guilty > inno) {
                 lastWords();
             } else {
                 stopVotingTime = false;
@@ -105,6 +112,7 @@ function lastWords() {
     var interval = setInterval(function() {
         if (--timer < 0) {
             clearInterval(interval);
+            tos.hangPlayer();
             night();
             return;
         }
@@ -131,7 +139,8 @@ module.exports = {
     discussion: discussion,
     phase: phase,
     guilty: guilty,
-    innocent: innocent,
+    inno: inno,
     voteCounter: voteCounter,
-    stopVotingTime: stopVotingTime
-}
+    stopVotingTime: stopVotingTime,
+    playerOnTrial: playerOnTrial
+};
