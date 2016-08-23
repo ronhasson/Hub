@@ -166,19 +166,21 @@ margin: 14px;">
         </div></div>
         </center>
         <script>
-            var rolePicker = require("./apps/townofsalem/rolePicker.js");
-            var roles = require("./apps/townofsalem/roles.js");
-            var tos = require("./apps/townofsalem/tosGame.js");
-
-            requestChangeRemotePage("tos");
-            var players = {};
-            var voteInfo = new Object();
-            voteInfo.votingTo = null;
-            voteInfo.votesToMe = 0;
-            var voteList = {};
-            isDay = false;
-
-            function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
+        var rolePicker = require("./apps/townofsalem/rolePicker.js");
+        var roles = require("./apps/townofsalem/roles.js");
+        var tos = require("./apps/townofsalem/tosGame.js");
+        requestChangeRemotePage("tos");
+        var players = {};
+        var voteInfo = new Object();
+        voteInfo.votingTo = null;
+        voteInfo.votesToMe = 0;
+        var voteList = {};
+        var guiltyVoters = [];
+        var innoVoters = [];
+        var playerOnTrial = null;
+        isDay = false;
+        function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
+            if (tos.playerOnTrial == null) {
                 var sender_player = data.player;
                 for (let uid in players) {
                     let temp_player = players[uid];
@@ -257,179 +259,267 @@ margin: 14px;">
                             }, temp_player.socketid);
                     }
                 }
+            } else {
+                if (tos.playerOnTrial == data.player) {
+                    sendEmit('getMessage', {
+                        username: data.player.username,
+                        message: data.message
+                    });
+                }
             }
-
-            function Button1(data) {
-                if (isDay) {
-                    if (tos.phase == "Voting") { //voting
-                        for (let uid in players) {
-                            if (players[uid].username == data.targetname) {
-                                if (voteList[data.player.uid].votingTo == null) {
-                                    voteList[data.player.uid].votingTo = players[uid];
+        }
+        function sendVotingMessage(username, targetUsername, message) {
+            sendEmit('getVotingMessage', {
+                message: username + message + targetUsername
+            });
+        }
+        function Button1(data) {
+            if (isDay) {
+                if (tos.phase == "Voting") { //voting
+                    for (let uid in players) {
+                        if (players[uid].username == data.targetname) {
+                            if (voteList[data.player.uid].votingTo == null) {
+                                voteList[data.player.uid].votingTo = players[uid];
+                                if (players[data.player.uid].role == roles.Mayor) {
+                                    voteList[uid].votesToMe += 3;
+                                } else {
                                     voteList[uid].votesToMe++;
-                                } else if (voteList[data.player.uid].votingTo.username != data.targetname) {
-                                    voteList[voteList[data.player.uid].votingTo.uid].votesToMe--;
-                                    voteList[uid].votesToMe++;
-                                    voteList[data.player.uid].votingTo = players[uid];
                                 }
+                                sendVotingMessage(data.player.username, data.targetname + ".", " has voted against ");
+                            } else if (voteList[data.player.uid].votingTo.username != data.targetname) {
+                                if (players[data.player.uid].role == roles.Mayor) {
+                                    voteList[uid].votesToMe += 3;
+                                    voteList[voteList[data.player.uid].votingTo.uid].votesToMe -= 3;
+                                } else {
+                                    voteList[uid].votesToMe++;
+                                    voteList[voteList[data.player.uid].votingTo.uid].votesToMe--;
+                                }
+                                voteList[data.player.uid].votingTo = players[uid];
+                                sendVotingMessage(data.player.username, data.targetname + ".", " has changed their vote to ");
+                            } else if (voteList[data.player.uid].votingTo.username == data.targetname) {
+                                if (players[data.player.uid].role == roles.Mayor) {
+                                    voteList[uid].votesToMe -= 3;
+                                } else {
+                                    voteList[uid].votesToMe--;
+                                }
+                                voteList[data.player.uid].votingTo = null;
+                                sendVotingMessage(data.player.username, "", " has canceled their vote.");
+                            }
+                            shouldGetOnTrial(uid);
+                        }
+                    }
+                } else if (tos.phase == "Judgement") { //judgement
+                    if (guiltyVoters.indexOf(data.player.username) == -1) {
+                        tos.guilty++;
+                        sendVotingMessage(data.player.username, "", " has voted.");
+                        guiltyVoters.push(data.player.username);
+                    } else {
+                        tos.guilty--;
+                        sendVotingMessage(data.player.username, "", " has canceled their vote.");
+                        var temp = -1;
+                        for (var i = 0; i < guiltyVoters.length; i++) {
+                            if (guiltyVoters[i] == data.player.username) {
+                                temp = i;
                             }
                         }
-                    } else { //judgement
-
-                    }
-                } else { //night
-
-                }
-            }
-
-            function Button2(data) {
-
-            }
-
-
-
-            function start() {
-                for (let uid in players) {
-                    let player = players[uid];
-                    if (player.username == "") {
-                        delete players[uid];
+                        guiltyVoters.splice(temp, 1);
                     }
                 }
-                var roleList;
-                roleList = rolePicker.getRoles(Object.keys(players).length);
-                roleList = rolePicker.checkValidation(roleList);
-                console.log("s start - ");
-                console.log(roleList);
-                roleList.shuffle();
-                var i = 0;
-                for (let uid in players) {
-                    players[uid].role = roleList[i];
-                    voteList[uid] = voteInfo;
-                    i++;
-                }
-                console.log("start - ");
-                console.log(players);
-                SendMafia();
-                SendVampires();
-                SendNames();
-                for (let uid in players) {
-                    sendToSocketId("startGame", {
-                        player: players[uid]
-                    }, players[uid].socketid);
-                }
-
-                tos.discussion();
+            } else { //night
             }
-
-            function SendMafia() {
-                var tempmafia_list = {};
-                var socketidlist = {};
-                for (let uid in players) {
-                    if (players[uid].role.team == "mafia") {
-                        tempmafia_list[uid] = players[uid];
-                        socketidlist[uid] = players[uid].socketid;
+        }
+        function Button2(data) {
+            if (isDay) {
+                if (tos.phase == "Judgement") {
+                    if (innoVoters.indexOf(data.player.username) == -1) {
+                        tos.inno++;
+                        sendVotingMessage(data.player.username, "", " has voted.");
+                        innoVoters.push(data.player.username);
+                    } else {
+                        tos.inno--;
+                        sendVotingMessage(data.player.username, "", " has canceled their vote.");
+                        var temp = -1;
+                        for (var i = 0; i < innoVoters.length; i++) {
+                            if (innoVoters[i] == data.player.username) {
+                                temp = i;
+                            }
+                        }
+                        innoVoters.splice(temp, 1);
                     }
                 }
-                sendToSocketIDList("getMafia", socketidlist, {
-                    mafiaList: tempmafia_list
-                });
+            } else { //night
             }
-
-            function SendVampires() {
-                var tempvampires_list = {};
-                var socketidlist = {};
-                for (let uid in players) {
-                    if (players[uid].role == roles.Vampire) {
-                        tempvampires_list[uid] = players[uid];
-                        socketidlist[uid] = players[uid].socketid;
-                    }
+        }
+        function shouldGetOnTrial(playerUID) {
+            var playersAlive = 0;
+            for (let uid in players) {
+                if (!players[uid].isded) {
+                    playersAlive++;
                 }
-                sendToSocketIDList("getVampires", socketidlist, {
-                    vampireList: tempvampires_list
-                });
             }
-
-            function SendNames() {
-                var name_list = {};
-                var socketidlist = {};
-                for (let uid in players) {
-                    name_list[uid] = players[uid].username;
+            if (voteList[playerUID].votesToMe > (playersAlive / 2)) {
+                tos.voteCounter++;
+                tos.stopVotingTime = true;
+                tos.playerOnTrial = players[playerUID];
+                playerOnTrial = players[playerUID];
+                for (let uid in voteList) {
+                    voteList[uid].votesToMe = 0;
+                    voteList[uid].votingTo = null;
+                }
+                // go on trial
+            }
+        }
+        function showJudgementResults() {
+            for (var i = 0; i < innoVoters.length; i++) {
+                sendVotingMessage(innoVoters[i], "", " voted innocent.");
+            }
+            for (var i = 0; i < guiltyVoters.length; i++) {
+                sendVotingMessage(guiltyVoters[i], "", " voted guilty.");
+            }
+            for (let uid in players) {
+                if (guiltyVoters.indexOf(players[uid].username) == -1 && innoVoters.indexOf(players[uid].username) == -1) {
+                    sendVotingMessage(players[uid].username, "", " abstained.");
+                }
+            }
+        }
+        function hangPlayer() {
+            playerOnTrial.isded = true;
+            // show will and role
+            // put in graveyard
+            playerOnTrial = null;
+        }
+        function start() {
+            for (let uid in players) {
+                let player = players[uid];
+                if (player.username == "") {
+                    delete players[uid];
+                }
+            }
+            var roleList;
+            roleList = rolePicker.getRoles(Object.keys(players).length);
+            roleList = rolePicker.checkValidation(roleList);
+            console.log("s start - ");
+            console.log(roleList);
+            roleList.shuffle();
+            var i = 0;
+            for (let uid in players) {
+                players[uid].role = roleList[i];
+                voteList[uid] = voteInfo;
+                i++;
+            }
+            console.log("start - ");
+            console.log(players);
+            SendMafia();
+            SendVampires();
+            SendNames();
+            for (let uid in players) {
+                sendToSocketId("startGame", {
+                    player: players[uid]
+                }, players[uid].socketid);
+            }
+            tos.discussion();
+        }
+        function SendMafia() {
+            var tempmafia_list = {};
+            var socketidlist = {};
+            for (let uid in players) {
+                if (players[uid].role.team == "mafia") {
+                    tempmafia_list[uid] = players[uid];
                     socketidlist[uid] = players[uid].socketid;
                 }
-                sendToSocketIDList("getNames", socketidlist, {
-                    nameList: name_list
-                });
             }
-
-            Array.prototype.shuffle = function() {
-                var input = this;
-
-                for (var i = input.length - 1; i >= 0; i--) {
-
-                    var randomIndex = Math.floor(Math.random() * (i + 1));
-                    var itemAtIndex = input[randomIndex];
-
-                    input[randomIndex] = input[i];
-                    input[i] = itemAtIndex;
-                }
-                return input;
-            }
-
-            function addPlayer(uid, socketid, id) {
-                var player = new Object();
-                player.Seancing = null; //will contain the playing you're curently seancing
-                player.inJail = null;
-                player.username = "";
-                player.role = "";
-                player.abilitycounter = 0; //only ++ when ability counter is limited
-                player.isded = false;
-                player.socketid = socketid;
-                players[uid] = player;
-                sendEmit("getRoles", roles);
-                //console.log("add player - " + player);
-            }
-
-
-
-            function checkUserName(data) {
-                //console.log(players);
-                for (let uid in players) {
-                    let player = players[uid];
-                    //console.log(player);
-                    if (player.username == data.usr) {
-                        sendEmit("requestUserNCallBack", {
-                            flag: true,
-                            usr: data.usr,
-                            uid: data.uid
-                        });
-                        return false;
-                    }
-                }
-                //console.log("pass - " +players[data.uid]);
-                players[data.uid].username = data.usr;
-                sendEmit("requestUserNCallBack", {
-                    flag: false,
-                    usr: data.usr,
-                    uid: data.uid
-                });
-                displayUsers();
-                //console.log(players);
-            }
-
-            function displayUsers() {
-                var disp = document.getElementById("usersInGame");
-                disp.innerHTML = "";
-                for (var uid in players) {
-                    let player = players[uid];
-                    if (player.username != "") {
-                        disp.innerHTML += "<a class='playerWait' onclick='removePlayer(\"" + uid + "\")'>" + player.username + "</a></br>";
-                    }
+            sendToSocketIDList("getMafia", socketidlist, {
+                mafiaList: tempmafia_list
+            });
+        }
+        function SendVampires() {
+            var tempvampires_list = {};
+            var socketidlist = {};
+            for (let uid in players) {
+                if (players[uid].role == roles.Vampire) {
+                    tempvampires_list[uid] = players[uid];
+                    socketidlist[uid] = players[uid].socketid;
                 }
             }
-
-            function removePlayer(uid) {
-                players[uid].username = "";
-                displayUsers();
+            sendToSocketIDList("getVampires", socketidlist, {
+                vampireList: tempvampires_list
+            });
+        }
+        function SendNames() {
+            var name_list = {};
+            var socketidlist = {};
+            for (let uid in players) {
+                name_list[uid] = players[uid].username;
+                socketidlist[uid] = players[uid].socketid;
             }
-        </script>
+            sendToSocketIDList("getNames", socketidlist, {
+                nameList: name_list
+            });
+        }
+        Array.prototype.shuffle = function() {
+            var input = this;
+            for (var i = input.length - 1; i >= 0; i--) {
+                var randomIndex = Math.floor(Math.random() * (i + 1));
+                var itemAtIndex = input[randomIndex];
+                input[randomIndex] = input[i];
+                input[i] = itemAtIndex;
+            }
+            return input;
+        }
+        function addPlayer(uid, socketid, id) {
+            var player = new Object();
+            player.Seancing = null; //will contain the playing you're curently seancing
+            player.inJail = null;
+            player.username = "";
+            player.role = "";
+            player.abilitycounter = 0; //only ++ when ability counter is limited
+            player.isded = false;
+            player.socketid = socketid;
+            players[uid] = player;
+            sendEmit("getRoles", roles);
+            //console.log("add player - " + player);
+        }
+        function checkUserName(data) {
+            //console.log(players);
+            for (let uid in players) {
+                let player = players[uid];
+                //console.log(player);
+                if (player.username == data.usr) {
+                    sendEmit("requestUserNCallBack", {
+                        flag: true,
+                        usr: data.usr,
+                        uid: data.uid
+                    });
+                    return false;
+                }
+            }
+            //console.log("pass - " +players[data.uid]);
+            players[data.uid].username = data.usr;
+            sendEmit("requestUserNCallBack", {
+                flag: false,
+                usr: data.usr,
+                uid: data.uid
+            });
+            displayUsers();
+            //console.log(players);
+        }
+        function displayUsers() {
+            var disp = document.getElementById("usersInGame");
+            disp.innerHTML = "";
+            for (var uid in players) {
+                let player = players[uid];
+                if (player.username != "") {
+                    disp.innerHTML += "<a class='playerWait' onclick='removePlayer(\"" + uid + "\")'>" + player.username + "</a></br>";
+                }
+            }
+        }
+        function removePlayer(uid) {
+            players[uid].username = "";
+            displayUsers();
+        }
+        module.exports = {
+            hangPlayer: hangPlayer,
+            showJudgementResults: showJudgementResults
+        };
+    </script>
 </template>
