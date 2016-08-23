@@ -4,6 +4,7 @@
     -webkit-user-select: none;
     margin: 0;
     padding: 0.1%;
+    height: 1.5vh;
 }
 body {
     color: white;
