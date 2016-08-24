@@ -1,11 +1,172 @@
 <template>
+    <style>
+        #cont {
+            background-image: url("apps/townofsalem/village.jpg");
+            height: 98vh;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+    <div style="
+    -webkit-user-select: none;
+    cursor: default;
+">
+        <span style="
+    text-shadow: 0 1px 0 #ccc,                 0 2px 0 #c9c9c9,                 0 3px 0 #bbb,                 0 4px 0 #b9b9b9,                 0 5px 0 #aaa,                 0 6px 1px rgba(0,0,0,.1),                 0 0 5px rgba(0,0,0,.1),                 0 1px 3px rgba(0,0,0,.3),                 0 3px 5px rgba(0,0,0,.2),                 0 5px 10px rgba(0,0,0,.25),                 0 10px 10px rgba(0,0,0,.2),                 0 20px 20px rgba(0,0,0,.15);
+    position: absolute;
+    font-size: 8vh;
+    left: 47vw;
+    top: 17vh;
+    opacity: 0.9;
+">Town of Salem</span>
+        <div style="
+      height: 30vh;
+      width: 33vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(23deg)rotateX(-1deg) translateY(277px)translateX(170px);
+      transform-style: preserve-3d;
+      box-sizing: border-box;
+      transform-origin: center center;
+  ">
+            <div style="
+      height: 30vh;
+      width: 33vw;
+      z-index: 0;
+      position: absolute;
+      transform-origin: center center;
+      background: none;
+      background-color: #3ba029;
+      border: black solid 2px;
+  "></div>
+            <div style="
+      height: 55vh;
+      width: 1vw;
+      position: fixed;
+      z-index: -1;
+      background: linear-gradient(to left, rgb(241,224,245), #615d5d);
+  "></div>
+            <div style="
+      background: linear-gradient(to left, rgb(241,224,245), #736f6f);
+      height: 55vh;
+      width: 1vw;
+      float: right;
+      z-index: -1;
+      position: relative;
+      right: 12px;
+  "></div>
+            <span style="
+      z-index: 1;
+      position: absolute;
+      font-size: 5vh;
+      transform-style: preserve-3d;
+      margin: 14px;
+  ">Town population</span>
+            <div id="usersInGame" style="
+z-index: 1;
+position: absolute;
+font-size: 3vh;
+transform-style: preserve-3d;
+margin: 14px;">
 
-    <center>
-        <h1></h1>
-        <input type="button" value="Start!" onclick="start()" />
-        <div id="usersInGame">
+            </div>
+            <div style="
+      background-color: #30882f;
+      height: 30vh;
+      width: 2vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(270deg) translateX(-42px);
+      transform-origin: center left;
+      transform-style: preserve-3d;
+      border: black solid 1px;
+  "></div>
+            <div style="
+      background-color: #0e7d00;
+      height: 59vh;
+      width: 2vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(90deg)rotatex(90deg)translateY(618px) translateZ(317px)translateX(20px);
+      transform-origin: center bottom;
+      transform-style: preserve-3d;
+      border: black solid;
+  "></div>
+            <div style="
+      background-color: #30882f;
+      height: 59vh;
+      width: 2vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(90deg)rotatex(90deg)translateY(615px) translateZ(642px)translateX(20px);
+      transform-origin: center bottom;
+      transform-style: preserve-3d;
+      border: black solid;
+  "></div>
+            <span style="
+      z-index: 1;
+      position: absolute;
+      font-size: 5vh;
+      transform-style: preserve-3d;
+      margin: 14px;
+      transform: translateX(495px);
+  ">0/7</span></div>
+        <div onclick="start()" style="
+      height: 13vh;
+      width: 20vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(-16deg)rotateX(-13deg)rotateZ(3deg) translateY(760px)translateX(976px);
+      transform-style: preserve-3d;
+      box-sizing: border-box;
+      transform-origin: center center;
+      cursor: pointer;
+  ">
+            <div style="
+      height: 13vh;
+      width: 20vw;
+      z-index: 0;
+      position: absolute;
+      transform-origin: center center;
+      background: none;
+      background-color: #368efb;
+      border: black solid 2px;
+  "></div>
+
+
+            <span style="
+      z-index: 1;
+      position: absolute;
+      font-size: 5vh;
+      transform-style: preserve-3d;
+      transform: translateX(57px);
+      font-size: 113px;
+  ">Start</span>
+            <div style="
+      background-color: #3c85b9;
+      height: 13vh;
+      width: 2vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(90deg) translateX(93px)translateZ(349px)scaleX(2.5);
+      transform-origin: center right;
+      transform-style: preserve-3d;
+      border: black solid 1px;
+  "></div>
+
+            <div style="
+      background-color: #65bcfb;
+      height: 20vw;
+      width: 2vw;
+      z-index: 0;
+      position: absolute;
+      transform: rotateY(90deg)rotatex(90deg)translateY(366px) translateZ(386px)translateX(57px) scaleX(2.5);
+      transform-origin: center bottom;
+      transform-style: preserve-3d;
+      border: black solid;
+  "></div>
         </div>
-    </center>
+    </div>
     <script>
         var rolePicker = require("./apps/townofsalem/rolePicker.js");
         var roles = require("./apps/townofsalem/roles.js");
