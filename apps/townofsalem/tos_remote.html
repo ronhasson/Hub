@@ -148,35 +148,21 @@
 </body>
 <script>
     function addActionTable() { //TODO: ron do stuff
-        var table = "<table style='font-size:80px'>";
+        var table = "<table style='font-size:30px'>";
         for (let name in nameList) {
             table += "<tr><td><span id='name_" + nameList[name] + "'>" + nameList[name] + "</span></td><td><input class='button1' type='button' id='button1_" + nameList[name] + "' onclick='ActivateAction(\"" + nameList[name] +
                 "\")'/></td><td><input class='button2' type='button' id='button2_" + nameList[name] + "' onclick='ActivateAction2(\"" + nameList[name] + "\")'/></td></tr>";
         }
         table += "</table>";
         document.getElementById("actions").innerHTML = table;
-        document.getElementsByClassName("button1").style.width = 100 px;
-        document.getElementsByClassName("button2").style.width = 100 px;
-    }
-
-    function ActivateAction(targetname) {
-        socket.emit("requestFromServer", {
-            action: "Button1",
-            data: {
-                player: player,
-                targetname: targetname
+        var elems = document.getElementsByClassName("button1");
+        for (var i=0;i<elems.length;i+=1){
+                elems[i].size = "100";
             }
-        });
-    }
-
-    function ActivateAction2(targetname) {
-        socket.emit("requestFromServer", {
-            action: "Button2",
-            data: {
-                player: player,
-                targetname: targetname
+        elems = document.getElementsByClassName("button2");
+        for (var i=0;i<elems.length;i+=1){
+                elems[i].size = "100";
             }
-        });
     }
 
     function openNav() {
@@ -208,6 +194,8 @@
     var vampireList = {};
     var nameList = {};
 
+    var nowVoting = false;
+
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
@@ -219,6 +207,11 @@
     });
 
     socket.on('changePhase', function(data) {
+        if(nowVoting && data.phase != "Voting")
+            nowVoting = false;
+        if(data.phase == "Voting") {
+            nowVoting = true;
+        }
         if (data.hasOwnProperty('defendant')) {
             startCountdown(data.time, data.phase, data.defendant);
         } else {
@@ -230,71 +223,107 @@
         editActionButtons(phase, defendant);
         var interval = setInterval(function() {
             document.getElementById("phases").innerHTML = phase + ": " + timer;
-            if (--timer < 0) {
+            if (--timer < 0 || (!nowVoting && phase == "Voting")) {
                 clearInterval(interval);
                 return;
             }
         }, 1000);
     }
 
+    function ActivateAction(targetname) {
+        socket.emit("requestFromServer", {
+            action: "Button1",
+            data: {
+                player: player,
+                targetname: targetname
+            }
+        });
+    }
+
+    function ActivateAction2(targetname) {
+        socket.emit("requestFromServer", {
+            action: "Button2",
+            data: {
+                player: player,
+                targetname: targetname
+            }
+        });
+    }
+
+    function setClassButtonDisplayTo(classname, present) {
+        var elems = document.getElementsByClassName(classname);
+        for (var i=0;i<elems.length;i+=1){
+                elems[i].style.display = present;
+            }
+    }
+
     function editActionButtons(phase, defendant) {
+        var elems;
         if (phase == "Discussion") {
-            document.getElementsByClassName("button2").style.visibility = 'hidden';
-            document.getElementsByClassName("button1").style.visibility = 'hidden';
+            setClassButtonDisplayTo("button2", "none");
+            setClassButtonDisplayTo("button1", "none");
         } else if (phase == "Voting") {
-            document.getElementsByClassName("button1").style.visibility = 'visible';
-            document.getElementById("button1_" + player.username).style.visibility = 'hidden';
-            document.getElementsByClassName("button1").value = "Vote!";
-        } else if (phase == "Defence") {
-            document.getElementsByClassName("button2").style.visibility = 'hidden';
-            document.getElementsByClassName("button1").style.visibility = 'hidden';
-        } else if (phase == "Judgment") {
-            document.getElementById("button1_" + defendant).visibility = "visible";
+            setClassButtonDisplayTo("button2", "none");
+            elems = document.getElementsByClassName("button1");
+            for (var i=0;i<elems.length;i+=1){
+                elems[i].style.display = 'block';
+                elems[i].value = "Vote!";
+            }
+            document.getElementById("button1_" + player.username).style.display = 'none';
+        } else if (phase == "Defense") {
+            setClassButtonDisplayTo("button2", "none");
+            elems = document.getElementsByClassName("button1");
+            for (var i=0;i<elems.length;i+=1){
+                elems[i].style.display = 'none';
+                elems[i].value = "";
+            }
+        } else if (phase == "Judgement") {
+            document.getElementById("button1_" + defendant).style.display = "block";
             document.getElementById("button1_" + defendant).value = "Guilty";
-            document.getElementById("button2_" + defendant).visibility = "visible";
+            document.getElementById("button2_" + defendant).style.display = "block";
             document.getElementById("button2_" + defendant).value = "Innocent";
-            document.getElementById("button1_" + player.username).style.visibility = 'hidden';
-            document.getElementById("button2_" + player.username).style.visibility = 'hidden';
+            document.getElementById("button1_" + player.username).style.display = 'none';
+            document.getElementById("button2_" + player.username).style.display = 'none';
         } else if (phase == "Last Words") {
-            document.getElementsByClassName("button2").style.visibility = 'hidden';
-            document.getElementsByClassName("button1").style.visibility = 'hidden';
+            setClassButtonDisplayTo("button2", "none");
+            setClassButtonDisplayTo("button1", "none");
         } else if (phase == "Night") {
             if (player.role.name == roles.Jailor.name && player.inJail != null) {
-                document.getElementById("button1_" + player.inJail.username).visibility = "visible";
+                document.getElementById("button1_" + player.inJail.username).display = "block";
             } else if (player.role.name == roles.Transporter.name) {
-                document.getElementsByClassName("button1").style.visibility = 'visible';
-                document.getElementsByClassName("button2").style.visibility = 'visible';
+                setClassButtonDisplayTo("button2", "block");
+                setClassButtonDisplayTo("button1", "block");
             } else if (player.role.name == roles.Witch.name) {
-                document.getElementsByClassName("button1").style.visibility = 'visible';
-                document.getElementById("button1_" + player.username).style.visibility = 'hidden';
-                document.getElementsByClassName("button2").style.visibility = 'visible';
-            } else if (player.role.name == roles.Amnesiac.name) //when all maf's are ded you can become a mafioso
+                document.getElementById("button1_" + player.username).style.display = 'none';
+                setClassButtonDisplayTo("button2", "block");
+                setClassButtonDisplayTo("button1", "block");
+            } /*else if (player.role.name == roles.Amnesiac.name) //when all maf's are ded you can become a mafioso
             {
-                document.getElementsByClassName("button1d").style.visibility = 'visible';
-                document.getElementsByClassName("button1dt").style.visibility = 'visible';
-                document.getElementsByClassName("button1dc").style.visibility = 'visible';
-            } else if (player.role.team == "mafia") {
-                document.getElementsByClassName("button1").style.visibility = 'visible';
+                document.getElementsByClassName("button1d").style.display = 'block';
+                document.getElementsByClassName("button1dt").style.display = 'block';
+                document.getElementsByClassName("button1dc").style.display = 'block';
+            }*/ else if (player.role.team == "mafia") {
+                setClassButtonDisplayTo("button1", "block");
                 for (let playa in mafiaList) {
-                    document.getElementById("button1_" + mafiaList[playa].username).style.visibility = 'hidden';
+                    document.getElementById("button1_" + mafiaList[playa].username).style.display = 'none';
                 }
             } else if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name || player.role.name == roles.Arsonist.name) {
-                document.getElementsByClassName("button1").style.visibility = 'visible';
+                etClassButtonDisplayTo("button1", "block");
             } else if (player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
                 player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name) {
-                document.getElementsByClassName("button1").style.visibility = 'visible';
-                document.getElementById("button1_" + player.username).style.visibility = 'hidden';
+                etClassButtonDisplayTo("button1", "block");
+                document.getElementById("button1_" + player.username).style.display = 'none';
             } else if (player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name) {
-                document.getElementById("button1_" + player.username).style.visibility = 'visible';
+                document.getElementById("button1_" + player.username).style.display = 'block';
             } else if (player.role.name == roles.Vampire.name) {
-                document.getElementsByClassName("button1").style.visibility = 'visible';
+                setClassButtonDisplayTo("button1", "block");
                 for (let playa in vampireList) {
-                    document.getElementById("button1_" + vampireList[playa].username).style.visibility = 'hidden';
+                    document.getElementById("button1_" + vampireList[playa].username).style.display = 'none';
                 }
-            } else if (player.role.name == roles.Retributionist.name) {
-                document.getElementsByClassName("button1dt").style.visibility = 'visible';
-                document.getElementsByClassName("button1dtu").style.visibility = 'visible';
-            }
+            } /*else if (player.role.name == roles.Retributionist.name) {
+                document.getElementsByClassName("button1dt").style.display = 'block';
+                document.getElementsByClassName("button1dtu").style.display = 'block';
+            }*/
         }
     }
 

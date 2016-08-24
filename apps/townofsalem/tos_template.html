@@ -9,23 +9,153 @@
     <script>
         var rolePicker = require("./apps/townofsalem/rolePicker.js");
         var roles = require("./apps/townofsalem/roles.js");
-        var tos = require("./apps/townofsalem/tosGame.js");
 
         requestChangeRemotePage("tos");
         var players = {};
 
-        var voteInfo = new Object();
-        voteInfo.votingTo = null;
-        voteInfo.votesToMe = 0;
         var voteList = {};
         var guiltyVoters = [];
         var innoVoters = [];
-        var playerOnTrial = null;
 
-        isDay = false;
+        var playerOnTrial = null;
+        var dayOne = false; //TODO: BACK TO TRUE YOU FOCKING FOCK
+
+        var voteCounter = 0;
+        var votingTimer = 30;
+        var stopVotingTime = false;
+
+        var inno = 0;
+        var guilty = 0;
+
+        var phase = "Discussion";
+
+        var isDay = true;
+
+        function discussion() {
+            votingTimer = 30;
+            voteCounter = 0;
+            phase = "Discussion";
+            var timer;
+            if (dayOne)
+                timer = 15;
+            else
+                timer = 5;
+            sendEmit("changePhase", {
+                time: timer,
+                phase: "Discussion"
+            });
+            var interval = setInterval(function() {
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    if (dayOne) {
+                        night();
+                        dayOne = false;
+                    } else {
+                        voting();
+                    }
+                    return;
+                }
+            }, 1000);
+        }
+
+        function voting() { //everyone alive can vote
+            phase = "Voting";
+            sendEmit("changePhase", {
+                time: votingTimer,
+                phase: "Voting"
+            });
+            var interval = setInterval(function() {
+                if (stopVotingTime) {
+                    clearInterval(interval);
+                    defense();
+                    return;
+                }
+                if (--votingTimer < 0 || voteCounter > 6) {
+                    clearInterval(interval);
+                    night();
+                    return;
+                }
+            }, 1000);
+        }
+
+        function defense() { //only trailled person can talk
+            phase = "Defense";
+            sendEmit("changePhase", {
+                time: 20,
+                phase: "Defense"
+            });
+            var timer = 20;
+            var interval = setInterval(function() {
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    judgement();
+                    return;
+                }
+            }, 1000);
+        }
+
+        function judgement() { //everyone alive can vote
+            inno = 0;
+            guilty = 0;
+            phase = "Judgement";
+            sendEmit("changePhase", {
+                time: 20,
+                phase: "Judgement",
+                defendant: playerOnTrial.username
+            });
+            var timer = 20;
+            var interval = setInterval(function() {
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    showJudgementResults();
+                    if (guilty > inno) {
+                        lastWords();
+                    } else {
+                        playerOnTrial = null;
+                        stopVotingTime = false;
+                        voting();
+                    }
+                    return;
+                }
+            }, 1000);
+        }
+
+        function lastWords() {
+            phase = "Last Words";
+            sendEmit("changePhase", {
+                time: 5,
+                phase: "Last Words"
+            });
+            var timer = 5;
+            var interval = setInterval(function() {
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    hangPlayer();
+                    night();
+                    return;
+                }
+            }, 1000);
+        }
+
+        function night() {
+            phase = "Night";
+            sendEmit("changePhase", {
+                time: 40,
+                phase: "Night"
+            });
+            isDay = false;
+            var timer = 40;
+            var interval = setInterval(function() {
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    discussion();
+                    return;
+                }
+            }, 1000);
+        }
 
         function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
-            if (tos.playerOnTrial == null) {
+            if (playerOnTrial == null || phase == "Judgement") {
                 var sender_player = data.player;
                 for (let uid in players) {
                     let temp_player = players[uid];
@@ -105,7 +235,7 @@
                     }
                 }
             } else {
-                if (tos.playerOnTrial == data.player) {
+                if (playerOnTrial.username == data.player.username) {
                     sendEmit('getMessage', {
                         username: data.player.username,
                         message: data.message
@@ -122,19 +252,19 @@
 
         function Button1(data) {
             if (isDay) {
-                if (tos.phase == "Voting") { //voting
+                if (phase == "Voting") { //voting
                     for (let uid in players) {
-                        if (players[uid].username == data.targetname) {
+                        if (players[uid].username == data.targetname)   {
                             if (voteList[data.player.uid].votingTo == null) {
                                 voteList[data.player.uid].votingTo = players[uid];
-                                if (players[data.player.uid].role == roles.Mayor) {
+                                if (data.player.role.name == roles.Mayor.name) {
                                     voteList[uid].votesToMe += 3;
                                 } else {
                                     voteList[uid].votesToMe++;
                                 }
                                 sendVotingMessage(data.player.username, data.targetname + ".", " has voted against ");
                             } else if (voteList[data.player.uid].votingTo.username != data.targetname) {
-                                if (players[data.player.uid].role == roles.Mayor) {
+                                if (data.player.role.name == roles.Mayor.name) {
                                     voteList[uid].votesToMe += 3;
                                     voteList[voteList[data.player.uid].votingTo.uid].votesToMe -= 3;
                                 } else {
@@ -144,7 +274,7 @@
                                 voteList[data.player.uid].votingTo = players[uid];
                                 sendVotingMessage(data.player.username, data.targetname + ".", " has changed their vote to ");
                             } else if (voteList[data.player.uid].votingTo.username == data.targetname) {
-                                if (players[data.player.uid].role == roles.Mayor) {
+                                if (data.player.role.name == roles.Mayor.name) {
                                     voteList[uid].votesToMe -= 3;
                                 } else {
                                     voteList[uid].votesToMe--;
@@ -155,22 +285,22 @@
                             shouldGetOnTrial(uid);
                         }
                     }
-                } else if (tos.phase == "Judgement") { //judgement
+                } else if (phase == "Judgement") { //judgement
+                    var msg = "";
                     if (guiltyVoters.indexOf(data.player.username) == -1) {
-                        tos.guilty++;
-                        sendVotingMessage(data.player.username, "", " has voted.");
+                        msg = " has voted.";
+                        guilty++;
                         guiltyVoters.push(data.player.username);
-                    } else {
-                        tos.guilty--;
-                        sendVotingMessage(data.player.username, "", " has canceled their vote.");
-                        var temp = -1;
-                        for (var i = 0; i < guiltyVoters.length; i++) {
-                            if (guiltyVoters[i] == data.player.username) {
-                                temp = i;
-                            }
+                        if(innoVoters.indexOf(data.player.username) != -1) {
+                            innoVoters.splice(innoVoters.indexOf(data.player.username), 1);
+                            msg = " has changed their vote.";
                         }
-                        guiltyVoters.splice(temp, 1);
+                    } else {
+                        msg = " has canceled their vote.";
+                        guilty--;
+                        guiltyVoters.splice(guiltyVoters.indexOf(data.player.username), 1);
                     }
+                    sendVotingMessage(data.player.username, "", msg);
                 }
             } else { //night
 
@@ -179,22 +309,22 @@
 
         function Button2(data) {
             if (isDay) {
-                if (tos.phase == "Judgement") {
+                if (phase == "Judgement") {
+                    var msg = "";
                     if (innoVoters.indexOf(data.player.username) == -1) {
-                        tos.inno++;
-                        sendVotingMessage(data.player.username, "", " has voted.");
+                        msg = " has voted.";
+                        inno++;
                         innoVoters.push(data.player.username);
-                    } else {
-                        tos.inno--;
-                        sendVotingMessage(data.player.username, "", " has canceled their vote.");
-                        var temp = -1;
-                        for (var i = 0; i < innoVoters.length; i++) {
-                            if (innoVoters[i] == data.player.username) {
-                                temp = i;
-                            }
+                        if(guiltyVoters.indexOf(data.player.username) != -1) {
+                            guiltyVoters.splice(guiltyVoters.indexOf(data.player.username), 1);
+                            msg = " has changed their vote.";
                         }
-                        innoVoters.splice(temp, 1);
+                    } else {
+                        inno--;
+                        innoVoters.splice(innoVoters.indexOf(data.player.username), 1);
+                        msg = " has canceled their vote.";
                     }
+                    sendVotingMessage(data.player.username, "", msg);
                 }
             } else { //night
 
@@ -209,14 +339,14 @@
                 }
             }
             if (voteList[playerUID].votesToMe > (playersAlive / 2)) {
-                tos.voteCounter++;
-                tos.stopVotingTime = true;
-                tos.playerOnTrial = players[playerUID];
+                voteCounter++;
+                stopVotingTime = true;
                 playerOnTrial = players[playerUID];
                 for (let uid in voteList) {
                     voteList[uid].votesToMe = 0;
                     voteList[uid].votingTo = null;
                 }
+                console.log("on trial baby: " + playerOnTrial.username);
                 // go on trial
             }
         }
@@ -229,16 +359,20 @@
                 sendVotingMessage(guiltyVoters[i], "", " voted guilty.");
             }
             for (let uid in players) {
-                if (guiltyVoters.indexOf(players[uid].username) == -1 && innoVoters.indexOf(players[uid].username) == -1) {
+                if (guiltyVoters.indexOf(players[uid].username) == -1 && innoVoters.indexOf(players[uid].username) == -1 && playerOnTrial.username != players[uid].username) {
                     sendVotingMessage(players[uid].username, "", " abstained.");
                 }
             }
+            guiltyVoters = [];
+            innoVoters = [];
         }
 
         function hangPlayer() {
+            console.log("about to fucking die baby: " + playerOnTrial.username);
             playerOnTrial.isded = true;
+            // show msg "ditza" has died.
             // show will and role
-            // put in graveyard
+            // put in graveyard (2 buttons will and deathnote)
             playerOnTrial = null;
         }
 
@@ -258,6 +392,9 @@
             var i = 0;
             for (let uid in players) {
                 players[uid].role = roleList[i];
+                var voteInfo = new Object();
+                voteInfo.votingTo = null;
+                voteInfo.votesToMe = 0;
                 voteList[uid] = voteInfo;
                 i++;
             }
@@ -271,8 +408,7 @@
                     player: players[uid]
                 }, players[uid].socketid);
             }
-
-            tos.discussion();
+            discussion();
         }
 
         function SendMafia() {
@@ -338,6 +474,7 @@
             player.abilitycounter = 0; //only ++ when ability counter is limited
             player.isded = false;
             player.socketid = socketid;
+            player.uid = uid;
             players[uid] = player;
             sendEmit("getRoles", roles);
             //console.log("add player - " + player);
@@ -383,10 +520,5 @@
             players[uid].username = "";
             displayUsers();
         }
-
-        module.exports = {
-            hangPlayer: hangPlayer,
-            showJudgementResults: showJudgementResults
-        };
     </script>
 </template>

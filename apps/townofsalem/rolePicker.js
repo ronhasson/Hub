@@ -21,7 +21,7 @@ var getRoles = function getRoles(num) {
               Role.Mafioso,
               Role.Consort,
               Role.Vampire,
-              Role.Vampire
+              Role.Medium
             ];
             case 5:
             return [
