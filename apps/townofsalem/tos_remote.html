@@ -148,7 +148,7 @@
 </body>
 <script>
     function addActionTable() { //TODO: ron do stuff
-        var table = "<table style='font-size:30px'>";
+        var table = "<table style='font-size:45px'>";
         for (let name in nameList) {
             table += "<tr><td><span id='name_" + nameList[name] + "'>" + nameList[name] + "</span></td><td><input class='button1' type='button' id='button1_" + nameList[name] + "' onclick='ActivateAction(\"" + nameList[name] +
                 "\")'/></td><td><input class='button2' type='button' id='button2_" + nameList[name] + "' onclick='ActivateAction2(\"" + nameList[name] + "\")'/></td></tr>";
@@ -288,6 +288,8 @@
             setClassButtonDisplayTo("button2", "none");
             setClassButtonDisplayTo("button1", "none");
         } else if (phase == "Night") {
+            setClassButtonDisplayTo("button2", "none");
+            setClassButtonDisplayTo("button1", "none");
             if (player.role.name == roles.Jailor.name && player.inJail != null) {
                 document.getElementById("button1_" + player.inJail.username).display = "block";
             } else if (player.role.name == roles.Transporter.name) {
@@ -297,12 +299,12 @@
                 document.getElementById("button1_" + player.username).style.display = 'none';
                 setClassButtonDisplayTo("button2", "block");
                 setClassButtonDisplayTo("button1", "block");
-            } /*else if (player.role.name == roles.Amnesiac.name) //when all maf's are ded you can become a mafioso
+            } else if (player.role.name == roles.Amnesiac.name) //when all maf's are ded you can become a mafioso
             {
-                document.getElementsByClassName("button1d").style.display = 'block';
-                document.getElementsByClassName("button1dt").style.display = 'block';
-                document.getElementsByClassName("button1dc").style.display = 'block';
-            }*/ else if (player.role.team == "mafia") {
+                setClassButtonDisplayTo("button1d", "block"); //normal dead
+                setClassButtonDisplayTo("button1dt", "block"); //normal town dead
+                setClassButtonDisplayTo("button1dc", "block"); //normal dead cleaned
+            } else if (player.role.team == "mafia") {
                 setClassButtonDisplayTo("button1", "block");
                 for (let playa in mafiaList) {
                     document.getElementById("button1_" + mafiaList[playa].username).style.display = 'none';

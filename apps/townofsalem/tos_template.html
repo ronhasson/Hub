@@ -205,6 +205,7 @@ margin: 14px;">
                 time: timer,
                 phase: "Discussion"
             });
+            isDay = true;
             var interval = setInterval(function() {
                 if (--timer < 0) {
                     clearInterval(interval);
@@ -531,10 +532,16 @@ margin: 14px;">
         function hangPlayer() {
             console.log("about to fucking die baby: " + playerOnTrial.username);
             playerOnTrial.isded = true;
+
             // show msg "ditza" has died.
             // show will and role
             // put in graveyard (2 buttons will and deathnote)
             playerOnTrial = null;
+        }
+
+        function getNewClassName(player) {
+            var classname = "d";
+            if()
         }
 
         function start() {
