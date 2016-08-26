@@ -172,7 +172,9 @@ margin: 14px;">
         var roles = require("./apps/townofsalem/roles.js");
 
         requestChangeRemotePage("tos");
-        var players = {};
+
+        var players = [];
+        var _roleList;
 
         var voteList = {};
         var guiltyVoters = [];
@@ -319,8 +321,8 @@ margin: 14px;">
         function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
             if (playerOnTrial == null || phase == "Judgement") {
                 var sender_player = data.player;
-                for (let uid in players) {
-                    let temp_player = players[uid];
+                for (let index in players) {
+                    let temp_player = players[index];
                     if (temp_player.socketid == sender_player.socketid)
                         sendToSocketId('getMessage', {
                             username: sender_player.username,
@@ -539,84 +541,69 @@ margin: 14px;">
             playerOnTrial = null;
         }
 
-        function getNewClassName(player) {
-            var classname = "d";
-            if()
-        }
-
         function start() {
-            for (let uid in players) {
+            for (let index in players) {
+                if(players[index].username == "") {
+                    delete players[index];
+                }
+            }
+            /*for (let uid in players) {
                 let player = players[uid];
                 if (player.username == "") {
                     delete players[uid];
                 }
-            }
-            var roleList;
-            roleList = rolePicker.getRoles(Object.keys(players).length);
-            roleList = rolePicker.checkValidation(roleList);
+            }*/
+            
+            _roleList = rolePicker.getRoles(Object.keys(players).length);
+            _roleList = rolePicker.checkValidation(_roleList);
             console.log("s start - ");
-            console.log(roleList);
-            roleList.shuffle();
+            console.log(_roleList);
+            var shuffledRoleList = _roleList.shuffle();
             var i = 0;
+            var mafList = [];
+            var vampList = [];
+            var _nameList = [];
+            for (let index in players) {
+                players[index].role = shuffledRoleList[i];
+                var voteInfo = new Object();
+                voteInfo.votingTo = null;
+                voteInfo.votesToMe = 0;
+                voteList[index] = voteInfo;
+                if(players[index].role.team == "mafia") {
+                    mafList.push(players[index]);
+                }
+                else if(players[index].role.name == roles.Vampire.name) {
+                    vampList.push(players[index]);
+                }
+                _nameList.push(players[index].username);
+                i++;
+            }
+            for (let index in players) {
+                if(players[index].role.team == "mafia") {
+                    players[index].mafiaList = mafList;
+                }
+                else if(players[index].role.name == roles.Vampire.name) {
+                    players[index].vampireList = vampList;
+                }
+                players.nameList = _nameList;
+            }
+            /*var i = 0;
             for (let uid in players) {
-                players[uid].role = roleList[i];
+                players[uid].role = _roleList[i];
                 var voteInfo = new Object();
                 voteInfo.votingTo = null;
                 voteInfo.votesToMe = 0;
                 voteList[uid] = voteInfo;
                 i++;
-            }
+            }*/
             console.log("start - ");
             console.log(players);
-            SendMafia();
-            SendVampires();
-            SendNames();
-            for (let uid in players) {
+            for (let index in players) {
                 sendToSocketId("startGame", {
-                    player: players[uid]
-                }, players[uid].socketid);
+                    player: players[index]
+                }, players[index].socketid);
             }
             discussion();
-        }
-
-        function SendMafia() {
-            var tempmafia_list = {};
-            var socketidlist = {};
-            for (let uid in players) {
-                if (players[uid].role.team == "mafia") {
-                    tempmafia_list[uid] = players[uid];
-                    socketidlist[uid] = players[uid].socketid;
-                }
-            }
-            sendToSocketIDList("getMafia", socketidlist, {
-                mafiaList: tempmafia_list
-            });
-        }
-
-        function SendVampires() {
-            var tempvampires_list = {};
-            var socketidlist = {};
-            for (let uid in players) {
-                if (players[uid].role == roles.Vampire) {
-                    tempvampires_list[uid] = players[uid];
-                    socketidlist[uid] = players[uid].socketid;
-                }
-            }
-            sendToSocketIDList("getVampires", socketidlist, {
-                vampireList: tempvampires_list
-            });
-        }
-
-        function SendNames() {
-            var name_list = {};
-            var socketidlist = {};
-            for (let uid in players) {
-                name_list[uid] = players[uid].username;
-                socketidlist[uid] = players[uid].socketid;
-            }
-            sendToSocketIDList("getNames", socketidlist, {
-                nameList: name_list
-            });
         }
 
         Array.prototype.shuffle = function() {
@@ -633,19 +620,230 @@ margin: 14px;">
             return input;
         }
 
-        function addPlayer(uid, socketid, id) {
-            var player = new Object();
-            player.Seancing = null; //will contain the playing you're curently seancing
-            player.inJail = null;
-            player.username = "";
-            player.role = "";
-            player.abilitycounter = 0; //only ++ when ability counter is limited
-            player.isded = false;
-            player.socketid = socketid;
-            player.uid = uid;
-            players[uid] = player;
-            sendEmit("getRoles", roles);
-            //console.log("add player - " + player);
+        function addPlayer(uid, socketid) {
+            var p = new Player(uid, socketid);
+            p.roleList = _roleList;
+            players.push(p);
+        }
+
+        class Player {
+            roleList: roles.Role[] = []; //error is here: "unexpected token :"
+            nameList: string[] = [];
+            username: string = "";
+            role: roles.Role;
+            isDead: boolean = false;
+            uid: string;
+            socketid: string;
+            roleBlocked: boolean = false; //check if needed
+            blackmailed: boolean = false;
+            jailed: boolean = false;
+            cleaned: boolean = false;
+            framed: boolean = false;
+            abilityCounter: number = 0;
+            targetPlayer: string = "";
+            will: string = ""; //check if needed + deathnote
+            //add priority
+            constructor(_uid: string, _socketid: string) {
+                this.uid = _uid;
+                this.socketid = _socketid;
+            }
+        }
+
+        class Jailor extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Medium extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Transporter extends Player {
+            target2: string = ""; //for button2
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Witch extends Player {
+            target2: string = "";
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Veteran extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Escort extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Consort extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Doctor extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Janitor extends Player {
+            mafiaList: Player[];
+            cleanedPlayers: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Retributionist extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Forger extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Consigliere extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Blackmailer extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Framer extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Bodyguard extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Godfather extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Mafioso extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class SerialKiller extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class VampireHunter extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Jester extends Player {
+            diedAtNight: boolean; // set when dead
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Vigilante extends Player {
+            willDie: boolean = false; //if kills town
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Disguiser extends Player {
+            mafiaList: Player[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Amnesiac extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Arsonist extends Player {
+            dousedTargets: string[];
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Survivor extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Sheriff extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Lookout extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Investigator extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Vampire extends Player {
+            vampireList: Player[];
+            youngest: boolean = false;
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
+        }
+
+        class Werewolf extends Player {
+            constructor(_uid: string, _socketid: string) {
+                super(_uid, _socketid);
+            }
         }
 
         function checkUserName(data) {
@@ -688,5 +886,7 @@ margin: 14px;">
             players[uid].username = "";
             displayUsers();
         }
+
+        
     </script>
 </template>
