@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var rolePicker = require("./apps/townofsalem/rolePicker.js");
 var roles = require("./apps/townofsalem/roles.js");
 requestChangeRemotePage("tos");
@@ -11,7 +6,7 @@ var voteList = [];
 var guiltyVoters = [];
 var innoVoters = [];
 var playerOnTrial = null;
-var dayOne = false; //TODO: BACK TO TRUE YOU FOCKING FOCK
+var dayOne = false;
 var voteCounter = 0;
 var votingTimer = 30;
 var stopVotingTime = false;
@@ -20,7 +15,7 @@ var guilty = 0;
 var phase = "Discussion";
 var isDay = true;
 function discussion() {
-    UnjailPlayer(); //unjails jailed player
+    UnjailPlayer();
     votingTimer = 30;
     voteCounter = 0;
     stopVotingTime = false;
@@ -147,9 +142,8 @@ function sendMessageToPlayers(data) {
     if (phase != "Last Words" && phase != "Defense") {
         var sender_player = data.player;
         for (var i = 0; i < players.length; i++) {
-            var temp_player = players[i];
+            let temp_player = players[i];
             if (temp_player.uid == sender_player.uid) {
-                console.log('send msg to myself works');
                 sendToSocketId('getMessage', {
                     username: sender_player.username + ": ",
                     message: data.message
@@ -308,6 +302,9 @@ function alertOnAbilityCount() {
             else if (players[i].role.name == roles.Janitor.name) {
                 sendToSocketId("getMessage", { username: "", message: "You have " + (players[i].role.abilitylimit - players[i].abilityCounter) + " cleanings left." }, players[i].socketid);
             }
+            else if (players[i].role.name == roles.Survivor.name) {
+                sendToSocketId("getMessage", { username: "", message: "You have " + (players[i].role.abilitylimit - players[i].abilityCounter) + " bullet proof vests left." }, players[i].socketid);
+            }
         }
     }
 }
@@ -336,6 +333,14 @@ function checkDayAbilities() {
                     sendToSocketId("updateTargetPlayer", players[i].targetPlayer, players[i].socketid);
                     sendToSocketId("cannotUseAbility", {}, players[i].socketid);
                 }
+            }
+        }
+        else if (players[i].role.name == roles.Mayor.name) {
+            if (players[i].abilityCounter == 0) {
+                sendToSocketId('getMessage', {
+                    username: "",
+                    message: "You did not use your day ability."
+                }, players[i].socketid);
             }
         }
     }
@@ -415,6 +420,14 @@ function Button1(data) {
         }
     }
     else {
+        var i = getIndexByUID(data.player.uid);
+        if (!players[i].isded && players[i].role.Priority != 0 && players[i].abilityCounter < players[i].role.abilitylimit) {
+            if (players[i].role.name == roles.Jester.name && players[i].hanged) {
+                players[i].targetPlayer = data.targetPlayer;
+            }
+            else if (players[i].role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Sheriff.name) {
+            }
+        }
     }
 }
 function updatePlayerWill(data) {
@@ -544,7 +557,7 @@ function hangPlayer() {
     players[getIndexByUID(playerOnTrial.uid)].isded = true;
     sendVotingMessage(playerOnTrial.username, "", " has died. rip in pepperonies");
     players[getIndexByUID(playerOnTrial.uid)].howIDied = "iz jus a prank, y u heff to b med";
-    var deadlist = {}; //should i save it as class variable
+    var deadlist = {};
     for (var i = 0; i < players.length; i++) {
         if (players[i].isded) {
             var deadrole;
@@ -559,8 +572,6 @@ function hangPlayer() {
     }
     sendEmit("updateDeadList", deadlist);
     sendToSocketId("killOrResPlayer", true, playerOnTrial.socketid);
-    // show will and role
-    // put in graveyard (2 buttons will and deathnote)
     playerOnTrial = null;
 }
 function updatePlayerDeathnote(data) {
@@ -745,7 +756,7 @@ function classifyPlayer(index, rolename) {
         case "Werewolf":
             players[index] = new Werewolf(temp_uid, temp_socketid, temp_usrname);
             break;
-    } //TODO: add troll
+    }
 }
 Array.prototype.shuffle = function () {
     var input = this;
@@ -762,290 +773,196 @@ function addPlayer(uid, socketid) {
     p.roleList = roles;
     players.push(p);
 }
-var VoteInfo = (function () {
-    function VoteInfo() {
+class VoteInfo {
+    constructor() {
         this.votingTo = null;
         this.votesToMe = 0;
     }
-    return VoteInfo;
-}());
-var Player = (function () {
-    //add priority
-    function Player(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        this.roleList = []; //error is here: "unexpected token :"
+}
+class Player {
+    constructor(_uid, _socketid, usrname = "") {
+        this.roleList = [];
         this.nameList = [];
         this.username = "";
         this.isded = false;
         this.hanged = false;
-        this.roleBlocked = false; //check if needed
+        this.roleBlocked = false;
         this.blackmailed = false;
         this.inJail = false;
         this.cleaned = false;
         this.framed = false;
         this.abilityCounter = 0;
         this.targetPlayer = "";
-        this.will = ""; //check if needed + deathnote
+        this.will = "";
         this.howIDied = "";
         this.uid = _uid;
         this.socketid = _socketid;
         this.username = usrname;
     }
-    return Player;
-}());
-var Jailor = (function (_super) {
-    __extends(Jailor, _super);
-    function Jailor(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Jailor extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return Jailor;
-}(Player));
-var Medium = (function (_super) {
-    __extends(Medium, _super);
-    function Medium(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Medium extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Medium;
-}(Player));
-var Transporter = (function (_super) {
-    __extends(Transporter, _super);
-    function Transporter(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
-        this.target2 = ""; //for button2
-    }
-    return Transporter;
-}(Player));
-var Witch = (function (_super) {
-    __extends(Witch, _super);
-    function Witch(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Transporter extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.target2 = "";
     }
-    return Witch;
-}(Player));
-var Veteran = (function (_super) {
-    __extends(Veteran, _super);
-    function Veteran(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Witch extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
+        this.target2 = "";
+    }
+}
+class Veteran extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return Veteran;
-}(Player));
-var Escort = (function (_super) {
-    __extends(Escort, _super);
-    function Escort(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Escort extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Escort;
-}(Player));
-var Consort = (function (_super) {
-    __extends(Consort, _super);
-    function Consort(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Consort extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Consort;
-}(Player));
-var Doctor = (function (_super) {
-    __extends(Doctor, _super);
-    function Doctor(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Doctor extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Doctor;
-}(Player));
-var Janitor = (function (_super) {
-    __extends(Janitor, _super);
-    function Janitor(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Janitor extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Janitor;
-}(Player));
-var Retributionist = (function (_super) {
-    __extends(Retributionist, _super);
-    function Retributionist(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Retributionist extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Retributionist;
-}(Player));
-var Forger = (function (_super) {
-    __extends(Forger, _super);
-    function Forger(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Forger extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Forger;
-}(Player));
-var Consigliere = (function (_super) {
-    __extends(Consigliere, _super);
-    function Consigliere(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Consigliere extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Consigliere;
-}(Player));
-var Blackmailer = (function (_super) {
-    __extends(Blackmailer, _super);
-    function Blackmailer(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Blackmailer extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Blackmailer;
-}(Player));
-var Framer = (function (_super) {
-    __extends(Framer, _super);
-    function Framer(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Framer extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Framer;
-}(Player));
-var Bodyguard = (function (_super) {
-    __extends(Bodyguard, _super);
-    function Bodyguard(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Bodyguard extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Bodyguard;
-}(Player));
-var Godfather = (function (_super) {
-    __extends(Godfather, _super);
-    function Godfather(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Godfather extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return Godfather;
-}(Player));
-var Mafioso = (function (_super) {
-    __extends(Mafioso, _super);
-    function Mafioso(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Mafioso extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return Mafioso;
-}(Player));
-var SerialKiller = (function (_super) {
-    __extends(SerialKiller, _super);
-    function SerialKiller(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class SerialKiller extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return SerialKiller;
-}(Player));
-var VampireHunter = (function (_super) {
-    __extends(VampireHunter, _super);
-    function VampireHunter(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class VampireHunter extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return VampireHunter;
-}(Player));
-var Jester = (function (_super) {
-    __extends(Jester, _super);
-    function Jester(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Jester extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Jester;
-}(Player));
-var Vigilante = (function (_super) {
-    __extends(Vigilante, _super);
-    function Vigilante(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Vigilante extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
-        this.willDie = false; //if kills town
+        this.willDie = false;
     }
-    return Vigilante;
-}(Player));
-var Disguiser = (function (_super) {
-    __extends(Disguiser, _super);
-    function Disguiser(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Disguiser extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Disguiser;
-}(Player));
-var Amnesiac = (function (_super) {
-    __extends(Amnesiac, _super);
-    function Amnesiac(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Amnesiac extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Amnesiac;
-}(Player));
-var Arsonist = (function (_super) {
-    __extends(Arsonist, _super);
-    function Arsonist(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Arsonist extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return Arsonist;
-}(Player));
-var Survivor = (function (_super) {
-    __extends(Survivor, _super);
-    function Survivor(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Survivor extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Survivor;
-}(Player));
-var Sheriff = (function (_super) {
-    __extends(Sheriff, _super);
-    function Sheriff(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Sheriff extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Sheriff;
-}(Player));
-var Lookout = (function (_super) {
-    __extends(Lookout, _super);
-    function Lookout(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Lookout extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Lookout;
-}(Player));
-var Investigator = (function (_super) {
-    __extends(Investigator, _super);
-    function Investigator(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Investigator extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
     }
-    return Investigator;
-}(Player));
-var Vampire = (function (_super) {
-    __extends(Vampire, _super);
-    function Vampire(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Vampire extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.youngest = false;
     }
-    return Vampire;
-}(Player));
-var Werewolf = (function (_super) {
-    __extends(Werewolf, _super);
-    function Werewolf(_uid, _socketid, usrname) {
-        if (usrname === void 0) { usrname = ""; }
-        _super.call(this, _uid, _socketid);
+}
+class Werewolf extends Player {
+    constructor(_uid, _socketid, usrname = "") {
+        super(_uid, _socketid);
         this.deathnote = "";
     }
-    return Werewolf;
-}(Player));
+}
 function checkUserName(data) {
     if (data.usr == "") {
         sendEmit("requestUserNCallBack", {
@@ -1055,8 +972,8 @@ function checkUserName(data) {
         });
         return false;
     }
-    for (var uid in players) {
-        var player = players[uid];
+    for (let uid in players) {
+        let player = players[uid];
         if (player.username == data.usr) {
             sendEmit("requestUserNCallBack", {
                 flag: true,
