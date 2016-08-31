@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Time</title>
+    <meta id="addressbarColorAndroid" name="theme-color" content="#019a91">
+    <meta id="addressbarColorIOS" name="apple-mobile-web-app-status-bar-style" content="#019a91">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
+</head>
+
+<style>
+
+</style>
+
+<body style="background-color: #d0e0e7;margin:0">
+
+</body>
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+    var socket = io();
+    var uid = guid();
+
+    var player;
+
+    socket.emit("join", uid);
+
+    function requestUsername() {
+        var TEMP_username = document.getElementById("usernameInput").value;
+        socket.emit("requestUserN", {
+            usr: TEMP_username,
+            uid: uid
+        });
+    }
+    socket.on('requestUserNCallBack', function(data) {
+        if (!data.flag && uid == data.uid) {
+            var username = data.usr;
+            document.getElementById("start").style.display = 'none';
+            document.getElementById("waiting").style.display = '';
+            document.getElementById("userView").innerHTML = "Hello " + username;
+        }
+        if (data.flag && uid == data.uid) {
+            document.getElementById("error").innerHTML = "Darling, the username is unavailable 💃";
+        }
+    });
+
+    function sendButtonPress(button) {
+        socket.emit('buttonPress', button);
+    }
+
+    socket.on('changePageRemote', function(page) {
+        document.location.href = "/" + page;
+    });
+
+    function guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
+</script>
+
+</html>
