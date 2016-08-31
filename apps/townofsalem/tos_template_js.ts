@@ -40,7 +40,7 @@ function discussion() {
         phase: "Discussion"
     });
     isDay = true;
-    var interval = setInterval(function () {
+    var interval = setInterval(function() {
         if (--timer < -5) {
             clearInterval(interval);
             if (dayOne) {
@@ -60,7 +60,7 @@ function voting() { //everyone alive can vote
         time: votingTimer,
         phase: "Voting"
     });
-    var interval = setInterval(function () {
+    var interval = setInterval(function() {
         if (stopVotingTime) {
             clearInterval(interval);
             defense();
@@ -81,7 +81,7 @@ function defense() { //only trailled person can talk
         phase: "Defense"
     });
     var timer = 5;
-    var interval = setInterval(function () {
+    var interval = setInterval(function() {
         if (--timer < -5) {
             clearInterval(interval);
             judgement();
@@ -100,7 +100,7 @@ function judgement() { //everyone alive can vote
         defendant: playerOnTrial.username
     });
     var timer = 10;
-    var interval = setInterval(function () {
+    var interval = setInterval(function() {
         if (--timer < -5) {
             clearInterval(interval);
             showJudgementResults();
@@ -123,7 +123,7 @@ function lastWords() {
         phase: "Last Words"
     });
     var timer = 5;
-    var interval = setInterval(function () {
+    var interval = setInterval(function() {
         if (--timer < -5) {
             clearInterval(interval);
             hangPlayer();
@@ -143,7 +143,7 @@ function night() {
     });
     isDay = false;
     var timer = 40;
-    var interval = setInterval(function () {
+    var interval = setInterval(function() {
         if (--timer < -5) {
             clearInterval(interval);
             discussion();
@@ -159,7 +159,6 @@ function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
         for (var i = 0; i < players.length; i++) {
             let temp_player = players[i];
             if (temp_player.uid == sender_player.uid) {
-                console.log('send msg to myself works');
                 sendToSocketId('getMessage', {
                     username: sender_player.username + ": ",
                     message: data.message
@@ -323,6 +322,9 @@ function alertOnAbilityCount() {
             else if (players[i].role.name == roles.Janitor.name) {
                 sendToSocketId("getMessage", { username: "", message: "You have " + (players[i].role.abilitylimit - players[i].abilityCounter) + " cleanings left." }, players[i].socketid);
             }
+            else if (players[i].role.name == roles.Survivor.name) {
+                sendToSocketId("getMessage", { username: "", message: "You have " + (players[i].role.abilitylimit - players[i].abilityCounter) + " bullet proof vests left." }, players[i].socketid);
+            }
         }
     }
 }
@@ -352,6 +354,14 @@ function checkDayAbilities() {
                     sendToSocketId("updateTargetPlayer", players[i].targetPlayer, players[i].socketid);
                     sendToSocketId("cannotUseAbility", {}, players[i].socketid);
                 }
+            }
+        }
+        else if (players[i].role.name == roles.Mayor.name) {
+            if (players[i].abilityCounter == 0) {
+                sendToSocketId('getMessage', {
+                    username: "",
+                    message: "You did not use your day ability."
+                }, players[i].socketid);
             }
         }
     }
@@ -424,8 +434,16 @@ function Button1(data) {
                 sendVotingMessage(data.player.username, "", msg);
             }
         }
-    } else { //night 
+    } else { //night
         //if player isnt dead and has a night ability: set target name
+        var i = getIndexByUID(data.player.uid);
+        if (!players[i].isded && players[i].role.Priority != 0 && players[i].abilityCounter < players[i].role.abilitylimit) {
+            if (players[i].role.name == roles.Jester.name && players[i].hanged) {
+                    players[i].targetPlayer = data.targetPlayer;
+            }
+            else if(players[i].role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Sheriff.name){
+            }
+        }
     }
 }
 
@@ -770,7 +788,7 @@ function classifyPlayer(index, rolename) {
     }//TODO: add troll
 }
 
-Array.prototype.shuffle = function () {
+Array.prototype.shuffle = function() {
     var input = this;
     for (var i = input.length - 1; i >= 0; i--) {
 
