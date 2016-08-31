@@ -485,11 +485,7 @@
                 elems[i].style.display = 'none';
                 elems[i].value = "Do shit with that one too";
             }
-<<<<<<< HEAD
-            if (player.role.name == roles.Jailor.name && player.canUseAbility) {
-=======
             if (player.role.name == roles.Jailor.name && player.canUseAbility && player.targetPlayer != "") {
->>>>>>> b27073daa6b8dc5bf33e1d976604ae6ab08f9ad3
                 document.getElementById("button1_" + player.targetPlayer).style.display = "block";
             }
             if (!player.inJail) {
