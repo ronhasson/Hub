@@ -280,6 +280,23 @@ function getIndexByUsername(_username) {
     return -1;
 }
 
+function compare(a,b) {
+    if(a.role.priority < b.role.priority) {
+        return -1;
+    }
+    if(a.role.priority > b.role.priority) {
+        return 1;
+    }
+    return 0;
+}
+
+function sortPlayersByPriority() {
+    var sortedPlayers = players.sort();
+    console.log(players);
+    console.log(sortedPlayers);
+
+}
+
 function UnjailPlayer() {
     for (var i = 0; i < players.length; i++) {
         if (players[i].role.name == roles.Jailor.name) {

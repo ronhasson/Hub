@@ -4,6 +4,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1,
         team: "town",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
@@ -18,6 +19,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "town",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Doctor.png",
@@ -32,6 +34,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "town",
+        priority: 2,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Escort.png",
@@ -46,6 +49,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "town",
+        priority: 4,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
@@ -60,6 +64,7 @@ var Role = {
         canKill: true,
         abilitylimit: 3,
         team: "town",
+        priority: 5,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jailor.png",
@@ -74,6 +79,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "town",
+        priority: 4,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Lookout.png",
@@ -88,6 +94,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "town",
+        priority: 0,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mayor.png",
@@ -102,6 +109,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "town",
+        priority: 0,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Medium.png",
@@ -116,6 +124,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "town",
+        priority: 3,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Retributionist.png",
@@ -130,6 +139,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "town",
+        priority: 4,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Sheriff.png",
@@ -144,6 +154,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "town",
+        priority: 0,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Spy.png",
@@ -158,6 +169,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "town",
+        priority: 1,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Transporter.png",
@@ -172,6 +184,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1000,
         team: "town",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/VampireHunter.png",
@@ -186,6 +199,7 @@ var Role = {
         canKill: true,
         abilitylimit: 3,
         team: "town",
+        priority: 1,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Veteran.png",
@@ -200,6 +214,7 @@ var Role = {
         canKill: true,
         abilitylimit: 3,
         team: "town",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vigilante.png",
@@ -214,6 +229,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "mafia",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Blackmailer.png",
@@ -228,6 +244,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "mafia",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consigliere.png",
@@ -242,6 +259,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "mafia",
+        priority: 2,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consort.png",
@@ -256,6 +274,7 @@ var Role = {
         canKill: false,
         abilitylimit: 3,
         team: "mafia",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Disguiser.png",
@@ -270,6 +289,7 @@ var Role = {
         canKill: false,
         abilitylimit: 3,
         team: "mafia",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Forger.png",
@@ -284,6 +304,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "mafia",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
@@ -298,6 +319,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1000,
         team: "mafia",
+        priority: 3,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Godfather.png",
@@ -312,6 +334,7 @@ var Role = {
         canKill: false,
         abilitylimit: 3,
         team: "mafia",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
@@ -326,6 +349,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1000,
         team: "mafia",
+        priority: 5,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mafioso.png",
@@ -340,6 +364,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "neutral",
+        priority: 6,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Amnesiac.png",
@@ -354,6 +379,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Arsonist.png",
@@ -368,6 +394,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 0,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Executioner.png",
@@ -382,6 +409,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "neutral",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jester.png",
@@ -396,6 +424,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/SerialKiller.png",
@@ -410,6 +439,7 @@ var Role = {
         canKill: false,
         abilitylimit: 4,
         team: "neutral",
+        priority: 3,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Survivor.png",
@@ -424,6 +454,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 5,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vampire.png",
@@ -438,6 +469,7 @@ var Role = {
         canKill: true,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 5,
         unique: true,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Werewolf.png",
@@ -452,6 +484,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 2,
         unique: false,
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Witch.png",
@@ -466,6 +499,7 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "neutral",
+        priority: 0,
         unique: true,
         info: {
             img: "http://en.wikifur.com/w/images/f/f3/Troll.png",
