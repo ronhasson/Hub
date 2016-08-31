@@ -144,6 +144,7 @@
             <p id="AbilitiesRole" style="margin:0;"></p>
             <p id="AttributesRole" style="margin:0;"></p>
             <p id="GoalRole" style="margin:0;"></p>
+            <table id="teamTable"></table>
         </div>
 
         <div id="graveyard">
@@ -182,6 +183,25 @@
         }
     }
 
+    function updateTeamTable() {
+        var table = "";
+        if (player.role.team == "mafia") {
+            document.getElementById("teamTable").innerHTML = "";
+            for (let maf in player.mafiaList) {
+                if (!isUsernameDead(player.mafiaList[maf].username)) {
+                    table += "<tr><td>" + player.mafiaList[maf].username + " ( " + player.mafiaList[maf].role.name + " )</td></tr>";
+                }
+            }
+        } else if (player.role.name == roles.Vampire.name) {
+            document.getElementById("teamTable").innerHTML = "";
+            for (let vam in player.vampireList) {
+                if (!isUsernameDead(player.vampireList[vam].username)) {
+                    table += "<tr><td>" + player.vampireList[vam].username + " ( " + player.vampireList[vam].role.name + " )</td></tr>";
+                }
+            }
+        }
+        document.getElementById("teamTable").innerHTML = table;
+    }
 
 
     function addGraveyard() {
@@ -261,7 +281,7 @@
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
-        document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        document.getElementById("log").value += data.username + data.message + "\n";
     });
 
     socket.on('getVotingMessage', function(data) {
@@ -336,23 +356,28 @@
             if (!sunClicked) {
                 setClassButtonDisplayTo("button2", "none");
                 setClassButtonDisplayTo("button1", "none");
-                if (player.role.name == roles.Jailor.name && !isUsernameDead(player.username)) {
+                if (player.role.name == roles.Jailor.name && !player.isded) {
                     for (var i in nameList) {
                         if (!isUsernameDead(nameList[i]) && player.username != nameList[i]) {
                             document.getElementById("sunbutton_" + nameList[i]).style.display = "block";
                             document.getElementById("sunbutton_" + nameList[i]).value = "Jail that muthafaka";
                         }
                     }
-                } else if (isUsernameDead(player.username) && player.role.name == roles.Medium.name) {
+                } else if (player.role.name == roles.Medium.name && player.isded && player.canUseAbility) {
                     for (var i = 0; i < nameList.length; i++) {
                         if (!isUsernameDead(nameList[i])) {
                             document.getElementById("sunbutton_" + nameList[i]).style.display = "block";
                             document.getElementById("sunbutton_" + nameList[i]).value = "Seance that muthafaka";
                         }
                     }
-                } else if (player.role.name == roles.Mayor.name && !isUsernameDead(player.username)) {
-                    document.getElementById("sunbutton_" + player.username).style.display = "block";
-                    document.getElementById("sunbutton_" + player.username).value = "Reveal that muthafaka";
+                } else if (player.role.name == roles.Mayor.name && !player.isded && player.canUseAbility) {
+                    socket.emit("requestFromServer", {
+                        action: "sunButton",
+                        data: {
+                            player: player,
+                            targetname: player.username
+                        }
+                    });
                 }
                 sunClicked = true;
             } else {
@@ -398,13 +423,15 @@
     }
 
     function ActivateAction3(targetname) {
-        socket.emit("requestFromServer", {
-            action: "sunButton",
-            data: {
-                player: player,
-                targetname: targetname
-            }
-        });
+        if (player.role.name != roles.Mayor.name) {
+            socket.emit("requestFromServer", {
+                action: "sunButton",
+                data: {
+                    player: player,
+                    targetname: targetname
+                }
+            });
+        }
     }
 
     function setClassButtonDisplayTo(classname, present) {
@@ -425,6 +452,9 @@
             for (var i = 0; i < elems.length; i += 1) {
                 elems[i].style.display = 'block';
                 elems[i].value = "Vote!";
+            }
+            for (let deadp in deadPlayers) {
+                document.getElementById("button1_" + deadPlayers[deadp].username).style.display = 'none';
             }
             document.getElementById("button1_" + player.username).style.display = 'none';
         } else if (phase == "Defense") {
@@ -455,46 +485,61 @@
                 elems[i].style.display = 'none';
                 elems[i].value = "Do shit with that one too";
             }
-            if (player.role.name == roles.Jailor.name && player.targetPlayer != "") {
+            if (player.role.name == roles.Jailor.name && player.canUseAbility) {
                 document.getElementById("button1_" + player.targetPlayer).display = "block";
-            } else if (player.role.name == roles.Transporter.name) {
-                setClassButtonDisplayTo("button2", "block");
-                setClassButtonDisplayTo("button1", "block");
-            } else if (player.role.name == roles.Witch.name) {
-                setClassButtonDisplayTo("button2", "block");
-                setClassButtonDisplayTo("button1", "block");
-                document.getElementById("button1_" + player.username).style.display = 'none';
-            } else if (player.role.name == roles.Amnesiac.name) { //when all maf's are ded you can become a mafioso
-                for (let i in deadPlayers) {
-                    if (deadPlayers[i].role == null) {
-                        document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
-                    } else if (!deadPlayers[i].role.unique) {
-                        document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+            }
+            if (!player.inJail) {
+                if (player.canUseAbility) {
+                    if (player.role.name == roles.Transporter.name) {
+                        setClassButtonDisplayTo("button2", "block");
+                        setClassButtonDisplayTo("button1", "block");
+                    } else if (player.role.name == roles.Witch.name) {
+                        setClassButtonDisplayTo("button2", "block");
+                        setClassButtonDisplayTo("button1", "block");
+                        document.getElementById("button1_" + player.username).style.display = 'none';
+                    } else if (player.role.name == roles.Amnesiac.name) { //when all maf's are ded you can become a mafioso
+                        for (let i in deadPlayers) {
+                            if (deadPlayers[i].role == null) {
+                                document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+                            } else if (!deadPlayers[i].role.unique) {
+                                document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+                            }
+                        }
+                    } else if (player.role.team == "mafia") {
+                        setClassButtonDisplayTo("button1", "block");
+                        for (let playa in player.mafiaList) {
+                            document.getElementById("button1_" + player.mafiaList[playa].username).style.display = 'none';
+                        }
+                    } else if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name || player.role.name == roles.Arsonist.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                    } else if (player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
+                        player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                        document.getElementById("button1_" + player.username).style.display = 'none';
+                    } else if (player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name) {
+                        document.getElementById("button1_" + player.username).style.display = 'block';
+                    } else if (player.role.name == roles.Vampire.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                        for (let playa in player.vampireList) {
+                            document.getElementById("button1_" + player.vampireList[playa].username).style.display = 'none';
+                        }
+                    } else if (player.role.name == roles.Retributionist.name) {
+                        for (let i in deadPlayers) {
+                            if (deadPlayers[i].role.team == "town") {
+                                document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+                            }
+                        }
+                    }
+                } else {
+                    if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                        document.getElementById("button1_" + player.username).style.display = 'none';
                     }
                 }
-            } else if (player.role.team == "mafia") {
-                setClassButtonDisplayTo("button1", "block");
-                for (let playa in player.mafiaList) {
-                    document.getElementById("button1_" + player.mafiaList[playa].username).style.display = 'none';
-                }
-            } else if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name || player.role.name == roles.Arsonist.name) {
-                etClassButtonDisplayTo("button1", "block");
-            } else if (player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
-                player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name) {
-                etClassButtonDisplayTo("button1", "block");
-                document.getElementById("button1_" + player.username).style.display = 'none';
-            } else if (player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name) {
-                document.getElementById("button1_" + player.username).style.display = 'block';
-            } else if (player.role.name == roles.Vampire.name) {
-                setClassButtonDisplayTo("button1", "block");
-                for (let playa in player.vampireList) {
-                    document.getElementById("button1_" + player.vampireList[playa].username).style.display = 'none';
-                }
-            } else if (player.role.name == roles.Retributionist.name) {
+            }
+            if (player.role.name != roles.Retributionist.name && player.role.name != roles.Amnesiac.name) { //remove all buttons from dead, unless you have abilities that can be used on dead (i.e. ret/amne)
                 for (let i in deadPlayers) {
-                    if (deadPlayers[i].role.team == "town") {
-                        document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
-                    }
+                    document.getElementById("button1_" + deadPlayers[i].username).style.display = 'none';
                 }
             }
         }
@@ -571,6 +616,8 @@
     }
     socket.on('startGame', function(data) {
         player = data.player;
+        player.isded = false;
+        player.canUseAbility = true;
         roles = data.roles;
         nameList = data.nameList;
         document.getElementById("nameView").innerHTML = player.username;
@@ -584,10 +631,29 @@
         document.getElementById("waiting").style.display = 'none';
         updateRoleText();
         addActionTable();
+        updateTeamTable();
     });
+
     socket.on('updateDeadList', function(data) {
         deadPlayers = data;
         addGraveyard();
+        updateTeamTable();
+    });
+
+    socket.on('killOrResPlayer', function(data) {
+        player.isded = data;
+    });
+
+    socket.on('jailOrUnjailPlayer', function(data) {
+        player.inJail = data;
+    });
+
+    socket.on('updateTargetPlayer', function(data) {
+        player.targetPlayer = data;
+    });
+
+    socket.on('cannotUseAbility', function(data) {
+        player.canUseAbility = false;
     });
 </script>
 
