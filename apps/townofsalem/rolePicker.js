@@ -7,14 +7,14 @@ var getRoles = function getRoles(num) {
             ];
             case 2:
             return [
-                Role.Vampire,
-                Role.Vampire
+                Role.Jailor,
+                Role.Jailor
             ];
             case 3:
             return [
-              Role.Mafioso,
-              Role.Consort,
-              Role.Spy
+              Role.Jailor,
+              Role.Vampire,
+              Role.Vampire
             ];
             case 4:
             return [

@@ -22,7 +22,7 @@
         padding-top: 9.5vh;
         transition: 0.5s;
     }
-
+    
     .sidenav a {
         padding: 8px 8px 8px 32px;
         text-decoration: none;
@@ -33,26 +33,26 @@
         border: 5px;
         font-family: sans-serif;
     }
-
+    
     .sidenav a:hover,
     .offcanvas a:focus {
         color: #18436b;
     }
-
+    
     .closebtn {
         position: absolute;
         top: 0;
         right: 25px;
         margin-left: 50px;
     }
-
+    
     #main {
         transition: margin-left .5s;
         padding-top: 2vh;
         padding-left: 3vw;
         font-size: 3vh;
     }
-
+    
     #topBar {
         background-color: rgb(45, 110, 236);
         width: 100vw;
@@ -60,7 +60,7 @@
         height: 11vw;
         box-shadow: 0px 0px 19px 0px rgba(0, 0, 0, 0.75);
     }
-
+    
     .opener {
         vertical-align: middle;
         font-size: 6.5vw;
@@ -69,7 +69,7 @@
         margin-top: 1.5vw;
         cursor: pointer;
     }
-
+    
     .inTopBar {
         vertical-align: middle;
         font-size: 6vw;
@@ -106,16 +106,22 @@
             <a onclick="changeTab('chat')">Chat</a>
             <a onclick="changeTab('actions')">Actions</a>
             <a onclick="changeTab('role')">Role</a>
+            <a onclick="changeTab('graveyard')">Graveyard</a>
         </div>
 
         <div id="topBar">
             <span onclick="openNav()" class="opener"><i class="fa fa-bars" aria-hidden="true"></i></span>
             <span class="inTopBar" id="phases"></span>
-            <span class="inTopBar" style="color:rgb(250, 255, 0);display:none" id="sun"><i class="fa fa-sun-o" aria-hidden="true"></i></span>
-            <span class="inTopBar" style="color:rgb(198, 26, 9);display:none" id="deathNote"><i class="fa fa-sticky-note" aria-hidden="true"></i></span>
-            <span class="inTopBar" style="color:rgb(245, 231, 184)" id="will"><i class="fa fa-sticky-note" aria-hidden="true"></i></span>
+            <span class="inTopBar" style="color:rgb(250, 255, 0);display:none" id="sun" onclick="onClickSun()"><i class="fa fa-sun-o" aria-hidden="true"></i></span>
+            <span class="inTopBar" style="color:rgb(198, 26, 9);display:none" id="deathNote" onclick="onClickDeathNote()"><i class="fa fa-sticky-note" aria-hidden="true"></i></span>
+            <span class="inTopBar" style="color:rgb(245, 231, 184)" id="will" onclick="onClickWill()"><i class="fa fa-sticky-note" aria-hidden="true"></i></span>
         </div>
-
+        <div id="willsAndDeathnotes">
+            <textarea id="myWillText" style="position: fixed; top: 50%; left:50%; margin-top: -50px; margin-left: -50px; display:none" cols="40" rows="10"></textarea>
+            <textarea id="willText" style="position: fixed; top: 50%; left:50%; margin-top: -50px; margin-left: -50px; display:none" cols="40" rows="10" readonly></textarea>
+            <textarea id="myDeathNoteText" style="position: fixed; top: 50%; left:50%; margin-top: -50px; margin-left: -50px; display:none" cols="40" rows="10"></textarea>
+            <textarea id="DeathNoteText" style="position: fixed; top: 50%; left:50%; margin-top: -50px; margin-left: -50px; display:none" cols="40" rows="10" readonly></textarea>
+        </div>
         <div id="chatMenu">
             <!--
               all, mafia, vamp, jailor,dead, siance
@@ -129,10 +135,6 @@
         </div>
 
         <div id="actions" style="display: none">
-            <center>
-                <table>
-                </table>
-            </center>
         </div>
 
         <div id="role" style="font-family: sans-serif;white-space: pre-line;padding:27px; display: none">
@@ -142,27 +144,104 @@
             <p id="AbilitiesRole" style="margin:0;"></p>
             <p id="AttributesRole" style="margin:0;"></p>
             <p id="GoalRole" style="margin:0;"></p>
+            <table id="teamTable"></table>
+        </div>
+
+        <div id="graveyard">
         </div>
     </div>
 
 </body>
 <script>
+    function onClickWill() {
+        if (document.getElementById("myWillText").style.display == "none") {
+            document.getElementById("myWillText").style.display = "block";
+        } else if (!isUsernameDead(player.username)) {
+            document.getElementById("myWillText").style.display = "none";
+            socket.emit("requestFromServer", {
+                action: "updatePlayerWill",
+                data: {
+                    player: player,
+                    willText: document.getElementById("myWillText").value
+                }
+            });
+        }
+    }
+
+    function onClickDeathNote() {
+        if (document.getElementById("myDeathNoteText").style.display == "none") {
+            document.getElementById("myDeathNoteText").style.display = "block";
+        } else if (!isUsernameDead(player.username)) {
+            document.getElementById("myDeathNoteText").style.display = "none";
+            socket.emit("requestFromServer", {
+                action: "updatePlayerDeathnote",
+                data: {
+                    player: player,
+                    deathnoteText: document.getElementById("myDeathNoteText").value
+                }
+            });
+        }
+    }
+
+    function updateTeamTable() {
+        var table = "";
+        if (player.role.team == "mafia") {
+            document.getElementById("teamTable").innerHTML = "";
+            for (let maf in player.mafiaList) {
+                if (!isUsernameDead(player.mafiaList[maf].username)) {
+                    table += "<tr><td>" + player.mafiaList[maf].username + " ( " + player.mafiaList[maf].role.name + " )</td></tr>";
+                }
+            }
+        } else if (player.role.name == roles.Vampire.name) {
+            document.getElementById("teamTable").innerHTML = "";
+            for (let vam in player.vampireList) {
+                if (!isUsernameDead(player.vampireList[vam].username)) {
+                    table += "<tr><td>" + player.vampireList[vam].username + " ( " + player.vampireList[vam].role.name + " )</td></tr>";
+                }
+            }
+        }
+        document.getElementById("teamTable").innerHTML = table;
+    }
+
+
+    function addGraveyard() {
+        var table = "<table style='font-size:45px'>";
+        for (let deadPlayer in deadPlayers) {
+            var deadname = deadPlayers[deadPlayer].username;
+            var deadrole;
+            if (deadPlayers[deadPlayer].role == null) {
+                deadrole = "cleaned";
+            } else {
+                deadrole = deadPlayers[deadPlayer].role.name;
+            }
+            table += "<tr><td><span style='color:gray' id='name_" + deadname + "'>" + deadname + " (" + deadrole + ")" + "</span></td><td><span style='color:rgb(245, 231, 184)' class='deadWill' id='will_" + deadname + "' onclick='showWill(\"" + deadname +
+                "\")'><i class='fa fa-sticky-note' aria-hidden='true'></i></span></td><td><span style='color:rgb(198, 26, 9)' class='deadDeathnote' id='deathnote_" + deadname + "' onclick='showDeathnote(\"" + deadname +
+                "\")'><i class='fa fa-sticky-note' aria-hidden='true'></i></span></td></tr>";
+        }
+        table += "</table>";
+        document.getElementById("graveyard").innerHTML = table;
+    }
+
     function addActionTable() { //TODO: ron do stuff
         var table = "<table style='font-size:45px'>";
         for (let name in nameList) {
             table += "<tr><td><span id='name_" + nameList[name] + "'>" + nameList[name] + "</span></td><td><input class='button1' type='button' id='button1_" + nameList[name] + "' onclick='ActivateAction(\"" + nameList[name] +
-                "\")'/></td><td><input class='button2' type='button' id='button2_" + nameList[name] + "' onclick='ActivateAction2(\"" + nameList[name] + "\")'/></td></tr>";
+                "\")'/></td><td><input class='button2' type='button' id='button2_" + nameList[name] + "' onclick='ActivateAction2(\"" + nameList[name] + "\")'/></td><td><input style=" + '"display:none; background-color:yellow"' + " class='sunbutton' type='button' id='sunbutton_" + nameList[name] + "' onclick='ActivateAction3(\"" + nameList[name] + "\")'/></td></tr>";
         }
         table += "</table>";
         document.getElementById("actions").innerHTML = table;
         var elems = document.getElementsByClassName("button1");
-        for (var i=0;i<elems.length;i+=1){
-                elems[i].size = "100";
-            }
+        for (var i = 0; i < elems.length; i += 1) {
+            elems[i].size = "100";
+        }
         elems = document.getElementsByClassName("button2");
-        for (var i=0;i<elems.length;i+=1){
-                elems[i].size = "100";
-            }
+        for (var i = 0; i < elems.length; i += 1) {
+            elems[i].size = "100";
+        }
+        elems = document.getElementsByClassName("sunbutton");
+        for (var i = 0; i < elems.length; i += 1) {
+            elems[i].size = "100";
+        }
     }
 
     function openNav() {
@@ -189,17 +268,20 @@
 
     var player;
     var roles;
-
-    var mafiaList = {};
-    var vampireList = {};
+    var isDay = true;
     var nameList = {};
+    var deadPlayers = {};
 
+    var sunClicked = false;
+
+    var currentPhase = "";
+    var currentDefendant = "";
     var nowVoting = false;
 
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
-        document.getElementById("log").value += data.username + ": " + data.message + "\n";
+        document.getElementById("log").value += data.username + data.message + "\n";
     });
 
     socket.on('getVotingMessage', function(data) {
@@ -207,20 +289,110 @@
     });
 
     socket.on('changePhase', function(data) {
-        if(nowVoting && data.phase != "Voting")
+        currentDefendant = "";
+        currentPhase = data.phase;
+        isDay = data.phase != "Night";
+        if (sunClicked && !isDay) {
+            setClassButtonDisplayTo("sunbutton", "none");
+            sunClicked = false;
+            editActionButtons(currentPhase, currentDefendant);
+        }
+        if (!isDay) {
+            document.getElementById("sun").style.display = 'none';
+        } else if (player.role.name == roles.Jailor.name || player.role.name == roles.Mayor.name) {
+            document.getElementById("sun").style.display = 'block';
+        }
+        if (nowVoting && data.phase != "Voting")
             nowVoting = false;
-        if(data.phase == "Voting") {
+        if (data.phase == "Voting") {
             nowVoting = true;
         }
         if (data.hasOwnProperty('defendant')) {
             startCountdown(data.time, data.phase, data.defendant);
+            currentDefendant = data.defendant;
         } else {
             startCountdown(data.time, data.phase);
         }
     });
 
+    function showWill(targetplayer) {
+        if (document.getElementById("willText").style.display == "none") {
+            for (let deadp in deadPlayers) {
+                if (deadPlayers[deadp].username == targetplayer) {
+                    document.getElementById("willText").value = deadPlayers[deadp].will;
+                }
+            }
+            document.getElementById("willText").style.display = "block";
+        } else {
+            document.getElementById("willText").value = "";
+            document.getElementById("willText").style.display = "none";
+        }
+    }
+
+    function showDeathnote(targetplayer) {
+        if (document.getElementById("DeathNoteText").style.display == "none") {
+            for (let deadp in deadPlayers) {
+                if (deadPlayers[deadp].username == targetplayer) {
+                    document.getElementById("DeathNoteText").value = deadPlayers[deadp].deathnote;
+                }
+            }
+            document.getElementById("DeathNoteText").style.display = "block";
+        } else {
+            document.getElementById("DeathNoteText").value = "";
+            document.getElementById("DeathNoteText").style.display = "none";
+        }
+    }
+
+    function isUsernameDead(usrname) {
+        for (var i = 0; i < deadPlayers.length; i++) {
+            if (deadPlayers[i].username == usrname)
+                return true;
+        }
+        return false;
+    }
+
+    function onClickSun() {
+        if (isDay) {
+            if (!sunClicked) {
+                setClassButtonDisplayTo("button2", "none");
+                setClassButtonDisplayTo("button1", "none");
+                if (player.role.name == roles.Jailor.name && !player.isded) {
+                    for (var i in nameList) {
+                        if (!isUsernameDead(nameList[i]) && player.username != nameList[i]) {
+                            document.getElementById("sunbutton_" + nameList[i]).style.display = "block";
+                            document.getElementById("sunbutton_" + nameList[i]).value = "Jail that muthafaka";
+                        }
+                    }
+                } else if (player.role.name == roles.Medium.name && player.isded && player.canUseAbility) {
+                    for (var i = 0; i < nameList.length; i++) {
+                        if (!isUsernameDead(nameList[i])) {
+                            document.getElementById("sunbutton_" + nameList[i]).style.display = "block";
+                            document.getElementById("sunbutton_" + nameList[i]).value = "Seance that muthafaka";
+                        }
+                    }
+                } else if (player.role.name == roles.Mayor.name && !player.isded && player.canUseAbility) {
+                    socket.emit("requestFromServer", {
+                        action: "sunButton",
+                        data: {
+                            player: player,
+                            targetname: player.username
+                        }
+                    });
+                }
+                sunClicked = true;
+            } else {
+                setClassButtonDisplayTo("sunbutton", "none");
+                sunClicked = false;
+                editActionButtons(currentPhase, currentDefendant);
+            }
+        }
+    }
+
+
+
     function startCountdown(timer, phase, defendant = "") {
-        editActionButtons(phase, defendant);
+        if (!sunClicked || phase == "Night" && !player.isded)
+            editActionButtons(phase, defendant);
         var interval = setInterval(function() {
             document.getElementById("phases").innerHTML = phase + ": " + timer;
             if (--timer < 0 || (!nowVoting && phase == "Voting")) {
@@ -250,11 +422,23 @@
         });
     }
 
+    function ActivateAction3(targetname) {
+        if (player.role.name != roles.Mayor.name) {
+            socket.emit("requestFromServer", {
+                action: "sunButton",
+                data: {
+                    player: player,
+                    targetname: targetname
+                }
+            });
+        }
+    }
+
     function setClassButtonDisplayTo(classname, present) {
         var elems = document.getElementsByClassName(classname);
-        for (var i=0;i<elems.length;i+=1){
-                elems[i].style.display = present;
-            }
+        for (var i = 0; i < elems.length; i += 1) {
+            elems[i].style.display = present;
+        }
     }
 
     function editActionButtons(phase, defendant) {
@@ -265,15 +449,18 @@
         } else if (phase == "Voting") {
             setClassButtonDisplayTo("button2", "none");
             elems = document.getElementsByClassName("button1");
-            for (var i=0;i<elems.length;i+=1){
+            for (var i = 0; i < elems.length; i += 1) {
                 elems[i].style.display = 'block';
                 elems[i].value = "Vote!";
+            }
+            for (let deadp in deadPlayers) {
+                document.getElementById("button1_" + deadPlayers[deadp].username).style.display = 'none';
             }
             document.getElementById("button1_" + player.username).style.display = 'none';
         } else if (phase == "Defense") {
             setClassButtonDisplayTo("button2", "none");
             elems = document.getElementsByClassName("button1");
-            for (var i=0;i<elems.length;i+=1){
+            for (var i = 0; i < elems.length; i += 1) {
                 elems[i].style.display = 'none';
                 elems[i].value = "";
             }
@@ -288,44 +475,73 @@
             setClassButtonDisplayTo("button2", "none");
             setClassButtonDisplayTo("button1", "none");
         } else if (phase == "Night") {
-            setClassButtonDisplayTo("button2", "none");
-            setClassButtonDisplayTo("button1", "none");
-            if (player.role.name == roles.Jailor.name && player.inJail != null) {
-                document.getElementById("button1_" + player.inJail.username).display = "block";
-            } else if (player.role.name == roles.Transporter.name) {
-                setClassButtonDisplayTo("button2", "block");
-                setClassButtonDisplayTo("button1", "block");
-            } else if (player.role.name == roles.Witch.name) {
-                document.getElementById("button1_" + player.username).style.display = 'none';
-                setClassButtonDisplayTo("button2", "block");
-                setClassButtonDisplayTo("button1", "block");
-            } else if (player.role.name == roles.Amnesiac.name) //when all maf's are ded you can become a mafioso
-            {
-                setClassButtonDisplayTo("button1d", "block"); //normal dead
-                setClassButtonDisplayTo("button1dt", "block"); //normal town dead
-                setClassButtonDisplayTo("button1dc", "block"); //normal dead cleaned
-            } else if (player.role.team == "mafia") {
-                setClassButtonDisplayTo("button1", "block");
-                for (let playa in mafiaList) {
-                    document.getElementById("button1_" + mafiaList[playa].username).style.display = 'none';
+            elems = document.getElementsByClassName("button1");
+            for (var i = 0; i < elems.length; i += 1) {
+                elems[i].style.display = 'none';
+                elems[i].value = "Do shit";
+            }
+            elems = document.getElementsByClassName("button2");
+            for (var i = 0; i < elems.length; i += 1) {
+                elems[i].style.display = 'none';
+                elems[i].value = "Do shit with that one too";
+            }
+            if (player.role.name == roles.Jailor.name && player.canUseAbility) {
+                document.getElementById("button1_" + player.targetPlayer).display = "block";
+            }
+            if (!player.inJail) {
+                if (player.canUseAbility) {
+                    if (player.role.name == roles.Transporter.name) {
+                        setClassButtonDisplayTo("button2", "block");
+                        setClassButtonDisplayTo("button1", "block");
+                    } else if (player.role.name == roles.Witch.name) {
+                        setClassButtonDisplayTo("button2", "block");
+                        setClassButtonDisplayTo("button1", "block");
+                        document.getElementById("button1_" + player.username).style.display = 'none';
+                    } else if (player.role.name == roles.Amnesiac.name) { //when all maf's are ded you can become a mafioso
+                        for (let i in deadPlayers) {
+                            if (deadPlayers[i].role == null) {
+                                document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+                            } else if (!deadPlayers[i].role.unique) {
+                                document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+                            }
+                        }
+                    } else if (player.role.team == "mafia") {
+                        setClassButtonDisplayTo("button1", "block");
+                        for (let playa in player.mafiaList) {
+                            document.getElementById("button1_" + player.mafiaList[playa].username).style.display = 'none';
+                        }
+                    } else if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name || player.role.name == roles.Arsonist.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                    } else if (player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
+                        player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                        document.getElementById("button1_" + player.username).style.display = 'none';
+                    } else if (player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name) {
+                        document.getElementById("button1_" + player.username).style.display = 'block';
+                    } else if (player.role.name == roles.Vampire.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                        for (let playa in player.vampireList) {
+                            document.getElementById("button1_" + player.vampireList[playa].username).style.display = 'none';
+                        }
+                    } else if (player.role.name == roles.Retributionist.name) {
+                        for (let i in deadPlayers) {
+                            if (deadPlayers[i].role.team == "town") {
+                                document.getElementById("button1_" + deadPlayers[i].username).style.display = 'block';
+                            }
+                        }
+                    }
+                } else {
+                    if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name) {
+                        setClassButtonDisplayTo("button1", "block");
+                        document.getElementById("button1_" + player.username).style.display = 'none';
+                    }
                 }
-            } else if (player.role.name == roles.Bodyguard.name || player.role.name == roles.Doctor.name || player.role.name == roles.Arsonist.name) {
-                etClassButtonDisplayTo("button1", "block");
-            } else if (player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
-                player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name) {
-                etClassButtonDisplayTo("button1", "block");
-                document.getElementById("button1_" + player.username).style.display = 'none';
-            } else if (player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name) {
-                document.getElementById("button1_" + player.username).style.display = 'block';
-            } else if (player.role.name == roles.Vampire.name) {
-                setClassButtonDisplayTo("button1", "block");
-                for (let playa in vampireList) {
-                    document.getElementById("button1_" + vampireList[playa].username).style.display = 'none';
+            }
+            if (player.role.name != roles.Retributionist.name && player.role.name != roles.Amnesiac.name) { //remove all buttons from dead, unless you have abilities that can be used on dead (i.e. ret/amne)
+                for (let i in deadPlayers) {
+                    document.getElementById("button1_" + deadPlayers[i].username).style.display = 'none';
                 }
-            } /*else if (player.role.name == roles.Retributionist.name) {
-                document.getElementsByClassName("button1dt").style.display = 'block';
-                document.getElementsByClassName("button1dtu").style.display = 'block';
-            }*/
+            }
         }
     }
 
@@ -333,14 +549,15 @@
         document.getElementById("chatMenu").style.display = 'none';
         document.getElementById("actions").style.display = 'none';
         document.getElementById("role").style.display = 'none';
+        document.getElementById("graveyard").style.display = 'none';
         if (tab == "chat") {
-            document.getElementById("chatMenu").style.display = '';
-        }
-        if (tab == "actions") {
-            document.getElementById("actions").style.display = '';
-        }
-        if (tab == "role") {
-            document.getElementById("role").style.display = '';
+            document.getElementById("chatMenu").style.display = 'block';
+        } else if (tab == "actions") {
+            document.getElementById("actions").style.display = 'block';
+        } else if (tab == "role") {
+            document.getElementById("role").style.display = 'block';
+        } else if (tab == "graveyard") {
+            document.getElementById("graveyard").style.display = 'block';
         }
     }
 
@@ -388,10 +605,6 @@
         document.location.href = "/" + page;
     });
 
-    socket.on('getRoles', function(senRoles) {
-        roles = senRoles;
-    });
-
     function guid() {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
@@ -403,30 +616,44 @@
     }
     socket.on('startGame', function(data) {
         player = data.player;
-        console.log(player.role.name);
-        console.log(player.username);
+        player.isded = false;
+        player.canUseAbility = true;
+        roles = data.roles;
+        nameList = data.nameList;
         document.getElementById("nameView").innerHTML = player.username;
         if (player.role.canKill == true) {
-            document.getElementById("deathNote").style.display = '';
+            document.getElementById("deathNote").style.display = 'block';
         }
-        if (player.role == roles.Jailor || player.role == roles.Mayor) {
-            document.getElementById("sun").style.display = '';
+        if (player.role.name == roles.Jailor.name || player.role.name == roles.Mayor.name) {
+            document.getElementById("sun").style.display = 'block';
         }
-        document.getElementById("inGame").style.display = '';
+        document.getElementById("inGame").style.display = 'block';
         document.getElementById("waiting").style.display = 'none';
         updateRoleText();
         addActionTable();
+        updateTeamTable();
     });
 
-    socket.on('getMafia', function(data) {
-        mafiaList = data.mafiaList;
+    socket.on('updateDeadList', function(data) {
+        deadPlayers = data;
+        addGraveyard();
+        updateTeamTable();
     });
-    socket.on('getVampires', function(data) {
-        vampireList = data.vampireList;
+
+    socket.on('killOrResPlayer', function(data) {
+        player.isded = data;
     });
-    socket.on('getNames', function(data) {
-        nameList = data.nameList;
-        console.log(nameList);
+
+    socket.on('jailOrUnjailPlayer', function(data) {
+        player.inJail = data;
+    });
+
+    socket.on('updateTargetPlayer', function(data) {
+        player.targetPlayer = data;
+    });
+
+    socket.on('cannotUseAbility', function(data) {
+        player.canUseAbility = false;
     });
 </script>
 
