@@ -6,6 +6,8 @@ var Role = {
         team: "town",
         priority: 3,
         unique: false,
+        cons_result: "Your target is a trained protector, they must be a Bodyguard.",
+        invest_result: "Your target is not afraid to get their hands dirty. They could be: Bodyguard/Godfather/Arsonist",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
             Alignment: "Town (Protective)",
@@ -19,8 +21,10 @@ var Role = {
         canKill: false,
         abilitylimit: 1,
         team: "town",
-        priority: 3,
+        priority: 3, 
         unique: false,
+        cons_result: "Your target is a professional surgeon. They must be a Doctor.",
+        invest_result: "Your target is covered in blood. They could be: Doctor/Disguiser/Serial Killer",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Doctor.png",
             Alignment: "Town (Protective)",
@@ -36,6 +40,8 @@ var Role = {
         team: "town",
         priority: 2,
         unique: false,
+        cons_result: "Your target is a beautiful woman working for the town. They must be an Escort.",
+        invest_result: "Your target is skilled at disrupting others. They could be: Escort/Transporter/Consort",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Escort.png",
             Alignment: "Town (Support)",
@@ -51,6 +57,8 @@ var Role = {
         team: "town",
         priority: 4,
         unique: false,
+        cons_result: "Your target gathers information. They must be an Investigator.",
+        invest_result: "Your target has sensitive information to reveal. They could be: Investigator/Consigliere/Mayor",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Bodyguard.png",
             Alignment: "Town (Investigative)",
@@ -66,6 +74,8 @@ var Role = {
         team: "town",
         priority: 5,
         unique: true,
+        cons_result: "Your target detains people at night. They must be a Jailor.",
+        invest_result: "Your target knows your darkest secrets. They could be: Spy/Blackmailer/Jailor",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jailor.png",
             Alignment: "Town (Killing)",
@@ -81,6 +91,8 @@ var Role = {
         team: "town",
         priority: 4,
         unique: false,
+        cons_result: "Your target watches who visits people at night. They must be a Lookout.",
+        invest_result: "Your target sticks to the shadows. They could be: Lookout/Forger/Amnesiac",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Lookout.png",
             Alignment: "Town (Investigative)",
@@ -96,6 +108,8 @@ var Role = {
         team: "town",
         priority: 0,
         unique: true,
+        cons_result: "Your target is the leader of the town. They must be the Mayor.",
+        invest_result: "Your target has sensitive information to reveal. They could be: Investigator/Consigliere/Mayor",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mayor.png",
             Alignment: "Town (Support)",
@@ -111,6 +125,8 @@ var Role = {
         team: "town",
         priority: 0,
         unique: false,
+        cons_result: "Your target speaks with the dead. They must be a Medium.",
+        invest_result: "Your target works with dead bodies. They could be: Medium/Janitor/Retributionist",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Medium.png",
             Alignment: "Town (Support)",
@@ -126,6 +142,8 @@ var Role = {
         team: "town",
         priority: 3,
         unique: true,
+        cons_result: "Your target is a Retributionist.",
+        invest_result: "Your target works with dead bodies. They could be: Medium/Janitor/Retributionist",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Retributionist.png",
             Alignment: "Town (Support)",
@@ -141,6 +159,8 @@ var Role = {
         team: "town",
         priority: 4,
         unique: false,
+        cons_result: "Your target is a protector of the town. They must be a Sheriff.",
+        invest_result: "Your target is waiting for the perfect moment to strike. They could be: Sheriff/Executioner/Werewolf",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Sheriff.png",
             Alignment: "Town (Investigative)",
@@ -156,6 +176,8 @@ var Role = {
         team: "town",
         priority: 0,
         unique: false,
+        cons_result: "Your target secretly listens in on private conversations. They must be a Spy.",
+        invest_result: "Your target knows your darkest secrets. They could be: Spy/Blackmailer/Jailor",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Spy.png",
             Alignment: "Town (Investigative)",
@@ -171,6 +193,8 @@ var Role = {
         team: "town",
         priority: 1,
         unique: false,
+        cons_result: "Your target specializes in transportation. They must be a Transporter.",
+        invest_result: "Your target is skilled at disrupting others. They could be: Escort/Transporter/Consort",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Transporter.png",
             Alignment: "Town (Support)",
@@ -186,6 +210,8 @@ var Role = {
         team: "town",
         priority: 5,
         unique: false,
+        cons_result: "Your target tracks Vampires. They must be a Vampire Hunter!",
+        invest_result: "Your target keeps to themselves. They could be: Survivor/Vampire Hunter/Witch",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/VampireHunter.png",
             Alignment: "Town (Killing)",
@@ -201,6 +227,8 @@ var Role = {
         team: "town",
         priority: 1,
         unique: true,
+        cons_result: "Your target is a paranoid war hero. They must be a Veteran.",
+        invest_result: "Your target owns a gun. They could be: Vigilante/Mafioso/Veteran",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Veteran.png",
             Alignment: "Town (Killing)",
@@ -216,6 +244,8 @@ var Role = {
         team: "town",
         priority: 5,
         unique: false,
+        cons_result: "Your target will bend the law to enact justice. They must be a Vigilante.",
+        invest_result: "Your target owns a gun. They could be: Vigilante/Mafioso/Veteran",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vigilante.png",
             Alignment: "Town (Killing)",
@@ -231,6 +261,8 @@ var Role = {
         team: "mafia",
         priority: 3,
         unique: false,
+        cons_result: "Your target uses information to silence people. They must be a Blackmailer.",
+        invest_result: "Your target knows your darkest secrets. They could be: Spy/Blackmailer/Jailor",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Blackmailer.png",
             Alignment: "Mafia (Support)",
@@ -246,6 +278,8 @@ var Role = {
         team: "mafia",
         priority: 3,
         unique: false,
+        cons_result: "Your target gathers information for the Mafia. They must be a Consigliere.",
+        invest_result: "Your target has sensitive information to reveal. They could be: Investigator/Consigliere/Mayor",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consigliere.png",
             Alignment: "Mafia (Support)",
@@ -261,6 +295,8 @@ var Role = {
         team: "mafia",
         priority: 2,
         unique: false,
+        cons_result: "Your target is a beautiful woman working for the Mafia. They must be a Consort.",
+        invest_result: "Your target is skilled at disrupting others. They could be: Escort/Transporter/Consort",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Consort.png",
             Alignment: "Mafia (Support)",
@@ -276,6 +312,8 @@ var Role = {
         team: "mafia",
         priority: 5,
         unique: false,
+        cons_result: "Your target pretends to be other people. They must be a Disguiser.",
+        invest_result: "Your target is covered in blood. They could be: Doctor/Disguiser/Serial Killer",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Disguiser.png",
             Alignment: "Mafia (Deception)",
@@ -291,6 +329,8 @@ var Role = {
         team: "mafia",
         priority: 3,
         unique: false,
+        cons_result: "Your target forges documents. They must be a Framer or Forger.",
+        invest_result: "Your target sticks to the shadows. They could be: Lookout/Forger/Amnesiac",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Forger.png",
             Alignment: "Mafia (Deception)",
@@ -306,6 +346,8 @@ var Role = {
         team: "mafia",
         priority: 3,
         unique: false,
+        cons_result: "Your target forges documents. They must be a Framer.",
+        invest_result: "Your target may not be what they seem. They could be: Framer/Vampire/Jester",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
             Alignment: "Mafia (Deception)",
@@ -321,6 +363,8 @@ var Role = {
         team: "mafia",
         priority: 3,
         unique: true,
+        cons_result: "Your target is a leader of the mafia. They must be the Godfather.",
+        invest_result: "Your target is not afraid to get their hands dirty. They could be: Bodyguard/Godfather/Arsonist",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Godfather.png",
             Alignment: "Mafia (Killing)",
@@ -336,6 +380,8 @@ var Role = {
         team: "mafia",
         priority: 3,
         unique: false,
+        cons_result: "Your target cleans up dead bodies. They must be a Janitor.",
+        invest_result: "Your target works with dead bodies. They could be: Medium/Janitor/Retributionist",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Framer.png",
             Alignment: "Mafia (Deception)",
@@ -351,6 +397,8 @@ var Role = {
         team: "mafia",
         priority: 5,
         unique: true,
+        cons_result: "Your target does the Godfather's dirty work. They must be a Mafioso.",
+        invest_result: "Your target owns a gun. They could be: Vigilante/Mafioso/Veteran",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Mafioso.png",
             Alignment: "Mafia (Killing)",
@@ -366,6 +414,8 @@ var Role = {
         team: "neutral",
         priority: 6,
         unique: false,
+        cons_result: "Your target does not remember their role. They must be an Amnesiac.",
+        invest_result: "Your target sticks to the shadows. They could be: Lookout/Forger/Amnesiac",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Amnesiac.png",
             Alignment: "Neutral (Benign)",
@@ -381,6 +431,8 @@ var Role = {
         team: "neutral",
         priority: 5,
         unique: false,
+        cons_result: "Your target enjoys watching things burn. They must be an Arsonist.",
+        invest_result: "Your target is not afraid to get their hands dirty. They could be: Bodyguard/Godfather/Arsonist",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Arsonist.png",
             Alignment: "Neutral (Killing)",
@@ -396,6 +448,8 @@ var Role = {
         team: "neutral",
         priority: 0,
         unique: false,
+        cons_result: "Your target wants someone to be lynched at any cost. They must be an Executioner.",
+        invest_result: "Your target is waiting for the perfect moment to strike. They could be: Sheriff/Executioner/Werewolf",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Executioner.png",
             Alignment: "Neutral (Evil)",
@@ -411,6 +465,8 @@ var Role = {
         team: "neutral",
         priority: 5,
         unique: false,
+        cons_result: "Your target wants to be lynched. They must be a Jester.",
+        invest_result: "Your target may not be what they seem. They could be: Framer/Vampire/Jester",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Jester.png",
             Alignment: "Neutral (Evil)",
@@ -426,6 +482,8 @@ var Role = {
         team: "neutral",
         priority: 5,
         unique: false,
+        cons_result: "Your target wants to kill everyone. They must be a Serial Killer.",
+        invest_result: "Your target is covered in blood. They could be: Doctor/Disguiser/Serial Killer",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/SerialKiller.png",
             Alignment: "Neutral (Killing)",
@@ -441,6 +499,8 @@ var Role = {
         team: "neutral",
         priority: 3,
         unique: false,
+        cons_result: "Your target simply wants to live. They must be a Survivor.",
+        invest_result: "Your target keeps to themselves. They could be: Survivor/Vampire Hunter/Witch",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Survivor.png",
             Alignment: "Neutral (Benign)",
@@ -456,6 +516,8 @@ var Role = {
         team: "neutral",
         priority: 5,
         unique: false,
+        cons_result: "Your target drinks blood. They must be a Vampire!",
+        invest_result: "Your target may not be what they seem. They could be: Framer/Vampire/Jester",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Vampire.png",
             Alignment: "Neutral (Chaos)",
@@ -471,6 +533,8 @@ var Role = {
         team: "neutral",
         priority: 5,
         unique: true,
+        cons_result: "Your target howls at the moon. They must be a Werewolf.",
+        invest_result: "Your target is waiting for the perfect moment to strike. They could be: Sheriff/Executioner/Werewolf",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Werewolf.png",
             Alignment: "Neutral (Killing)",
@@ -484,8 +548,10 @@ var Role = {
         canKill: false,
         abilitylimit: 1000,
         team: "neutral",
-        priority: 2,
+        priority: 2.5,
         unique: false,
+        cons_result: "Your target casts spells on people. They must be a Witch.",
+        invest_result: "Your target keeps to themselves. They could be: Survivor/Vampire Hunter/Witch",
         info: {
             img: "https://www.blankmediagames.com/wp-content/themes/townofsalem/assets/img/roles/Witch.png",
             Alignment: "Neutral (Evil)",
@@ -501,6 +567,8 @@ var Role = {
         team: "neutral",
         priority: 0,
         unique: true,
+        cons_result: "ayy lmao 420 blaze it",
+        invest_result: "dis guy be vaping the nation b4 t'was cool",
         info: {
             img: "http://en.wikifur.com/w/images/f/f3/Troll.png",
             Alignment: "Neutral (Benign)",

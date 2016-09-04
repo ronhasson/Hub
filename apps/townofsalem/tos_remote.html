@@ -638,10 +638,11 @@
         deadPlayers = data;
         addGraveyard();
         updateTeamTable();
-    });
-
-    socket.on('killOrResPlayer', function(data) {
-        player.isded = data;
+        for(var deadp in deadPlayers) {
+            if(deadp.username == player.username) {
+                player.isded = true;
+            }
+        }
     });
 
     socket.on('jailOrUnjailPlayer', function(data) {
