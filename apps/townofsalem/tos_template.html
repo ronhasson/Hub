@@ -1,15 +1,14 @@
 <template>
     <style>
-        #cont {
-            background-image: url("apps/townofsalem/village.jpg");
-            height: 98vh;
-            background-repeat: no-repeat;
-            background-size: cover;
-        }
+        #cont {}
     </style>
-    <div style="
+    <div id="startScreen" style="
     -webkit-user-select: none;
     cursor: default;
+    background-image: url('apps/townofsalem/village.jpg');
+    height: 98vh;
+    background-repeat: no-repeat;
+    background-size: cover;
 ">
         <span style="
     text-shadow: 0 1px 0 #ccc,                 0 2px 0 #c9c9c9,                 0 3px 0 #bbb,                 0 4px 0 #b9b9b9,                 0 5px 0 #aaa,                 0 6px 1px rgba(0,0,0,.1),                 0 0 5px rgba(0,0,0,.1),                 0 1px 3px rgba(0,0,0,.3),                 0 3px 5px rgba(0,0,0,.2),                 0 5px 10px rgba(0,0,0,.25),                 0 10px 10px rgba(0,0,0,.2),                 0 20px 20px rgba(0,0,0,.15);
@@ -167,6 +166,44 @@ margin: 14px;">
   "></div>
         </div>
     </div>
-    
+    <div id="startScreen" style="
+    -webkit-user-select: none;
+    cursor: default;
+    height: 98vh;
+">
+        <div id="sky">
+
+        </div>
+        <div id="grass">
+            <div><!-- YAMA PPL WITH A HOUSE AND SHIT !-->
+
+            </div>
+        </div>
+    </div>
+  <style>
+    #sky{
+      height: 10vh;
+      background-color: rgb(43, 165, 226);
+      transition: all 3s;
+    }
+    #grass{
+      height: 88vh;
+      background-color: rgb(118, 214, 50);
+      padding: 10%;
+      transition: all 3s;
+    }
+    #sky.toNight{
+      background-color: rgb(29, 27, 68);
+    }
+    #sky.toDay{
+      background-color: rgb(43, 165, 226);
+    }
+    #grass.toNight{
+      background-color: rgb(15, 92, 37);
+    }
+    #grass.toDay{
+      background-color: rgb(118, 214, 50);
+    }
+  </style>
     <script src="./apps/townofsalem/tos_template_js.js"></script>
 </template>
