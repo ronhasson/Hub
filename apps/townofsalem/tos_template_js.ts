@@ -499,6 +499,18 @@ function Button1(data) {
                 else if (!abilityPlayer.isded && abilityPlayer.role.name == roles.Werewolf.name && dayCounter % 2 == 0) {
                     players[playerIndex].targetPlayer = targetPlayer.username;
                 }
+                else if (!abilityPlayer.isded && abilityPlayer.role.name == roles.Forger.name) {
+                    if (data.targetname == abilityPlayer.username && abilityPlayer.targetPlayer != "") {
+                        if (data.hasOwnProperty("forgedWill")) {
+                            players[playerIndex].willText = data.forgedWill;
+                            alertMessage("Will forgery confirmed", abilityPlayer.socketid);
+                        }
+                    }
+                    else {
+                        players[playerIndex].targetPlayer = data.targetname;
+                        alertMessage("Forging " + targetPlayer.username + "'s will.", abilityPlayer.socketid);
+                    }
+                }
                 else if (!abilityPlayer.isded && abilityPlayer.role.priority != 0) {
                     if (abilityPlayer.role.name == roles.Doctor.name || abilityPlayer.role.name == roles.Bodyguard.name) {
                         if (data.targetname != abilityPlayer.username) {
@@ -588,6 +600,11 @@ function Button2(data) {
                 var targetIndex = getIndexByUsername(data.targetname);
                 var abilityPlayer = players[playerIndex];
                 var targetPlayer = players[targetIndex];
+                if (!abilityPlayer.isded && abilityPlayer.role.name == roles.Forger.name && abilityPlayer.targetPlayer != "") {
+                    players[playerIndex].willText = "";
+                    players[playerIndex].targetPlayer = "";
+                    alertMessage("Forgery canceled.", abilityPlayer.socketid);
+                }
                 if (!abilityPlayer.isded && abilityPlayer.role.priority != 0 && (abilityPlayer.role.name == roles.Witch.name || abilityPlayer.role.name == roles.Transporter.name)) { //2nd buttons dont have ability limits
                     if (abilityPlayer.targetPlayer == data.targetname) {
                         alertMessage("You have canceled your decision.", abilityPlayer.socketid);
@@ -689,6 +706,7 @@ function hangPlayer() {
     sendVotingMessage(playerOnTrial.username, "", " has died. rip in pepperonies");
     players[getIndexByUID(playerOnTrial.uid)].howIDied = "iz jus a prank, y u heff to b med";
     var deadlist = {}; //should i save it as class variable
+    var Janitor_deadlist = {};
     for (var i = 0; i < players.length; i++) {
         if (players[i].isded) {
             var deadrole;
@@ -699,6 +717,7 @@ function hangPlayer() {
                 deadrole = players[i].role;
             }
             deadlist[i] = { username: players[i].username, role: deadrole, will: players[i].will, deathnote: players[i].howIDied };
+            Janitor_deadlist[i] = { username: players[i].username, role: players[i].role, will: players[i].will, deathnote: players[i].howIDied };
 
         }
     }
@@ -955,6 +974,7 @@ class Player {
     witched: boolean = false;
     guarded: Player = null;
     healed: boolean = false;
+    forged: boolean = false;
     abilityCounter: number = 0;
     targetPlayer: string = "";
     will: string = ""; //check if needed + deathnote
@@ -1191,6 +1211,7 @@ class Janitor extends Player {
         if (!this.roleBlocked && this.abilityCounter < this.role.abilitylimit) {
             this.abilityCounter++;
             players[getIndexByUsername(this.targetPlayer)].cleaned = true;
+            this.cleanedPlayers.push(players[getIndexByUsername(this.targetPlayer)]);
         }
     }
 }
@@ -1201,15 +1222,24 @@ class Retributionist extends Player {
     }
     useAbility(): void {
         if (players[getIndexByUsername(this.targetPlayer)].role.team == "town"
-            && !players[getIndexByUsername(this.targetPlayer)].cleaned && !this.roleBlocked)
+            && !players[getIndexByUsername(this.targetPlayer)].cleaned && !this.roleBlocked) {
             players[getIndexByUsername(this.targetPlayer)].isded = false;
+        }
     }
 }
 
 class Forger extends Player {
     mafiaList: Player[];
+    forgedWill: string;
     constructor(_uid: string, _socketid: string, usrname: string = "") {
         super(_uid, _socketid);
+        this.forgedWill = "";
+    }
+    useAbility(): void {
+        if (!this.roleBlocked && this.abilityCounter < this.role.abilitylimit) {
+            players[getIndexByUsername(this.targetPlayer)].forged = true;
+            this.abilityCounter++;
+        }
     }
 }
 
