@@ -1,23 +1,60 @@
 <template>
-<script src="apps\hangedman\hangedMan.js"></script>
-<div id="mainScreen" style="display:none">
+    <script src="apps\hangedman\hangedMan.js"></script>
+    <script src="apps\hangedman\serverHandler.js"></script>
 
-</div>
-<div id="waitingScreen">
+    <div id="mainScreen" style="display:none">
+        <h2 id="questionDisplay">?</h2>
+        <h2 id="answerDisplay">?</h2>
+        <h3 id="scoreDisplay"></h3>
+    </div>
+    <div id="waitingScreen">
+        <ol id="playerList">
 
-</div>
-<style>
-  #mainScreen{
-    background-color: rgb(126, 40, 194);
-    height: 98vh;
-    margin: 0;
-    padding: 20px;
-  }
-  #waitingScreen{
-    background-color: rgb(40, 115, 194);
-    height: 98vh;
-    margin: 0;
-    padding: 0;
-  }
-</style>
+        </ol>
+        <font id="counter" style="font-size:8vh;color:white;">0</font>
+    </div>
+
+    <style>
+        #mainScreen {
+            background-color: rgb(126, 40, 194);
+            color: white;
+            height: 98vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #waitingScreen {
+            : : background-color: rgb(40, 115, 194);
+            height: 98vh;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(270deg, #50c5cc, #506ecc, #a3cc50, #cc8250);
+            background-size: 800% 800%;
+            animation: waitingBackgoundAnimation 59s ease infinite;
+        }
+        @keyframes waitingBackgoundAnimation {
+            0% {
+                background-position: 0% 50%
+            }
+            50% {
+                background-position: 100% 50%
+            }
+            100% {
+                background-position: 0% 50%
+            }
+        }
+        ol {
+            column-count: 3;
+            column-gap: 20vw;
+            padding: 1vw;
+            padding-left: 6vw;
+            height: 70vh;
+        }
+
+        li {
+            margin: 10px;
+            display: -webkit-box;
+            font-size: 3vh;
+        }
+    </style>
 </template>

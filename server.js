@@ -20,6 +20,9 @@ expr.get('/tos', function(req, res) {
 expr.get('/tosRoles', function(req, res) {
     res.sendFile(__dirname + '/apps/townofsalem/roles.js');
 });
+expr.get('/hangedman', function(req, res) {
+    res.sendFile(__dirname + '/apps/hangedman/hangedman_remote.html');
+});
 //file_loader.init(expr);
 //file_loader.load_files();
 
@@ -62,7 +65,7 @@ function changeRemotePage(page) {
     io.emit("changePageRemote", page);
 }
 
-function sendEmit(_event, data) {
+function sendEmit(_event, data) { //send to all
     io.emit(_event, data);
 }
 function sendToSocketIDList(_event, socketidlist, data) {

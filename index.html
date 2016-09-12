@@ -73,6 +73,9 @@
         } else {
             if (button == "QR") {
                 qrShowState();
+            } else if(button == "home"){
+              changeRemotePage("");
+              switchPage("importMenu")
             } else {
                 transferInputs(button);
             }
@@ -102,7 +105,7 @@
     }
     function requestChangeRemotePage(page)
     {
-      changeRemotePage("tos");
+      changeRemotePage(page);
     }
 </script>
 <script src="js\particles.js"></script>

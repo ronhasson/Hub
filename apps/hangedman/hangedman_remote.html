@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Time</title>
+    <meta id="addressbarColorAndroid" name="theme-color" content="#019a91">
+    <meta id="addressbarColorIOS" name="apple-mobile-web-app-status-bar-style" content="#019a91">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.2/css/font-awesome.min.css">
+</head>
+
+<style>
+    h2 {
+        font-family: sans-serif;
+        font-size: 4.3vh;
+        margin: 10px;
+        margin-top: 1vh;
+        margin-bottom: 5vh;
+    }
+
+    h3 {
+        font-family: sans-serif;
+        font-size: 3vh;
+        margin: 10px;
+        margin-top: 3.5vh;
+        font-style: italic;
+        color: rgb(44, 44, 44);
+    }
+
+    #usernameInput {
+        width: 70%;
+        height: 3vh;
+        font-size: 2.5vh;
+    }
+
+    .startDivs {
+        width: 60%;
+        background-color: rgb(127, 201, 233);
+        padding: 8px;
+        margin-top: 7vh;
+        padding-bottom: 5vh;
+    }
+
+    #usernameColor {
+        height: 6vw;
+        width: 6vh;
+        border: 0;
+        padding: 0;
+    }
+
+    body {
+        background: -webkit-linear-gradient(-45deg, rgba(205, 235, 142, 1) 0%, rgba(165, 201, 86, 1) 100%);
+        height: 93vh;
+    }
+    .Button{
+      font-size: 4vh;
+      padding: 15px;
+      outline: none;
+      border-width: 0;
+      border-radius: 2px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+      background-color: white;
+
+    }
+</style>
+
+<body style="background-color: #f6f6f6;margin:0">
+    <div id="waitingScreen">
+        <center>
+            <div class="startDivs">
+                <h3>First question:</h3>
+                <h2>What is your name?</h2>
+                <input id="usernameInput" type="text" maxlength="18"/>
+            </div>
+            <div class="startDivs" style="margin-top: 5vh;">
+                <h3>Bonus question:</h3>
+                <h2>Choose your color</h2>
+                <input id="usernameColor" type="color" />
+            </div>
+            <div class="startDivs" style="margin-top: 3vh;background-color: transparent;">
+              <input id="readyButton" class="Button" onclick="onReady()" type="button" value="I'm ready!" /><br /><br />
+              <input type="button" class="Button"  onclick="sendButtonPress('home')" style="font-size:1.5vh" value="Quit game" />
+              <input type="button" id="startButton" disabled="true" class="Button" style="font-size:1.5vh" value="Start game" onclick="sendStart()" />
+            </div>
+        </center>
+    </div>
+    <div id="inGame" style="display:none;">
+
+    </div>
+</body>
+
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+    var socket = io();
+    var uid = guid();
+
+    var player = {};
+
+    function sendButtonPress(button) {
+        socket.emit('buttonPress', button);
+    }
+
+    socket.on('changePageRemote', function(page) {
+        document.location.href = "/" + page;
+    });
+
+    function guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                .toString(16)
+                .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+            s4() + '-' + s4() + s4() + s4();
+    }
+
+    function randomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        document.getElementById('usernameColor').value = color;
+    }
+    randomColor();
+
+    function onReady(){
+      document.getElementById("readyButton").disabled = true;
+      document.getElementById("usernameInput").disabled = true;
+      document.getElementById("usernameColor").disabled = true;
+      document.getElementById("startButton").disabled = false;
+
+      player.name = document.getElementById("usernameInput").value;
+      player.color = document.getElementById("usernameColor").value;
+      player.uid = uid;
+      player.score = 0;
+      console.log(player);
+
+      socket.emit("requestFromServer", {
+          action: "addPlayer",
+          data: {
+              player: player,
+          }
+      });
+    }
+    function sendStart(){
+      socket.emit("requestFromServer", {
+          action: "startGame",
+          data: {
+              player: player,
+          }
+      });
+    }
+    socket.on("stopWaiting", function(data){
+      if(document.getElementById("readyButton").disabled)
+      {
+        document.getElementById('waitingScreen').style.display = 'none';
+        document.getElementById('inGame').style.display = '';
+      }
+      else{
+        window.location.assign("https://media.giphy.com/media/OlMrROiMUPZQc/giphy.gif")
+      }
+    });
+</script>
+
+</html>
