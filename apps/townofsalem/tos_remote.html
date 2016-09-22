@@ -281,6 +281,11 @@
     var currentDefendant = "";
     var nowVoting = false;
 
+    var dayCounter = 0;
+
+    var jester_hanged_today;
+    var jester_guilty_voters = {};
+
     socket.emit("join", uid);
 
     socket.on('getMessage', function(data) {
@@ -292,13 +297,32 @@
     });
 
     socket.on('changePhase', function(data) {
+        if (data.phase == "Discussion") {
+            dayCounter++;
+        }
         currentDefendant = "";
         currentPhase = data.phase;
         isDay = data.phase != "Night";
         if (sunClicked && !isDay) {
             setClassButtonDisplayTo("sunbutton", "none");
             sunClicked = false;
-            editActionButtons(currentPhase, currentDefendant);
+            if (!player.isded) {
+                editActionButtons(currentPhase, currentDefendant);
+            } else {
+                if (currentPhase == "Night") {
+                    if (player.role.name == roles.Jester.name) {
+                        if (jester_hanged_today) {
+                            for (let i in jester_guilty_voters) {
+                                document.getElementById("button1_" + jester_guilty_voters[i]).style.display = 'block';
+                                document.getElementById("button1_" + jester_guilty_voters[i]).value = 'Hunt!';
+                            }
+                        }
+                    }
+                } else {
+                    setClassButtonDisplayTo("button2", "none");
+                    setClassButtonDisplayTo("button1", "none");
+                }
+            }
         }
         if (!isDay) {
             document.getElementById("sun").style.display = 'none';
@@ -386,7 +410,23 @@
             } else {
                 setClassButtonDisplayTo("sunbutton", "none");
                 sunClicked = false;
-                editActionButtons(currentPhase, currentDefendant);
+                if (!player.isded) {
+                    editActionButtons(currentPhase, currentDefendant);
+                } else {
+                    if (currentPhase == "Night") {
+                        if (player.role.name == roles.Jester.name) {
+                            if (jester_hanged_today) {
+                                for (let i in jester_guilty_voters) {
+                                    document.getElementById("button1_" + jester_guilty_voters[i]).style.display = 'block';
+                                    document.getElementById("button1_" + jester_guilty_voters[i]).value = 'Hunt!';
+                                }
+                            }
+                        }
+                    } else {
+                        setClassButtonDisplayTo("button2", "none");
+                        setClassButtonDisplayTo("button1", "none");
+                    }
+                }
             }
         }
     }
@@ -394,8 +434,25 @@
 
 
     function startCountdown(timer, phase, defendant = "") {
-        if (!sunClicked || phase == "Night" && !player.isded)
-            editActionButtons(phase, defendant);
+        if (!sunClicked || phase == "Night") {
+            if (!player.isded) {
+                editActionButtons(phase, defendant);
+            } else {
+                if (currentPhase == "Night") {
+                    if (player.role.name == roles.Jester.name) {
+                        if (jester_hanged_today) {
+                            for (let i in jester_guilty_voters) {
+                                document.getElementById("button1_" + jester_guilty_voters[i]).style.display = 'block';
+                                document.getElementById("button1_" + jester_guilty_voters[i]).value = 'Hunt!';
+                            }
+                        }
+                    }
+                } else {
+                    setClassButtonDisplayTo("button2", "none");
+                    setClassButtonDisplayTo("button1", "none");
+                }
+            }
+        }
         var interval = setInterval(function() {
             document.getElementById("phases").innerHTML = phase + ": " + timer;
             if (--timer < 0 || (!nowVoting && phase == "Voting")) {
@@ -545,8 +602,16 @@
                         setClassButtonDisplayTo("button1", "block");
                     } else if (player.role.name == roles.Escort.name || player.role.name == roles.Lookout.name || player.role.name == roles.Investigator.name || player.role.name == roles.Werewolf.name ||
                         player.role.name == roles.Sheriff.name || player.role.name == roles.VampireHunter.name || player.role.name == roles.Vigilante.name || player.role.name == roles.SerialKiller.name) {
-                        setClassButtonDisplayTo("button1", "block");
-                        document.getElementById("button1_" + player.username).style.display = 'none';
+                        if (player.role.name == roles.Werewolf.name) {
+                            if (dayCounter % 2 == 0) {
+                                setClassButtonDisplayTo("button1", "block");
+                                document.getElementById("button1_" + player.username).style.display = 'none';
+                            }
+                        } else {
+                            setClassButtonDisplayTo("button1", "block");
+                            document.getElementById("button1_" + player.username).style.display = 'none';
+                        }
+
                     } else if (player.role.name == roles.Veteran.name || player.role.name == roles.Survivor.name) {
                         document.getElementById("button1_" + player.username).style.display = 'block';
                     } else if (player.role.name == roles.Vampire.name) {
@@ -687,6 +752,13 @@
     socket.on('cannotUseAbility', function(data) {
         player.canUseAbility = false;
     });
+
+    socket.on('jesterHanged', function(data) {
+        jester_hanged_today = data.jester_hanged_today;
+        if (jester_hanged_today) {
+            jester_guilty_voters = data.guilty_voters;
+        }
+    })
 </script>
 
 </html>
