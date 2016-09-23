@@ -1807,16 +1807,6 @@ class Werewolf extends Player {
                 }
             }
         }
-
-        if (players[getIndexByUsername(this.targetPlayer)].inJail) {
-
-        }
-        goingToKill(this.username, this.targetPlayer);
-        for (var i = 0; i < players.length; i++) {
-            if (players[getIndexByUsername(this.targetPlayer)] == this.targetPlayer) {
-
-            }
-        }
     }
 }
 
