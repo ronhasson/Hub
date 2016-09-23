@@ -20,6 +20,8 @@ var guilty = 0;
 var phase = "Discussion";
 var isDay = true;
 var dayCounter = 0;
+var dousedTargets = [];
+var winners = [];
 function discussion() {
     dayCounter++;
     checkNightAbilities();
@@ -58,6 +60,8 @@ function voting() {
         time: votingTimer,
         phase: "Voting"
     });
+    guiltyVoters = [];
+    innoVoters = [];
     var interval = setInterval(function () {
         if (stopVotingTime) {
             clearInterval(interval);
@@ -150,104 +154,120 @@ function sendMessageToPlayers(data) {
     if (data.hasOwnProperty("message") && data.hasOwnProperty("player")) {
         if (UID_Exists(data.player.uid)) {
             if (phase != "Last Words" && phase != "Defense") {
-                var sender_player = players[getIndexByUID(data.player.uid)];
-                for (var i = 0; i < players.length; i++) {
-                    var temp_player = players[i];
-                    if (temp_player.uid == sender_player.uid) {
-                        sendToSocketId('getMessage', {
-                            username: sender_player.username + ": ",
-                            message: data.message
-                        }, temp_player.socketid);
-                    }
-                    else if (!isDay) {
-                        if (sender_player.isded) {
-                            if (temp_player.isded)
+                if (players[getIndexByUID(data.player.uid)].blackmailed) {
+                    sendToSocketId('getMessage', {
+                        username: "",
+                        message: "You are blackmailed."
+                    }, players[getIndexByUID(data.player.uid)].socketid);
+                }
+                else {
+                    var sender_player = players[getIndexByUID(data.player.uid)];
+                    for (var i = 0; i < players.length; i++) {
+                        var temp_player = players[i];
+                        if (temp_player.uid == sender_player.uid) {
+                            sendToSocketId('getMessage', {
+                                username: sender_player.username + ": ",
+                                message: data.message
+                            }, temp_player.socketid);
+                        }
+                        else if (!isDay) {
+                            if (sender_player.isded) {
+                                if (temp_player.isded)
+                                    sendToSocketId('getMessage', {
+                                        username: sender_player.username + ": ",
+                                        message: data.message
+                                    }, temp_player.socketid);
+                                else if (temp_player.role.name == roles.Medium.name)
+                                    sendToSocketId('getMessage', {
+                                        username: sender_player.username + ": ",
+                                        message: data.message
+                                    }, temp_player.socketid);
+                                else if (sender_player.role.name == roles.Medium.name && temp_player.username == sender_player.targetPlayer)
+                                    sendToSocketId('getMessage', {
+                                        username: "Medium" + ": ",
+                                        message: data.message
+                                    }, temp_player.socketid);
+                            }
+                            else if (temp_player.role.name == roles.Medium.name && temp_player.targetPlayer == sender_player.username) {
                                 sendToSocketId('getMessage', {
                                     username: sender_player.username + ": ",
                                     message: data.message
                                 }, temp_player.socketid);
-                            else if (temp_player.role.name == roles.Medium.name)
-                                sendToSocketId('getMessage', {
-                                    username: sender_player.username + ": ",
-                                    message: data.message
-                                }, temp_player.socketid);
-                            else if (sender_player.role.name == roles.Medium.name && temp_player.username == sender_player.targetPlayer)
+                            }
+                            else if (sender_player.role.name == roles.Medium.name && temp_player.isded) {
                                 sendToSocketId('getMessage', {
                                     username: "Medium" + ": ",
                                     message: data.message
                                 }, temp_player.socketid);
+                            }
+                            else if (sender_player.role.name == roles.Jailor.name && temp_player.username == sender_player.targetPlayer) {
+                                sendToSocketId('getMessage', {
+                                    username: "Jailor" + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
+                            else if (sender_player.inJail && temp_player.role.name == roles.Jailor.name) {
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
+                            else if (sender_player.role.team == "mafia" && temp_player.role.team == "mafia") {
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
+                            else if (sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name) {
+                                sendToSocketId('getMessage', {
+                                    username: "Mafia" + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
+                            else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name) {
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
+                            else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name) {
+                                sendToSocketId('getMessage', {
+                                    username: "Vampire" + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
                         }
-                        else if (temp_player.role.name == roles.Medium.name && temp_player.targetPlayer == sender_player.username) {
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.role.name == roles.Medium.name && temp_player.isded) {
-                            sendToSocketId('getMessage', {
-                                username: "Medium" + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.role.name == roles.Jailor.name && temp_player.username == sender_player.targetPlayer) {
-                            sendToSocketId('getMessage', {
-                                username: "Jailor" + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.inJail && temp_player.role.name == roles.Jailor.name) {
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.role.team == "mafia" && temp_player.role.team == "mafia") {
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.role.team == "mafia" && temp_player.role.name == roles.Spy.name) {
-                            sendToSocketId('getMessage', {
-                                username: "Mafia" + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.Vampire.name) {
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (sender_player.role.name == roles.Vampire.name && temp_player.role.name == roles.VampireHunter.name) {
-                            sendToSocketId('getMessage', {
-                                username: "Vampire" + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                    }
-                    else {
-                        if (!sender_player.isded) {
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
-                        }
-                        else if (temp_player.isded) {
-                            sendToSocketId('getMessage', {
-                                username: sender_player.username + ": ",
-                                message: data.message
-                            }, temp_player.socketid);
+                        else {
+                            if (!sender_player.isded) {
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
+                            else if (temp_player.isded) {
+                                sendToSocketId('getMessage', {
+                                    username: sender_player.username + ": ",
+                                    message: data.message
+                                }, temp_player.socketid);
+                            }
                         }
                     }
                 }
             }
             else {
                 if (playerOnTrial.username == data.player.username) {
-                    sendEmit('getMessage', {
-                        username: data.player.username + ": ",
-                        message: data.message
-                    });
+                    if (players[getIndexByUID(data.player.uid)].blackmailed) {
+                        sendEmit('getMessage', {
+                            username: data.player.username + ": ",
+                            message: "I am blackmailed."
+                        });
+                    }
+                    else {
+                        sendEmit('getMessage', {
+                            username: data.player.username + ": ",
+                            message: data.message
+                        });
+                    }
                 }
             }
         }
@@ -298,13 +318,134 @@ function compare(a, b) {
     return 0;
 }
 function checkNightAbilities() {
+    var jesters = getArrayIndexByRole("Jester");
+    for (var indx = 0; indx < jesters.length; indx++) {
+        if (players[jesters[indx]].diedToday && players[jesters[indx]].targetPlayer == "") {
+            players[jesters[indx]].targetPlayer = guiltyVoters[Math.floor(Math.random() * guiltyVoters.length)];
+        }
+    }
     var sortedByPriority = players.sort(compare);
     console.log(sortedByPriority);
     for (var i = 0; i < sortedByPriority.length; i++) {
-        if (sortedByPriority[i].priority != 0 && (sortedByPriority[i].targetPlayer != "" || sortedByPriority[i].role.name == roles.Werewolf.name)) {
-            sortedByPriority[i].useAbility();
+        if (!sortedByPriority[i].witched && sortedByPriority[i].priority != 0 && (sortedByPriority[i].targetPlayer != "" || ((sortedByPriority[i].role.name == roles.Werewolf.name && dayCounter % 2 == 0)
+            || (players[getIndexByUsername(sortedByPriority[i].username)].roleBlocked && sortedByPriority[i].role.name == roles.SerialKiller.name) || (sortedByPriority[i].role.name == roles.Arsonist.name)))
+            && (!sortedByPriority[i].isded || (sortedByPriority[i].role.name == roles.Jester.name && sortedByPriority[i].diedToday))
+            && (!sortedByPriority[i].inJail || (sortedByPriority[i].role.name == roles.Werewolf.name || sortedByPriority[i].role.name == roles.SerialKiller.name))) {
+            players[getIndexByUsername(sortedByPriority[i].username)].useAbility();
         }
     }
+    var executioners = getArrayIndexByRole("Executioner");
+    for (var i = 0; i < executioners.length; i++) {
+        if (players[getIndexByUsername(players[executioners[i]].username)].diedTonight) {
+        }
+    }
+    var arsonists = getArrayIndexByRole("Arsonist");
+    for (var i = 0; i < arsonists.length; i++) {
+        if (players[arsonists[i]].cleanYourself) {
+            for (var j = 0; j < dousedTargets.length; j++) {
+                if (dousedTargets[j] == players[arsonists[i]].username) {
+                    dousedTargets.splice(j, 1);
+                }
+            }
+        }
+    }
+    for (var i = 0; i < arsonists.length; i++) {
+        if (players[arsonists[i]].ignite) {
+            for (var j = 0; j < dousedTargets.length; j++) {
+                players[getIndexByUsername(dousedTargets[j])].diedTonight = true;
+            }
+            dousedTargets = [];
+        }
+    }
+    for (var i = 0; i < arsonists.length; i++) {
+        if (players[arsonists[i]].dousedTarget != "") {
+            dousedTargets.push(players[arsonists[i]].dousedTarget);
+        }
+    }
+    var executioners = getArrayIndexByRole("Executioner");
+    for (var i = 0; i < executioners.length; i++) {
+        if (players[getIndexByUsername(players[executioners[i]].target)].diedTonight) {
+            players[executioners[i]].role = roles.Jester;
+            classifyPlayer(getIndexByUID(players[executioners[i]].uid), players[executioners[i]].role.name);
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].diedTonight) {
+            players[i].isded = true;
+            players[i].diedTonight = false;
+        }
+        else if (!players[i].isded) {
+            players[i].cleaned = false;
+        }
+        players[i].inJail = false;
+        players[i].targetPlayer = "";
+    }
+    var mafList = [];
+    var vampList = [];
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.team == "mafia") {
+            players[i].mafiaList = mafList;
+        }
+        else if (players[i].role.name == roles.Vampire.name) {
+            players[i].vampireList = vampList;
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.team == "mafia") {
+            var _maflist = new Object();
+            for (var j = 0; j < players[i].mafiaList.length; j++) {
+                _maflist[j] = { role: players[i].mafiaList[j].role, username: players[i].mafiaList.username, uid: players[i].mafiaList.uid, inJail: players[i].mafiaList.inJail, targetPlayer: players[i].targetPlayer };
+            }
+            sendToSocketId("updateAfterNight", {
+                player: { role: players[i].role, username: players[i].username, uid: players[i].uid, inJail: players[i].inJail, mafiaList: _maflist, targetPlayer: players[i].targetPlayer },
+                canUseAbility: players[i].abilityCounter < players[i].role.abilitylimit
+            }, players[i].socketid);
+        }
+        else if (players[i].role.name == roles.Vampire.name) {
+            var _vamplist = new Object();
+            for (var j = 0; j < players[i].vampireList.length; j++) {
+                _vamplist[j] = { role: players[i].vampireList[j].role, username: players[i].vampireList[j].username, uid: players[i].vampireList[j].uid, inJail: players[i].vampireList[j].inJail, targetPlayer: players[i].targetPlayer };
+            }
+            sendToSocketId("updateAfterNight", {
+                player: { role: players[i].role, username: players[i].username, uid: players[i].uid, inJail: players[i].inJail, vampireList: _vamplist, targetPlayer: players[i].targetPlayer },
+                canUseAbility: players[i].abilityCounter < players[i].role.abilitylimit
+            }, players[i].socketid);
+        }
+        else {
+            sendToSocketId("updateAfterNight", {
+                player: { role: players[i].role, username: players[i].username, uid: players[i].uid, inJail: players[i].inJail, targetPlayer: players[i].targetPlayer },
+                canUseAbility: players[i].abilityCounter < players[i].role.abilitylimit
+            }, players[i].socketid);
+        }
+    }
+    var deadlist = {}; //should i save it as class variable
+    var Janitor_deadlist = {};
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].isded) {
+            var deadrole;
+            if (players[i].cleaned) {
+                deadrole = null;
+            }
+            else {
+                deadrole = players[i].role;
+            }
+            deadlist[i] = { username: players[i].username, role: deadrole, will: players[i].will, deathnote: players[i].howIDied };
+            Janitor_deadlist[i] = { username: players[i].username, role: players[i].role, will: players[i].will, deathnote: players[i].howIDied };
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.name == roles.Janitor.name) {
+            sendToSocketId("updateDeadList", {
+                deadlist: Janitor_deadlist
+            }, players[players[i]].socketid);
+        }
+        else {
+            sendToSocketId("updateDeadList", {
+                deadlist: deadlist
+            }, players[players[i]].socketid);
+        }
+    }
+    isGameOver();
 }
 function UnjailPlayer() {
     for (var i = 0; i < players.length; i++) {
@@ -356,10 +497,25 @@ function alertOnAbilityCount() {
 }
 function checkDayAbilities() {
     for (var i = 0; i < players.length; i++) {
+        players[i].roleBlocked = false;
+        players[i].blackmailed = false;
+        players[i].framed = false;
+        players[i].witched = false;
+        players[i].forged = false;
+        players[i].usingAbility = false;
+        if (players[i].role.name == roles.Witch.name || players[i].role.name == roles.Transporter.name) {
+            players[i].target2 = "";
+        }
+        if (players[i].role.name == roles.Arsonist.name) {
+            players[i].dousedTarget = "";
+            players[i].cleanYourself = false;
+            players[i].ignite = false;
+        }
         if (players[i].role.name == roles.Jailor.name && !players[i].isded) {
             if (players[i].targetPlayer != "") {
                 if (!players[getIndexByUsername(players[i].targetPlayer)].isded) {
                     players[getIndexByUsername(players[i].targetPlayer)].inJail = true;
+                    players[getIndexByUsername(players[i].targetPlayer)].roleBlocked = true;
                     sendToSocketId("jailOrUnjailPlayer", true, players[getIndexByUsername(players[i].targetPlayer)].socketid);
                     sendToSocketId("updateTargetPlayer", players[i].targetPlayer, players[i].socketid);
                     alertMessage("You dragged your target to jail.", players[i].socketid);
@@ -485,6 +641,18 @@ function Button1(data) {
                 else if (!abilityPlayer.isded && abilityPlayer.role.name == roles.Werewolf.name && dayCounter % 2 == 0) {
                     players[playerIndex].targetPlayer = targetPlayer.username;
                 }
+                else if (!abilityPlayer.isded && abilityPlayer.role.name == roles.Forger.name) {
+                    if (data.targetname == abilityPlayer.username && abilityPlayer.targetPlayer != "") {
+                        if (data.hasOwnProperty("forgedWill")) {
+                            players[playerIndex].forgedWill = data.forgedWill;
+                            alertMessage("Will forgery confirmed", abilityPlayer.socketid);
+                        }
+                    }
+                    else {
+                        players[playerIndex].targetPlayer = data.targetname;
+                        alertMessage("Forging " + targetPlayer.username + "'s will.", abilityPlayer.socketid);
+                    }
+                }
                 else if (!abilityPlayer.isded && abilityPlayer.role.priority != 0) {
                     if (abilityPlayer.role.name == roles.Doctor.name || abilityPlayer.role.name == roles.Bodyguard.name) {
                         if (data.targetname != abilityPlayer.username) {
@@ -574,6 +742,11 @@ function Button2(data) {
                 var targetIndex = getIndexByUsername(data.targetname);
                 var abilityPlayer = players[playerIndex];
                 var targetPlayer = players[targetIndex];
+                if (!abilityPlayer.isded && abilityPlayer.role.name == roles.Forger.name && abilityPlayer.targetPlayer != "") {
+                    players[playerIndex].forgedWill = "";
+                    players[playerIndex].targetPlayer = "";
+                    alertMessage("Forgery canceled.", abilityPlayer.socketid);
+                }
                 if (!abilityPlayer.isded && abilityPlayer.role.priority != 0 && (abilityPlayer.role.name == roles.Witch.name || abilityPlayer.role.name == roles.Transporter.name)) {
                     if (abilityPlayer.targetPlayer == data.targetname) {
                         alertMessage("You have canceled your decision.", abilityPlayer.socketid);
@@ -659,16 +832,33 @@ function showJudgementResults() {
             sendVotingMessage(players[i].username, "", " abstained.");
         }
     }
-    guiltyVoters = [];
-    innoVoters = [];
 }
 function hangPlayer() {
     console.log("about to fucking die baby: " + playerOnTrial.username);
     players[getIndexByUID(playerOnTrial.uid)].hanged = true;
     players[getIndexByUID(playerOnTrial.uid)].isded = true;
+    var Executioners = getArrayIndexByRole("Executioner");
+    for (var i = 0; i < Executioners.length; i++) {
+        if (players[Executioners[i]].target == players[getIndexByUID(playerOnTrial.uid)].username && !players[Executioners[i]].isded) {
+            winners.push(players[Executioners[i]].username);
+        }
+    }
+    if (players[getIndexByUID(playerOnTrial.uid)].role.name == roles.Jester.name) {
+        players[getIndexByUID(playerOnTrial.uid)].diedToday = true;
+        var jester_guilty_voters = {};
+        for (var index = 0; index < guiltyVoters.length; index++) {
+            jester_guilty_voters[index] = guiltyVoters[i];
+        }
+        sendToSocketId('jesterHanged', {
+            jester_hanged_today: true,
+            guilty_voters: jester_guilty_voters
+        }, players[getIndexByUID(playerOnTrial.uid)].socketid);
+        winners.push(players[getIndexByUID(playerOnTrial.uid)].username);
+    }
     sendVotingMessage(playerOnTrial.username, "", " has died. rip in pepperonies");
-    players[getIndexByUID(playerOnTrial.uid)].howIDied = "iz jus a prank, y u heff to b med";
+    players[getIndexByUID(playerOnTrial.uid)].howIDied = "iz jus a prank, y u heff 2 b med";
     var deadlist = {}; //should i save it as class variable
+    var Janitor_deadlist = {};
     for (var i = 0; i < players.length; i++) {
         if (players[i].isded) {
             var deadrole;
@@ -679,12 +869,188 @@ function hangPlayer() {
                 deadrole = players[i].role;
             }
             deadlist[i] = { username: players[i].username, role: deadrole, will: players[i].will, deathnote: players[i].howIDied };
+            Janitor_deadlist[i] = { username: players[i].username, role: players[i].role, will: players[i].will, deathnote: players[i].howIDied };
         }
     }
-    sendEmit("updateDeadList", deadlist);
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.name == roles.Janitor.name) {
+            sendToSocketId("updateDeadList", {
+                deadlist: Janitor_deadlist
+            }, players[players[i]].socketid);
+        }
+        else {
+            sendToSocketId("updateDeadList", {
+                deadlist: deadlist
+            }, players[players[i]].socketid);
+        }
+    }
+    var executioners = getArrayIndexByRole("Executioner");
+    for (var i = 0; i < executioners.length; i++) {
+        if (players[getIndexByUsername(players[executioners[i]].target)] == players[getIndexByUID(playerOnTrial.uid)].username && !players[executioners[i]].isded) {
+            players[executioners[i]].role = roles.Jester;
+            classifyPlayer(getIndexByUID(players[executioners[i]].uid), players[executioners[i]].role.name);
+            sendToSocketId("updateAfterNight", {
+                player: { role: players[executioners[i]].role, username: players[executioners[i]].username, uid: players[executioners[i]].uid, inJail: players[executioners[i]].inJail, targetPlayer: players[executioners[i]].targetPlayer },
+                isded: false,
+                canUseAbility: true
+            }, players[executioners[i]].socketid);
+        }
+    }
     // show will and role
     // put in graveyard (2 buttons will and deathnote)
     playerOnTrial = null;
+    isGameOver();
+}
+function isGameOver() {
+    var townWin = true;
+    var mafiaWin = true;
+    var skWin = true;
+    var arsoWin = true;
+    var wwWin = true;
+    var draw = true;
+    var witchExists = false;
+    var vigWithBullets = false;
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.name == roles.Witch.name) {
+            witchExists = true;
+        }
+        if (players[i].role.name == roles.Vigilante.name && players[i].abilityCounter < players[i].role.abilitylimit) {
+            vigWithBullets = true;
+        }
+        if (players[i].team == "mafia" || players[i].role.name == roles.Werewolf.name || players[i].role.name == roles.Arsonist.name || players[i].role.name == roles.SerialKiller.name) {
+            townWin = false;
+        }
+        if (witchExists && vigWithBullets) {
+            townWin = false;
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].team == "town" || players[i].role.name == roles.Werewolf.name || players[i].role.name == roles.Arsonist.name || players[i].role.name == roles.SerialKiller.name) {
+            mafiaWin = false;
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].team == "town" || players[i].role.name == roles.Werewolf.name || players[i].role.name == roles.Arsonist.name || players[i].team == "mafia") {
+            skWin = false;
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].team == "town" || players[i].role.name == roles.Werewolf.name || players[i].role.name == roles.SerialKiller.name || players[i].team == "mafia") {
+            arsoWin = false;
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].team == "town" || players[i].role.name == roles.Arsonist.name || players[i].role.name == roles.SerialKiller.name || players[i].team == "mafia") {
+            wwWin = false;
+        }
+    }
+    for (var i = 0; i < players.length; i++) {
+        if (!players[i].isded && players[i].role.name != roles.Survivor.name) {
+            draw = false;
+        }
+    }
+    if (townWin) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].team == "town" || players[i].role.name == roles.Survivor.name) {
+                winners.push(players[i].username);
+            }
+        }
+        sendEmit("getMessage", {
+            username: "",
+            message: "Town won! The winners are:"
+        });
+        for (var i = 0; i < winners.length; i++) {
+            sendEmit("getMessage", {
+                username: "",
+                message: winners[i]
+            });
+        }
+    }
+    if (mafiaWin) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].team == "mafia" || players[i].role.name == roles.Survivor.name || players[i].role.name == roles.Witch.name) {
+                winners.push(players[i].username);
+            }
+        }
+        sendEmit("getMessage", {
+            username: "",
+            message: "Mafia won! The winners are:"
+        });
+        for (var i = 0; i < winners.length; i++) {
+            sendEmit("getMessage", {
+                username: "",
+                message: winners[i]
+            });
+        }
+    }
+    if (skWin) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].role.name == roles.SerialKiller.name || players[i].role.name == roles.Survivor.name || players[i].role.name == roles.Witch.name) {
+                winners.push(players[i].username);
+            }
+        }
+        sendEmit("getMessage", {
+            username: "",
+            message: "Serial Killer won! The winners are:"
+        });
+        for (var i = 0; i < winners.length; i++) {
+            sendEmit("getMessage", {
+                username: "",
+                message: winners[i]
+            });
+        }
+    }
+    if (arsoWin) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].role.name == roles.Arsonist.name || players[i].role.name == roles.Survivor.name || players[i].role.name == roles.Witch.name) {
+                winners.push(players[i].username);
+            }
+        }
+        sendEmit("getMessage", {
+            username: "",
+            message: "Arsonist won! The winners are:"
+        });
+        for (var i = 0; i < winners.length; i++) {
+            sendEmit("getMessage", {
+                username: "",
+                message: winners[i]
+            });
+        }
+    }
+    if (wwWin) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].role.name == roles.Werewolf.name || players[i].role.name == roles.Survivor.name || players[i].role.name == roles.Witch.name) {
+                winners.push(players[i].username);
+            }
+        }
+        sendEmit("getMessage", {
+            username: "",
+            message: "Arsonist won! The winners are:"
+        });
+        for (var i = 0; i < winners.length; i++) {
+            sendEmit("getMessage", {
+                username: "",
+                message: winners[i]
+            });
+        }
+    }
+    if (draw) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].role.name == roles.Survivor.name) {
+                winners.push(players[i].username);
+            }
+        }
+        sendEmit("getMessage", {
+            username: "",
+            message: "I won! The winners are:"
+        });
+        for (var i = 0; i < winners.length; i++) {
+            sendEmit("getMessage", {
+                username: "",
+                message: winners[i]
+            });
+        }
+    }
 }
 function updatePlayerDeathnote(data) {
     if (data.hasOwnProperty("player") && data.hasOwnProperty("targetname")) {
@@ -872,6 +1238,12 @@ function classifyPlayer(index, rolename) {
         case "Werewolf":
             players[index] = new Werewolf(temp_uid, temp_socketid, temp_usrname);
             break;
+        case "Executioner":
+            players[index] = new Executioner(temp_uid, temp_socketid, temp_usrname);
+            break;
+        case "Spy":
+            players[index] = new Spy(temp_uid, temp_socketid, temp_usrname);
+            break;
     } //TODO: add troll
 }
 Array.prototype.shuffle = function () {
@@ -905,11 +1277,74 @@ var VoteInfo = (function () {
     }
     return VoteInfo;
 }());
+function goingToKill(killerUN, targetUN) {
+    var bgs = [];
+    var docs = [];
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.name == roles.Bodyguard.name) {
+            if (players[i].targetPlayer == targetUN && players[i].usingAbility) {
+                bgs.push(i);
+            }
+        }
+        else if (players[i].role.name == roles.Doctor.name) {
+            if (players[i].targetPlayer == targetUN && players[i].usingAbility) {
+                docs.push(i);
+            }
+        }
+    }
+    if (bgs.length != 0) {
+        if (docs.length != 0) {
+            for (var indx = 0; indx < docs.length; i++) {
+                alertMessage("Your target was attacked last night!", players[indx].socketid);
+            }
+        }
+        var bg_docs = [];
+        var attacker_docs = [];
+        var rand_bg_indx = Math.floor(Math.random() * bgs.length);
+        var attacker_index = getIndexByUsername(killerUN);
+        players[bgs[rand_bg_indx]].usingAbility = false;
+        alertMessage("You were attacked last night but a Bodyguard fought off your attacker!", players[bgs[rand_bg_indx]].socketid);
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].role.name == roles.Doctor.name && players[i].usingAbility && players[i].targetPlayer == players[bgs[rand_bg_indx]].username) {
+                bg_docs.push[i];
+            }
+            else if (players[i].role.name == roles.Doctor.name && players[i].usingAbility && players[i].targetPlayer == players[attacker_index].username) {
+                attacker_docs.push(i);
+            }
+        }
+        if (bg_docs.length == 0) {
+            players[bgs[rand_bg_indx]].diedTonight = true;
+            alertMessage("You were attacked protecting your target", players[bgs[rand_bg_indx]].socketid);
+        }
+        else {
+            for (var i = 0; i < bg_docs.length; i++) {
+                alertMessage("Your target was attacked!", players[bg_docs[i]].socketid);
+            }
+        }
+        if (attacker_docs.length == 0) {
+            players[attacker_index].diedTonight = true;
+            alertMessage("You were killed by a Bodyguard!", players[getIndexByUsername(killerUN)].socketid);
+        }
+        else {
+            for (var i = 0; i < attacker_docs.length; i++) {
+                alertMessage("Your target was attacked!", players[attacker_docs[i]].socketid);
+            }
+        }
+    }
+    else if (docs.length != 0) {
+        for (var indx = 0; indx < docs.length; i++) {
+            alertMessage("Your target was attacked last night!", players[indx].socketid);
+        }
+        alertMessage("You were attacked but someone nursed you back to health!", players[getIndexByUsername(targetUN)].socketid);
+    }
+    else
+        players[getIndexByUsername(targetUN)].diedTonight = true;
+}
 var Player = (function () {
     //add priority
     function Player(_uid, _socketid, usrname) {
         if (usrname === void 0) { usrname = ""; }
-        this.roleList = []; //error is here: "unexpected token :"
+        this.roleList = [];
         this.nameList = [];
         this.username = "";
         this.isded = false;
@@ -920,15 +1355,18 @@ var Player = (function () {
         this.cleaned = false;
         this.framed = false;
         this.witched = false;
-        this.guarded = null;
-        this.healed = false;
+        this.forged = false;
+        this.usingAbility = false;
         this.abilityCounter = 0;
         this.targetPlayer = "";
         this.will = ""; //check if needed + deathnote
         this.howIDied = "";
+        this.diedTonight = false;
         this.uid = _uid;
         this.socketid = _socketid;
         this.username = usrname;
+        this.abilityCounter = 0;
+        this.usingAbility = false;
     }
     return Player;
 }());
@@ -950,7 +1388,8 @@ var Jailor = (function (_super) {
     Jailor.prototype.useAbility = function () {
         var jailedTargetIndex = getJailedIndex();
         if (jailedTargetIndex != -1) {
-            if (players[jailedTargetIndex].username == this.targetPlayer && !this.roleBlocked) {
+            if (players[jailedTargetIndex].username == this.targetPlayer && !this.roleBlocked && this.abilityCounter < this.role.abilitylimit) {
+                this.usingAbility = true;
                 players[getIndexByUsername(this.targetPlayer)].isded = true;
                 this.abilityCounter++;
                 if (players[getIndexByUsername(this.targetPlayer)].role.team == "town") {
@@ -981,14 +1420,15 @@ var Transporter = (function (_super) {
         //else if this happens ^ and add else if to bottom statement \.'./
         if (this.targetPlayer != "" && this.target2 != "") {
             if (!players[getIndexByUsername(this.targetPlayer)].inJail && !players[getIndexByUsername(this.target2)].inJail) {
+                this.usingAbility = true;
                 var homeRampageWW1 = (players[getIndexByUsername(this.targetPlayer)].role.name == roles.Werewolf.name && players[getIndexByUsername(this.targetPlayer)].targetPlayer == this.targetPlayer
                     && !players[getIndexByUsername(this.targetPlayer)].roleBlocked);
                 var homeRampageWW2 = (players[getIndexByUsername(this.target2)].role.name == roles.Werewolf.name && players[getIndexByUsername(this.target2)].targetPlayer == this.target2
                     && !players[getIndexByUsername(this.target2)].roleBlocked);
-                if (homeRampageWW1) {
+                if (homeRampageWW1 && dayCounter % 2 == 0) {
                     players[getIndexByUsername(this.target2)].isded = true;
                 }
-                if (homeRampageWW2) {
+                if (homeRampageWW2 && dayCounter % 2 == 0) {
                     players[getIndexByUsername(this.targetPlayer)].isded = true;
                 }
                 for (var i = 0; i < players.length; i++) {
@@ -1048,6 +1488,11 @@ var Witch = (function (_super) {
                     players[getIndexByUsername(this.targetPlayer)].witched = true;
                     alertMessage("You were controlled by a Witch!", players[getIndexByUsername(this.targetPlayer)].socketid);
                 }
+                else if (target_p.role.name == roles.Jester.name) {
+                    players[getIndexByUsername(this.targetPlayer)].targetPlayer = this.target2;
+                    players[getIndexByUsername(this.targetPlayer)].witched = true;
+                    alertMessage("You were controlled by a Witch!", players[getIndexByUsername(this.targetPlayer)].socketid);
+                }
                 else if (target_p.role.name == roles.Amnesiac.name) {
                     players[getIndexByUsername(this.targetPlayer)].roleBlocked = true;
                     players[getIndexByUsername(this.targetPlayer)].targetPlayer = this.target2;
@@ -1063,14 +1508,15 @@ var Witch = (function (_super) {
                     }
                 }
                 else if (target_p.role.name == roles.Werewolf.name) {
-                    if (!players[getIndexByUsername(this.targetPlayer)].roleBlocked) {
+                    if (!players[getIndexByUsername(this.targetPlayer)].roleBlocked && players[getIndexByUsername(this.targetPlayer)].targetPlayer != ""
+                        && players[getIndexByUsername(this.targetPlayer)].targetPlayer != players[getIndexByUsername(this.targetPlayer)].username) {
                         players[getIndexByUsername(this.targetPlayer)].targetPlayer = this.targetPlayer;
                         players[getIndexByUsername(this.targetPlayer)].witched = true;
                         alertMessage("You were controlled by a Witch!", players[getIndexByUsername(this.targetPlayer)].socketid);
                         players[getIndexByUsername(this.targetPlayer)].useAbility();
                     }
                 }
-                else if (players[getIndexByUsername(this.targetPlayer)].role.priority != 0) {
+                else if (target_p.role.priority != 0) {
                     players[getIndexByUsername(this.targetPlayer)].targetPlayer = this.target2;
                     players[getIndexByUsername(this.targetPlayer)].witched = true;
                     alertMessage("You were controlled by a Witch!", players[getIndexByUsername(this.targetPlayer)].socketid);
@@ -1092,9 +1538,29 @@ var Veteran = (function (_super) {
         this.deathnote = "";
     }
     Veteran.prototype.useAbility = function () {
-        for (var i = 0; i < players.length; i++) {
-            if (players[i].targetPlayer == this.username && !players[i].healed) {
-                players[i].isded = true;
+        if (this.abilityCounter < this.role.abilitylimit) {
+            this.abilityCounter++;
+            var all_docs = getArrayIndexByRole("Doctor");
+            this.usingAbility = true;
+            for (var i = 0; i < players.length; i++) {
+                if (players[i].targetPlayer == this.username) {
+                    alertMessage("You shot someone who visited you last night!", this.socketid);
+                    var current_docs = [];
+                    for (var i_1 = 0; i_1 < all_docs.length; i_1++) {
+                        if (all_docs[i_1].targetPlayer == players[i_1].username && all_docs[i_1].usingAbility) {
+                            current_docs.push(i_1);
+                        }
+                    }
+                    if (current_docs.length == 0) {
+                        players[i].diedTonight = true;
+                    }
+                    else {
+                        for (var i_2 = 0; i_2 < current_docs.length; i_2++) {
+                            alertMessage("Your target has been attacked!", players[all_docs[current_docs[i_2]]].socketid);
+                        }
+                        alertMessage("You were attacked but someone nursed you back to health!", players[i].socketid);
+                    }
+                }
             }
         }
     };
@@ -1112,7 +1578,8 @@ var Escort = (function (_super) {
             || target_p.role.name == roles.Consort.name || target_p.role.name == roles.Escort.name) {
             alertMessage("Someone tried to role block you but you are immune!", target_p.socketid);
         }
-        else {
+        else if (!target_p.inJail) {
+            this.usingAbility = true;
             players[getIndexByUsername(this.targetPlayer)].roleBlocked = true;
             alertMessage("Someone occupied your night. You were role blocked!", target_p.socketid);
         }
@@ -1131,7 +1598,8 @@ var Consort = (function (_super) {
             || target_p.role.name == roles.Consort.name || target_p.role.name == roles.Escort.name) {
             alertMessage("Someone tried to role block you but you are immune!", target_p.socketid);
         }
-        else {
+        else if (!target_p.inJail) {
+            this.usingAbility = true;
             players[getIndexByUsername(this.targetPlayer)].roleBlocked = true;
             alertMessage("Someone occupied your night. You were role blocked!", target_p.socketid);
         }
@@ -1143,10 +1611,19 @@ var Doctor = (function (_super) {
     function Doctor(_uid, _socketid, usrname) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
+        this.success_heal = false;
     }
     Doctor.prototype.useAbility = function () {
         if (!this.roleBlocked) {
-            players[getIndexByUsername(this.targetPlayer)].healed = true;
+            if (this.targetPlayer == this.username) {
+                if (this.abilityCounter < this.role.abilitylimit) {
+                    this.usingAbility = true;
+                    this.abilityCounter++;
+                }
+            }
+            else if (!(players[getIndexByUsername(this.targetPlayer)].role.name == roles.Mayor.name && players[getIndexByUsername(this.targetPlayer)].abilityCounter != 0)) {
+                this.usingAbility = true;
+            }
         }
     };
     return Doctor;
@@ -1158,7 +1635,8 @@ var Janitor = (function (_super) {
         _super.call(this, _uid, _socketid);
     }
     Janitor.prototype.useAbility = function () {
-        if (!this.roleBlocked) {
+        if (!this.roleBlocked && this.abilityCounter < this.role.abilitylimit) {
+            this.usingAbility = true;
             this.abilityCounter++;
             players[getIndexByUsername(this.targetPlayer)].cleaned = true;
         }
@@ -1173,8 +1651,14 @@ var Retributionist = (function (_super) {
     }
     Retributionist.prototype.useAbility = function () {
         if (players[getIndexByUsername(this.targetPlayer)].role.team == "town"
-            && !players[getIndexByUsername(this.targetPlayer)].cleaned && !this.roleBlocked)
-            players[getIndexByUsername(this.targetPlayer)].isded = false;
+            && !players[getIndexByUsername(this.targetPlayer)].cleaned && !this.roleBlocked && players[getIndexByUsername(this.targetPlayer)].isded) {
+            classifyPlayer(getIndexByUID(players[getIndexByUsername(this.targetPlayer)].uid), players[getIndexByUsername(this.targetPlayer)].role.name);
+            this.abilityCounter++;
+            sendEmit("getMessage", {
+                username: "",
+                message: this.targetPlayer + " has been resurrected!"
+            });
+        }
     };
     return Retributionist;
 }(Player));
@@ -1183,7 +1667,15 @@ var Forger = (function (_super) {
     function Forger(_uid, _socketid, usrname) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
+        this.forgedWill = "";
     }
+    Forger.prototype.useAbility = function () {
+        if (!this.roleBlocked && this.abilityCounter < this.role.abilitylimit) {
+            this.usingAbility = true;
+            players[getIndexByUsername(this.targetPlayer)].forged = true;
+            this.abilityCounter++;
+        }
+    };
     return Forger;
 }(Player));
 var Consigliere = (function (_super) {
@@ -1207,6 +1699,7 @@ var Blackmailer = (function (_super) {
     }
     Blackmailer.prototype.useAbility = function () {
         if (!this.roleBlocked && !players[getIndexByUsername(this.targetPlayer)].inJail) {
+            this.usingAbility = true;
             players[getIndexByUsername(this.targetPlayer)].blackmailed = true;
         }
     };
@@ -1220,6 +1713,7 @@ var Framer = (function (_super) {
     }
     Framer.prototype.useAbility = function () {
         if (!this.roleBlocked) {
+            this.usingAbility = true;
             players[getIndexByUsername(this.targetPlayer)].framed = true;
         }
     };
@@ -1232,11 +1726,16 @@ var Bodyguard = (function (_super) {
         _super.call(this, _uid, _socketid);
     }
     Bodyguard.prototype.useAbility = function () {
-        if (!this.roleBlocked) {
+        if (!this.roleBlocked && !players[getIndexByUsername(this.targetPlayer)].inJail) {
             if (this.targetPlayer == this.username) {
-                this.abilityCounter++;
+                if (this.abilityCounter < this.role.abilitylimit) {
+                    this.usingAbility = true;
+                    this.abilityCounter++;
+                }
             }
-            players[getIndexByUsername(this.targetPlayer)].guarded = this;
+            else {
+                this.usingAbility = true;
+            }
         }
     };
     return Bodyguard;
@@ -1250,7 +1749,7 @@ var Godfather = (function (_super) {
     }
     Godfather.prototype.useAbility = function () {
         var indx = getIndexByUsername(this.targetPlayer);
-        if (!this.roleBlocked && !isNightImmune(indx)) {
+        if (!this.roleBlocked) {
             var mafioso_index = -1;
             for (var i = 0; i < this.mafiaList.length; i++) {
                 if (this.mafiaList[i].role.name == roles.Mafioso.name && !players[getIndexByUsername(this.mafiaList[i].username)].roleBlocked) {
@@ -1258,19 +1757,21 @@ var Godfather = (function (_super) {
                 }
             }
             if (mafioso_index == -1) {
-                if (players[getIndexByUsername(this.targetPlayer)].guarded != null) {
-                    this.isded = true;
-                    if (!players[getIndexByUsername(this.targetPlayer)].guarded.healed) {
-                        players[getIndexByUsername(players[getIndexByUsername(this.targetPlayer)].guarded.username)].isded = true;
+                if (isNightImmune(getIndexByUsername(this.targetPlayer))) {
+                    for (var i = 0; i < players.length; i++) {
+                        if (players[i].role.name == roles.Doctor.name && players[i].targetPlayer == this.targetPlayer && players[i].usingAbility) {
+                            alertMessage("Your target was attacked!", players[i].socketid);
+                        }
                     }
-                    players[getIndexByUsername(this.targetPlayer)].guarded = null;
+                    alertMessage("Your target was immune to your attack!", this.socketid);
+                    alertMessage("Someone tried to attack you but you are immune at night!", players[getIndexByUsername(this.targetPlayer)].socketid);
                 }
                 else {
-                    players[getIndexByUsername(this.targetPlayer)].isded = true;
+                    goingToKill(this.username, this.targetPlayer);
                 }
             }
-            else if (!players[indx].healed) {
-                players[getIndexByUsername(this.mafiaList[mafioso_index].username)].targetPlayer = "";
+            else {
+                players[mafioso_index].targetPlayer = this.targetPlayer;
             }
         }
     };
@@ -1279,8 +1780,9 @@ var Godfather = (function (_super) {
 function isNightImmune(index) {
     return (players[index].role.name == roles.Veteran.name && players[index].targetPlayer == players[index].username)
         || players[index].role.name == roles.Werewolf.name || players[index].role.name == roles.Godfather.name || players[index].role.name == roles.Arsonist.name
-        || players[index].role.name == roles.SerialKiller.name || (players[index].role.name == roles.Bodyguard.name && players[index].targetPlayer == players[index].username)
-        || (players[index].role.name == roles.Survivor.name && players[index].targetPlayer == players[index].username) || players[index].role.name == roles.Executioner.name;
+        || players[index].role.name == roles.SerialKiller.name || (players[index].role.name == roles.Bodyguard.name && players[index].targetPlayer == players[index].username && players[index].usingAbility)
+        || (players[index].role.name == roles.Survivor.name && players[index].targetPlayer == players[index].username && players[index].usingAbility) || players[index].role.name == roles.Executioner.name
+        || players[index].inJail;
 }
 var Mafioso = (function (_super) {
     __extends(Mafioso, _super);
@@ -1292,16 +1794,18 @@ var Mafioso = (function (_super) {
     Mafioso.prototype.useAbility = function () {
         var indx = getIndexByUsername(this.targetPlayer);
         //if not roleblocked and not attacking role that cannot die tonight
-        if (!this.roleBlocked && !isNightImmune(indx)) {
-            if (players[indx].guarded != null) {
-                this.isded = true;
-                if (!players[indx].guarded.healed) {
-                    players[getIndexByUsername(players[indx].guarded.username)].isded = true;
+        if (!this.roleBlocked) {
+            if (isNightImmune(getIndexByUsername(this.targetPlayer))) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].role.name == roles.Doctor.name && players[i].targetPlayer == this.targetPlayer && players[i].usingAbility) {
+                        alertMessage("Your target was attacked!", players[i].socketid);
+                    }
                 }
-                players[indx].guarded = null;
+                alertMessage("Your target was immune to your attack!", this.socketid);
+                alertMessage("Someone tried to attack you but you are immune at night!", players[getIndexByUsername(this.targetPlayer)].socketid);
             }
-            else if (!players[indx].healed) {
-                players[indx].isded = true;
+            else {
+                goingToKill(this.username, this.targetPlayer);
             }
         }
     };
@@ -1315,35 +1819,44 @@ var SerialKiller = (function (_super) {
         this.deathnote = "";
     }
     SerialKiller.prototype.useAbility = function () {
-        if (this.roleBlocked) {
-            for (var i = 0; i < players.length; i++) {
-                if ((players[i].role.name == roles.Escort.name || players[i].role.name == roles.Consort.name) && players[i].targetPlayer == this.username) {
-                    if (players[i].guarded != null) {
-                        this.isded = true;
-                        if (!players[i].guarded.healed) {
-                            players[getIndexByUsername(players[i].guarded.username)].isded = true;
-                        }
-                        players[i].guarded = null;
+        if (this.inJail) {
+            if (!players[getArrayIndexByRole("Jailor")[0]].usingAbility) {
+                goingToKill(this.username, players[getArrayIndexByRole("Jailor")[0]].username);
+            }
+            if (this.roleBlocked) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].targetPlayer == this.username && (players[i].role.name == roles.Escort.name || players[i].role.name == roles.Consort.name)) {
+                        goingToKill(this.username, players[i].username);
                     }
-                    else if (!players[i].healed) {
-                        players[i].isded = true;
+                }
+            }
+        }
+        else if (this.roleBlocked) {
+            for (var i = 0; i < players.length; i++) {
+                if (players[i].targetPlayer == this.username && (players[i].role.name == roles.Escort.name || players[i].role.name == roles.Consort.name)) {
+                    goingToKill(this.username, players[i].username);
+                    alertMessage("Someone role blocked you, so you attacked them!", this.socketid);
+                    if (this.targetPlayer == players[i].username) {
+                        alertMessage("you were attacked by a Serial Killer", players[i].socketid);
+                    }
+                    else {
+                        alertMessage("you were attacked by the Serial Killer you visited", players[i].socketid);
                     }
                 }
             }
         }
         else {
-            var jailor_index = getArrayIndexByRole("Jailor");
-            if ((this.inJail && players[jailor_index[0]].targetPlayer == "") || !isNightImmune(getIndexByUsername(this.targetPlayer))) {
-                if (players[i].guarded != null) {
-                    this.isded = true;
-                    if (!players[i].guarded.healed) {
-                        players[getIndexByUsername(players[i].guarded.username)].isded = true;
+            if (isNightImmune(getIndexByUsername(this.targetPlayer))) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].role.name == roles.Doctor.name && players[i].targetPlayer == this.targetPlayer && players[i].usingAbility) {
+                        alertMessage("Your target was attacked!", players[i].socketid);
                     }
-                    players[i].guarded = null;
                 }
-                else if (!players[i].healed) {
-                    players[i].isded = true;
-                }
+                alertMessage("Your target was immune to your attack!", this.socketid);
+                alertMessage("Someone tried to attack you but you are immune at night!", players[getIndexByUsername(this.targetPlayer)].socketid);
+            }
+            else {
+                goingToKill(this.username, this.targetPlayer);
             }
         }
     };
@@ -1357,36 +1870,9 @@ var VampireHunter = (function (_super) {
         this.deathnote = "";
     }
     VampireHunter.prototype.useAbility = function () {
-        if (this.roleBlocked) {
-            var vamp_list = getArrayIndexByRole("Vampire");
-            for (var i = 0; i < vamp_list.length; i++) {
-                if (players[vamp_list[i]].targetPlayer == this.username) {
-                    if (players[vamp_list[i]].guarded != null) {
-                        this.isded = true;
-                        if (!players[vamp_list[i]].guarded.healed) {
-                            players[getIndexByUsername(players[vamp_list[i]].guarded.username)].isded = true;
-                        }
-                        players[vamp_list[i]].guarded = null;
-                    }
-                    else if (!players[vamp_list[i]].healed) {
-                        players[vamp_list[i]].isded = true;
-                    }
-                }
-            }
-        }
-        else {
-            var indx = getIndexByUsername(this.targetPlayer);
-            if (players[indx].role.name == roles.Vampire.name) {
-                if (players[indx].guarded != null) {
-                    this.isded = true;
-                    if (!players[indx].guarded.healed) {
-                        players[getIndexByUsername(players[indx].guarded.username)].isded = true;
-                    }
-                    players[indx].guarded = null;
-                }
-                else if (!players[indx].healed) {
-                    players[indx].isded = true;
-                }
+        if (!this.roleBlocked) {
+            if (players[getIndexByUsername(this.targetPlayer)].role.name == roles.Vampire.name) {
+                goingToKill(this.username, this.targetPlayer);
             }
         }
     };
@@ -1397,13 +1883,14 @@ var Jester = (function (_super) {
     function Jester(_uid, _socketid, usrname) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
-        this.guilty_voters = [];
     }
     Jester.prototype.useAbility = function () {
-        if (this.targetPlayer == "") {
-        }
-        else {
-            players[getIndexByUsername(this.targetPlayer)].isded = true;
+        if (this.diedToday) {
+            players[getIndexByUsername(this.targetPlayer)].diedTonight = true;
+            this.diedToday = false;
+            sendToSocketId('jesterHanged', {
+                jester_hanged_today: false
+            }, players[getIndexByUID(playerOnTrial.uid)].socketid);
         }
     };
     return Jester;
@@ -1417,8 +1904,17 @@ var Vigilante = (function (_super) {
         this.willDie = false; //if kills town
     }
     Vigilante.prototype.useAbility = function () {
-        if (!this.roleBlocked) {
-            if (dayCounter > 1 || this.witched) {
+        if ((dayCounter > 1 || this.witched) && this.abilityCounter < this.role.abilitylimit && !this.roleBlocked) {
+            var index = getIndexByUsername(this.targetPlayer);
+            if (isNightImmune(index)) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].role.name == roles.Doctor.name && players[i].targetPlayer == players[index].username && players[i].usingAbility) {
+                        alertMessage("Your target was attacked!", players[i].socketid);
+                    }
+                }
+            }
+            else {
+                goingToKill(this.username, this.targetPlayer);
             }
         }
     };
@@ -1430,6 +1926,20 @@ var Disguiser = (function (_super) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
     }
+    Disguiser.prototype.useAbility = function () {
+        if (players[getIndexByUsername(this.targetPlayer)].diedTonight && this.abilityCounter < this.role.abilitylimit && !this.roleBlocked) {
+            this.usingAbility = true;
+            var myun = this.username;
+            var targetun = players[getIndexByUsername(this.targetPlayer)].username;
+            var temp = players[getIndexByUsername(this.targetPlayer)];
+            var targetindex = getIndexByUsername(this.targetPlayer);
+            var myindex = getIndexByUsername(this.username);
+            players[targetindex] = this;
+            players[myindex] = temp;
+            players[myindex].username = myun;
+            players[targetindex].username = targetun;
+        }
+    };
     return Disguiser;
 }(Player));
 var Amnesiac = (function (_super) {
@@ -1438,6 +1948,17 @@ var Amnesiac = (function (_super) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
     }
+    Amnesiac.prototype.useAbility = function () {
+        if (this.abilityCounter < this.role.abilitylimit && !this.roleBlocked && !this.diedTonight && players[getIndexByUsername(this.targetPlayer)].role.name != roles.Mafioso.name
+            && !players[getIndexByUsername(this.targetPlayer)].role.unique) {
+            this.role = players[getIndexByUsername(this.targetPlayer)].role;
+            classifyPlayer(getIndexByUID(this.uid), this.role.name);
+            sendEmit("getMessage", {
+                username: "",
+                message: "An Amnesiac remembered he was a " + this.role.name
+            });
+        }
+    };
     return Amnesiac;
 }(Player));
 var Arsonist = (function (_super) {
@@ -1446,7 +1967,73 @@ var Arsonist = (function (_super) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
         this.deathnote = "";
+        this.dousedTarget = "";
+        this.cleanYourself = false;
+        this.ignite = false;
     }
+    Arsonist.prototype.useAbility = function () {
+        if (!this.roleBlocked && !this.inJail) {
+            this.usingAbility = true;
+            if (this.targetPlayer == "") {
+                this.cleanYourself = true;
+            }
+            else if (this.targetPlayer == this.username) {
+                this.ignite = true;
+            }
+            else {
+                var bgs = [];
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].role.name == roles.Bodyguard.name) {
+                        if (players[i].targetPlayer == this.targetPlayer && players[i].usingAbility) {
+                            bgs.push(i);
+                        }
+                    }
+                }
+                if (bgs.length != 0) {
+                    var bg_docs = [];
+                    var attacker_docs = [];
+                    var rand_bg_indx = Math.floor(Math.random() * bgs.length);
+                    var attacker_index = getIndexByUsername(this.username);
+                    players[bgs[rand_bg_indx]].usingAbility = false;
+                    alertMessage("You were attacked last night but a Bodyguard fought off your attacker!", players[bgs[rand_bg_indx]].socketid);
+                    for (var i = 0; i < players.length; i++) {
+                        if (players[i].role.name == roles.Doctor.name && players[i].usingAbility && players[i].targetPlayer == players[bgs[rand_bg_indx]].username) {
+                            bg_docs.push[i];
+                        }
+                        else if (players[i].role.name == roles.Doctor.name && players[i].usingAbility && players[i].targetPlayer == players[attacker_index].username) {
+                            attacker_docs.push(i);
+                        }
+                    }
+                    if (bg_docs.length == 0) {
+                        players[bgs[rand_bg_indx]].diedTonight = true;
+                        alertMessage("You were attacked protecting your target", players[bgs[rand_bg_indx]].socketid);
+                    }
+                    else {
+                        for (var i = 0; i < bg_docs.length; i++) {
+                            alertMessage("Your target was attacked!", players[bg_docs[i]].socketid);
+                        }
+                    }
+                    if (attacker_docs.length == 0) {
+                        players[attacker_index].diedTonight = true;
+                        alertMessage("You were killed by a Bodyguard!", players[getIndexByUsername(this.username)].socketid);
+                    }
+                    else {
+                        for (var i = 0; i < attacker_docs.length; i++) {
+                            alertMessage("Your target was attacked!", players[attacker_docs[i]].socketid);
+                        }
+                    }
+                }
+                else {
+                    if (!players[getIndexByUsername(this.targetPlayer)].inJail) {
+                        this.dousedTarget = this.targetPlayer;
+                    }
+                    else {
+                        alertMessage("Your target was immune to your attack!", this.socketid);
+                    }
+                }
+            }
+        }
+    };
     return Arsonist;
 }(Player));
 var Survivor = (function (_super) {
@@ -1456,7 +2043,10 @@ var Survivor = (function (_super) {
         _super.call(this, _uid, _socketid);
     }
     Survivor.prototype.useAbility = function () {
-        this.abilityCounter++;
+        if (this.abilityCounter < this.role.abilitylimit && !this.roleBlocked) {
+            this.abilityCounter++;
+            this.usingAbility = true;
+        }
     };
     return Survivor;
 }(Player));
@@ -1492,6 +2082,18 @@ var Lookout = (function (_super) {
         if (usrname === void 0) { usrname = ""; }
         _super.call(this, _uid, _socketid);
     }
+    Lookout.prototype.useAbility = function () {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].targetPlayer == this.targetPlayer) {
+                var doc_onself = players[i].role.name == roles.Doctor.name && players[i].targetPlayer == players[i].username && players[i].usingAbility;
+                var bg_onself = players[i].role.name == roles.Bodyguard.name && players[i].targetPlayer == players[i].username && players[i].usingAbility;
+                if (this.username != players[i].username && !(players[i].role.name == roles.Disguiser.name && players[i].usingAbility) &&
+                    (players[i].targetPlayer != players[i].username || doc_onself || bg_onself)) {
+                    alertMessage(players[i].username + " visited your target last night!", this.socketid);
+                }
+            }
+        }
+    };
     return Lookout;
 }(Player));
 var Investigator = (function (_super) {
@@ -1519,6 +2121,8 @@ var Vampire = (function (_super) {
         _super.call(this, _uid, _socketid);
         this.youngest = false;
     }
+    Vampire.prototype.useAbility = function () {
+    };
     return Vampire;
 }(Player));
 var Werewolf = (function (_super) {
@@ -1528,8 +2132,86 @@ var Werewolf = (function (_super) {
         _super.call(this, _uid, _socketid);
         this.deathnote = "";
     }
+    Werewolf.prototype.useAbility = function () {
+        alertMessage("The light of the full moon has caused you to turn into a rampaging Werewolf!", this.socketid);
+        if (this.inJail) {
+            if (!players[getArrayIndexByRole("Jailor")[0]].usingAbility) {
+                goingToKill(this.username, players[getArrayIndexByRole("Jailor")[0]].username);
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].targetPlayer == players[getArrayIndexByRole("Jailor")[0]].username && players[i].usingAbility) {
+                        goingToKill(this.username, players[i].username);
+                    }
+                }
+            }
+        }
+        else {
+            if (this.targetPlayer == "" || this.roleBlocked) {
+                this.targetPlayer = this.username;
+                if (this.roleBlocked) {
+                    for (var i = 0; i < players.length; i++) {
+                        if (players[i].targetPlayer == this.username && (players[i].role.name == roles.Escort.name || players[i].role.name == roles.Consort.name)) {
+                            goingToKill(this.username, players[i].username);
+                        }
+                    }
+                }
+            }
+            if (this.targetPlayer == this.username) {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].targetPlayer == this.username) {
+                        if (players[i].role.name == roles.Bodyguard.name) {
+                            goingToKill(players[i].username, this.username);
+                        }
+                        goingToKill(this.username, players[i].username);
+                    }
+                }
+            }
+            else {
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].targetPlayer == this.targetPlayer) {
+                        goingToKill(this.username, players[i].username);
+                    }
+                }
+            }
+        }
+    };
     return Werewolf;
 }(Player));
+var Executioner = (function (_super) {
+    __extends(Executioner, _super);
+    function Executioner(_uid, _socketid, usrname) {
+        if (usrname === void 0) { usrname = ""; }
+        _super.call(this, _uid, _socketid);
+        this.target = "";
+        this.target = getExecutionerTarget();
+    }
+    return Executioner;
+}(Player));
+var Spy = (function (_super) {
+    __extends(Spy, _super);
+    function Spy(_uid, _socketid, usrname) {
+        if (usrname === void 0) { usrname = ""; }
+        _super.call(this, _uid, _socketid);
+    }
+    Spy.prototype.useAbility = function () {
+        if (!this.roleBlocked) {
+            for (var i = 0; i < players.length; i++) {
+                if (players[i].role.team == "mafia" && !players[i].isded && players[i].usingAbility) {
+                    alertMessage(players[i].username + "visited " + players[i].targetPlayer + " last night", this.socketid);
+                }
+            }
+        }
+    };
+    return Spy;
+}(Player));
+function getExecutionerTarget() {
+    var possible_targets = [];
+    for (var i = 0; i < players.length; i++) {
+        if (players[i].role.team == "town" && players[i].role.name != roles.Mayor.name && players[i].role.name != roles.Spy.name && !players[i].isded) {
+            possible_targets.push(players[i].username);
+        }
+    }
+    return possible_targets[Math.floor(Math.random() * possible_targets.length)];
+}
 function checkUserName(data) {
     if (data.hasOwnProperty("usr") && data.hasOwnProperty("uid")) {
         if (usernameExists(data.usr) && UID_Exists(data.uid)) {

@@ -353,13 +353,12 @@ function checkNightAbilities() {
             players[getIndexByUsername(sortedByPriority[i].username)].useAbility();
         }
     }
-<<<<<<< HEAD
     var executioners = getArrayIndexByRole("Executioner");
     for (var i = 0; i < executioners.length; i++) {
         if(players[getIndexByUsername(players[executioners[i]].username)].diedTonight) {
-            //change exe role to jester
-=======
-
+            //change exe role to jester 
+        }
+    }
     var arsonists = getArrayIndexByRole("Arsonist");
     for (var i = 0; i < arsonists.length; i++) {
         if (players[arsonists[i]].cleanYourself) {
@@ -441,7 +440,6 @@ function checkNightAbilities() {
                 player: { role: players[i].role, username: players[i].username, uid: players[i].uid, inJail: players[i].inJail, targetPlayer: players[i].targetPlayer },
                 canUseAbility: players[i].abilityCounter < players[i].role.abilitylimit
             }, players[i].socketid);
->>>>>>> 40d3dade347461524dbc20fb887de4a1cfe013ec
         }
     }
 
@@ -461,14 +459,14 @@ function checkNightAbilities() {
         }
     }
     for (var i = 0; i < players.length; i++) {
-        if (player[i].role.name == roles.Janitor.name) {
+        if (players[i].role.name == roles.Janitor.name) {
             sendToSocketId("updateDeadList", {
                 deadlist: Janitor_deadlist
-            }, players[players[i]].socketid);
+            }, players[i].socketid);
         } else {
             sendToSocketId("updateDeadList", {
                 deadlist: deadlist
-            }, players[players[i]].socketid);
+            }, players[i].socketid);
         }
     }
     isGameOver();
@@ -870,11 +868,7 @@ function hangPlayer() {
     var Executioners = getArrayIndexByRole("Executioner");
     for (var i = 0; i < Executioners.length; i++) {
         if (players[Executioners[i]].target == players[getIndexByUID(playerOnTrial.uid)].username && !players[Executioners[i]].isded) {
-<<<<<<< HEAD
-            winners.push(players[Executioners[i]]);
-=======
             winners.push(players[Executioners[i]].username);
->>>>>>> 40d3dade347461524dbc20fb887de4a1cfe013ec
         }
     }
     if (players[getIndexByUID(playerOnTrial.uid)].role.name == roles.Jester.name) {
@@ -907,14 +901,14 @@ function hangPlayer() {
         }
     }
     for (var i = 0; i < players.length; i++) {
-        if (player[i].role.name == roles.Janitor.name) {
+        if (players[i].role.name == roles.Janitor.name) {
             sendToSocketId("updateDeadList", {
                 deadlist: Janitor_deadlist
-            }, players[players[i]].socketid);
+            }, players[i].socketid);
         } else {
             sendToSocketId("updateDeadList", {
                 deadlist: deadlist
-            }, players[players[i]].socketid);
+            }, players[i].socketid);
         }
     }
 
@@ -1991,19 +1985,13 @@ class Amnesiac extends Player {
 
 class Arsonist extends Player {
     deathnote: string = "";
-<<<<<<< HEAD
-=======
     dousedTarget: string = "";
     cleanYourself: boolean = false;
     ignite: boolean = false;
->>>>>>> 40d3dade347461524dbc20fb887de4a1cfe013ec
     constructor(_uid: string, _socketid: string, usrname: string = "") {
         super(_uid, _socketid);
     }
     useAbility(): void {
-<<<<<<< HEAD
-
-=======
         if (!this.roleBlocked && !this.inJail) {
             this.usingAbility = true;
             if (this.targetPlayer == "") {
@@ -2058,7 +2046,7 @@ class Arsonist extends Player {
                 }
                 else {
                     if (!players[getIndexByUsername(this.targetPlayer)].inJail) {
-                        dousedTarget = this.targetPlayer;
+                        this.dousedTarget = this.targetPlayer;
                     }
                     else {
                         alertMessage("Your target was immune to your attack!", this.socketid);
@@ -2066,7 +2054,6 @@ class Arsonist extends Player {
                 }
             }
         }
->>>>>>> 40d3dade347461524dbc20fb887de4a1cfe013ec
     }
 }
 
