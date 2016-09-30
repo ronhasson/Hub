@@ -40,6 +40,7 @@ io.on('connection', function (socket) {
         console.log("on join");
     });
     socket.on('requestUserN', function (data) {
+        console.log('raeched server.js');
         checkUserName(data);
     });
 
