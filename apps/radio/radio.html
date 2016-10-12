@@ -1,31 +1,102 @@
 <template>
-    <div class="Box">
-        <center>
-            <h1 id="dispName">99FM</h1>
-            <video controls="" autoplay="" name="media" id="Vsrc" src="http://99.livecdn.biz/99fm_aac">
+    <style>
+        progress {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+            position: absolute;
+            top: 38vh;
+            left: 18vw;
+            height: 1.0vw;
+            width: 37vh;
+            -webkit-transform: rotate(-90deg);
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        progress::-webkit-progress-value {
+            background-color: aqua;
+        }
+
+        #radioBox {
+            width: 48vw;
+            height: 41vh;
+            margin: auto;
+            padding-top: 2vh;
+            padding-bottom: 2vh;
+            padding-left: 1vw;
+            padding-right: 1vw;
+            margin-top: 8vw;
+        }
+        #channelLogo{
+          height: 20vh;
+          float: right;
+          margin-top: 10vh;
+          margin-right: 4vw;
+        }
+    </style>
+    <div id="radioBox" class="Box">
+        <div id="volSlider">
+            <progress id="volProg" value="1" max="1" id="progressBar"></progress>
+        </div>
+        <div id="info">
+            <h1 id="dispName" style="
+              font-size: 6.5vh;
+              margin-left: 6vw;
+              margin-top: 5vh;
+              position: absolute;"
+              >99FM</h1>
+            <video controls="" autoplay="" name="media" id="Vsrc" src="http://99.livecdn.biz/99fm_aac" style="display: none;">
             </video>
-        </center>
+        </div>
+        <div id="hugeStatus" style="
+            font-size: 11vh;
+            margin-left: 6vw;
+            margin-top: 23vh;
+            position: absolute;">
+            <i id="statusInd" class="fa fa-play" aria-hidden="true"style="position: absolute;"></i>
+        </div>
+        <img id="channelLogo"/>
+
     </div>
     <script>
         var stations = [{
             name: "99fm",
             short: "99fm",
-            url: "http://99.livecdn.biz/99fm_aac"
+            url: "http://99.livecdn.biz/99fm_aac",
+            img: "http://androappinfo.com/wp-content/uploads/2015/11/eco99-logo-222x230.jpg"
         }, {
             name: "galgalatz",
             short: "glglz",
-            url: "http://glglzicelv01.vds-is.bynetcdn.com/glglz.mp3"
+            url: "http://glglzicelv01.vds-is.bynetcdn.com/glglz.mp3",
+            img: "http://i.imgur.com/GzlSTLK.png"
         }];
         console.log(stations);
 
         var station = 0;
+        var vid = document.getElementById("Vsrc");
 
-        function changeChannel(next){ //if nexe == false then prev
-            station += (next) ? 1:-1;
+        sendEmit("musicLayout", null);
+        document.getElementById("channelLogo").src = stations[station].img;
+        document.getElementById("dispName").innerHTML = stations[station].name;
+
+        function changeChannel(next) { //if nexe == false then prev
+            station += (next) ? 1 : -1;
             station = station % stations.length;
             console.log(stations[station])
-            document.getElementById('Vsrc').src = stations[station].url;
+            vid.src = stations[station].url;
             document.getElementById("dispName").innerHTML = stations[station].name;
+            document.getElementById("channelLogo").src = stations[station].img;
+        }
+
+        Number.prototype.clamp = function(min, max) {
+            return Math.min(Math.max(this, min), max);
+        };
+
+        function addVol(num) {
+            vid.volume = (vid.volume + num).clamp(0.0, 1.0);
+            document.getElementById("volProg").value = vid.volume;
+            console.log("new vol: " + vid.volume);
         }
 
         function transferInputs(raw) {
@@ -49,6 +120,24 @@
 
                 case "B":
                     switchPage("importMenu");
+                    break;
+
+                case "volUp":
+                    addVol(0.1)
+                    break;
+
+                case "volDown":
+                    addVol(-0.1)
+                    break;
+
+                case "play":
+                    vid.play();
+                    document.getElementById("statusInd").className = "fa fa-play";
+                    break;
+
+                case "pause":
+                    vid.pause();
+                    document.getElementById("statusInd").className = "fa fa-pause";
                     break;
             }
         }

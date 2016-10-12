@@ -91,7 +91,7 @@
             box-shadow: 0px 3px 0px rgba(126, 35, 189, 1), 0px 3px 6px rgba(0, 0, 0, .9);
         }
 
-        #Bars {
+        #Bars1 {
             float: left;
         }
 
@@ -119,22 +119,22 @@
 <body>
     <center>
         <div style="height: 12vw; margin:1.3vw">
-            <a id="Bars" class="navBT" style="margin:0"><i  class="fa fa-bars navB" aria-hidden="true"></i></a>
+            <a id="Bars1" class="navBT" style="margin:0" onclick="showhideMenu()"><i  class="fa fa-bars navB" aria-hidden="true"></i></a><!-- the bars on the left !-->
             <a id="homeBT" onclick="sendButtonPress('home')" class="navBT" style="margin:0"><i  class="fa fa-home navB" aria-hidden="true"></i></a>
             <a id="ColorCont" class="navBT" style="margin:0">
                 <input class="navB" id="colorPicker" type="color" onchange="sendChangeColor()" />
             </a>
             <a id="qrBT" class="navBT" style="margin:0" onclick="sendButtonPress('QR')"><i  class="fa fa-qrcode navB" aria-hidden="true"></i></a>
-            <a id="Bars" class="navBT" style="margin:0;float:right;visibility: hidden;"><i  class="fa fa-bars navB" aria-hidden="true"></i></a>
+            <a id="Bars2" class="navBT" style="margin:0;float:right;visibility: hidden;"><i  class="fa fa-bars navB" aria-hidden="true"></i></a>
         </div>
         <br />
-        <div id="insideMenu">
-          <a class="navVolBT" style="margin:0"><i  class="fa fa-volume-down navB" aria-hidden="true"></i></a>
+        <div id="insideMenu" style="display:none">
+          <a class="navVolBT" onclick="sendButtonPress('volDown')" style="margin:0"><i  class="fa fa-volume-down navB" aria-hidden="true"></i></a>
           <a class="navVolBT" style="margin:0; margin-left:3vw"><i  class="fa fa-backward navB" aria-hidden="true"></i></a>
-          <a class="navVolBT" style="margin:0; margin-left:1.5vw;margin-right:0.25vw;"><i  class="fa fa-pause navB" aria-hidden="true"></i></a>
-          <a class="navVolBT" style="margin:0; margin-right:1.5vw;margin-left:0.25vw"><i  class="fa fa-play navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" onclick="sendButtonPress('pause')" style="margin:0; margin-left:1.5vw;margin-right:0.25vw;"><i  class="fa fa-pause navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" onclick="sendButtonPress('play')" style="margin:0; margin-right:1.5vw;margin-left:0.25vw"><i  class="fa fa-play navB" aria-hidden="true"></i></a>
           <a class="navVolBT" style="margin:0; margin-right:3vw"><i  class="fa fa-forward navB" aria-hidden="true"></i></a>
-          <a class="navVolBT" style="margin:0"><i  class="fa fa-volume-up navB" aria-hidden="true"></i></a>
+          <a class="navVolBT" onclick="sendButtonPress('volUp')" style="margin:0"><i  class="fa fa-volume-up navB" aria-hidden="true"></i></a>
         </div>
         <br />
         <div style="margin:0.8vw">
@@ -163,6 +163,21 @@
     socket.on('changePageRemote', function(page) {
         document.location.href = "/" + page;
     });
+
+    socket.on('musicLayout', function(data) {
+        showhideMenu();
+    });
+
+    function showhideMenu(){
+      var elm = document.getElementById("insideMenu");
+      if(elm.style.display != "none")
+      {
+        elm.style.display = "none"
+      }
+      else{
+        elm.style.display = ""
+      }
+    }
 </script>
 <script>
     var socket = io();
