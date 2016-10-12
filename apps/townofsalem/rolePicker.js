@@ -8,7 +8,7 @@ var getRoles = function getRoles(num) {
             case 2:
             return [
                 Role.Jailor,
-                Role.Jailor
+                Role.Mafioso
             ];
             case 3:
             return [
@@ -225,7 +225,7 @@ function randomInt(min, max) {
 }
 
 function randomizeAny() {
-    switch (randomInt(0, 30)) {
+    switch (randomInt(0, 29)) {
         case 0:
             return Role.Investigator;
         case 1:
@@ -286,8 +286,6 @@ function randomizeAny() {
             return Role.Consigliere;
         case 29:
             return Role.Consort;
-        case 30:
-            return Role.Vampire;
     }
 }
 

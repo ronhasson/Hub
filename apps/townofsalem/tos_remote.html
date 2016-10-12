@@ -472,8 +472,8 @@
                 action: "Button1",
                 data: {
                     player: player,
-                    targetname: targetname
-                    forgedWill: document.getElementById("forgeWillText").value;
+                    targetname: targetname,
+                    forgedWill: document.getElementById("forgeWillText").value
                 }
             });
         } else {
@@ -485,7 +485,6 @@
                 }
             });
         }
-
     }
 
     function ActivateAction2(targetname) {
@@ -676,12 +675,14 @@
 
     function requestUsername() {
         var TEMP_username = document.getElementById("usernameInput").value;
+        console.log('reached here');
         socket.emit("requestUserN", {
             usr: TEMP_username,
             uid: uid
         });
     }
     socket.on('requestUserNCallBack', function(data) {
+        console.log('reached here 2');
         if (!data.flag && uid == data.uid) {
             var username = data.usr;
             document.getElementById("start").style.display = 'none';
@@ -761,15 +762,15 @@
     })
 
     socket.on('updateAfterNight', function(data) {
-      player = data.player;
-      player.canUseAbility = data.canUseAbility;
-      document.getElementById("nameView").innerHTML = player.username;
-      if (player.role.canKill == true) {
-          document.getElementById("deathNote").style.display = 'block';
-      }
-      document.getElementById("inGame").style.display = 'block';
-      document.getElementById("waiting").style.display = 'none';
-      updateRoleText();
+        player = data.player;
+        player.canUseAbility = data.canUseAbility;
+        document.getElementById("nameView").innerHTML = player.username;
+        if (player.role.canKill == true) {
+            document.getElementById("deathNote").style.display = 'block';
+        }
+        document.getElementById("inGame").style.display = 'block';
+        document.getElementById("waiting").style.display = 'none';
+        updateRoleText();
     })
 </script>
 
