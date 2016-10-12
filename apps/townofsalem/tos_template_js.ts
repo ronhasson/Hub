@@ -48,8 +48,12 @@ function discussion() {
         time: timer,
         phase: "Discussion"
     });
+    sendEmit("getMessage", {
+        username: "",
+        message: "Day " + dayCounter
+    });
     isDay = true;
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (--timer < -5) {
             clearInterval(interval);
             if (dayOne) {
@@ -71,7 +75,7 @@ function voting() { //everyone alive can vote
     });
     guiltyVoters = [];
     innoVoters = [];
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (stopVotingTime) {
             clearInterval(interval);
             defense();
@@ -92,7 +96,7 @@ function defense() { //only trailled person can talk
         phase: "Defense"
     });
     var timer = 5;
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (--timer < -5) {
             clearInterval(interval);
             judgement();
@@ -112,7 +116,7 @@ function judgement() { //everyone alive can vote
         defendant: playerOnTrial.username
     });
     var timer = 10;
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (--timer < -5) {
             clearInterval(interval);
             showJudgementResults();
@@ -135,7 +139,7 @@ function lastWords() {
         phase: "Last Words"
     });
     var timer = 5;
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (--timer < -5) {
             clearInterval(interval);
             hangPlayer();
@@ -153,9 +157,15 @@ function night() {
         time: 40,
         phase: "Night"
     });
+    if (dayCounter % 2 == 0) {
+        sendEmit("getMessage", {
+        username: "",
+        phase: "There's a full moon tonight."
+    });
+    }
     isDay = false;
     var timer = 40;
-    var interval = setInterval(function() {
+    var interval = setInterval(function () {
         if (--timer < -5) {
             clearInterval(interval);
             discussion();
@@ -245,7 +255,7 @@ function sendMessageToPlayers(data) { //ALWAYS USE THE NAME PROPERTY
                                         message: data.message
                                     }, temp_player.socketid);
                                 }
-                                else if (sender_player.role.name == roles.Jailor.name && temp_player.username == sender_player.targetPlayer) {
+                                else if (sender_player.role.name == roles.Jailor.name && temp_player.username == players[getJailedIndex()].username) {
                                     sendToSocketId('getMessage', {
                                         username: "Jailor" + ": ",
                                         message: data.message
@@ -388,16 +398,10 @@ function checkNightAbilities() {
             players[getIndexByUsername(sortedByPriority[i].username)].useAbility();
         }
     }
-    var executioners = getArrayIndexByRole("Executioner");
-    for (var i = 0; i < executioners.length; i++) {
-        if(players[getIndexByUsername(players[executioners[i]].username)].diedTonight) {
-            //change exe role to jester 
-        }
-    }
     var arsonists = getArrayIndexByRole("Arsonist");
     for (var i = 0; i < arsonists.length; i++) {
         if (players[arsonists[i]].cleanYourself) {
-            for (var j = 0; j < dousedTargets.length; j++) {
+            for (var j = dousedTargets.length - 1; j >= 0; j--) {
                 if (dousedTargets[j] == players[arsonists[i]].username) {
                     dousedTargets.splice(j, 1);
                 }
@@ -430,22 +434,24 @@ function checkNightAbilities() {
         if (players[i].diedTonight) {
             players[i].isded = true;
             players[i].diedTonight = false;
+            alertMessage("You have died!", players[i].socketid);
         } else if (!players[i].isded) {
             players[i].cleaned = false;
         }
-
         players[i].inJail = false;
         players[i].targetPlayer = "";
+        players[i].roleBlocked = false;
+        players[i].witched = false;
     }
 
     var mafList = [];
     var vampList = [];
 
     for (var i = 0; i < players.length; i++) {
-        if (players[i].role.team == "mafia") {
+        if (players[i].role.team == "mafia" && !players[i].isded) {
             players[i].mafiaList = mafList;
         }
-        else if (players[i].role.name == roles.Vampire.name) {
+        else if (players[i].role.name == roles.Vampire.name && !players[i].isded) {
             players[i].vampireList = vampList;
         }
     }
@@ -505,9 +511,9 @@ function checkNightAbilities() {
         }
     }
     var gf_index = getArrayIndexByRole("Godfather");
-    if (gf_index == -1) {
+    if (gf_index[0] == -1) {
         var mafioso_index = getArrayIndexByRole("Mafioso");
-        if (mafioso_index != -1 && OG_mafioso_transformed) {
+        if (mafioso_index[0] != -1 && OG_mafioso_transformed) {
             classifyPlayer(mafioso_index[0], roles.Godfather.name)
             OG_mafioso_transformed = true;
         }
@@ -710,7 +716,16 @@ function Button1(data) {
                     var jailedIndex = getJailedIndex();
                     if (jailedIndex != -1) {
                         if (targetPlayer.username == players[jailedIndex].username) {
-                            players[playerIndex].targetPlayer = targetPlayer.username;
+                            if (players[playerIndex].targetPlayer == "") {
+                                players[playerIndex].targetPlayer = targetPlayer.username;
+                                alertMessage("You have decided to execute your target", abilityPlayer.socketid);
+                                alertMessage("The Jailor decided to execute you", targetPlayer.socketid);
+                            }
+                            else {
+                                players[playerIndex].targetPlayer = "";
+                                alertMessage("You have canceled your decision", abilityPlayer.socketid);
+                                alertMessage("The Jailor canceled his decision", targetPlayer.socketid);
+                            }
                         }
                     }
                 }
@@ -769,13 +784,9 @@ function Button1(data) {
 }
 
 function updatePlayerWill(data) {
-    if (data.hasOwnProperty("player") && data.hasOwnProperty("targetname")) {
-        if (usernameExists(data.targetname) && UID_Exists(data.player.uid)) {
-            for (var i = 0; i < players.length; i++) {
-                if (players[i].uid == data.player.uid && !players[i].isded) {
-                    players[i].will = data.willText;
-                }
-            }
+    if (data.hasOwnProperty("player") && data.hasOwnProperty("willText")) {
+        if (UID_Exists(data.player.uid)) {
+            players[getIndexByUID(data.player.uid)].will = data.willText;
         }
     }
 }
@@ -1145,13 +1156,9 @@ function isGameOver() {
 }
 
 function updatePlayerDeathnote(data) {
-    if (data.hasOwnProperty("player") && data.hasOwnProperty("targetname")) {
-        if (usernameExists(data.targetname) && UID_Exists(data.player.uid)) {
-            for (var i = 0; i < players.length; i++) {
-                if (data.player.uid == players[i].uid && players[i].role.canKill && !players[i].isded) {
-                    players[i].deathnote = data.deathnoteText;
-                }
-            }
+    if (data.hasOwnProperty("player") && data.hasOwnProperty("deathnoteText")) {
+        if (UID_Exists(data.player.uid)) {
+            players[getIndexByUID(data.player.uid)].deathnote = data.deathnoteText;
         }
     }
 }
@@ -1172,7 +1179,7 @@ function start() {
     var vampList = [];
     var _nameList = [];
     for (var i = 0; i < players.length; i++) {
-        classifyPlayer(i, _roleslist[j].name);
+        classifyPlayer(i, _roleslist[j].name, players[i].username);
         players[i].role = _roleslist[j];
         voteList[i] = new VoteInfo();
         if (players[i].role.team == "mafia") {
@@ -1238,114 +1245,147 @@ function arrToObj(arr) {
     return rv;
 }
 
-function classifyPlayer(index, rolename) {
+function classifyPlayer(index, rolename, _username = "") {
     var temp_uid = players[index].uid;
     var temp_socketid = players[index].socketid;
     var temp_usrname = players[index].username;
     switch (rolename) {
         case "Troll":
             players[index] = new Troll(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Jailor":
             players[index] = new Jailor(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Medium":
             players[index] = new Medium(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Transporter":
             players[index] = new Transporter(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Witch":
             players[index] = new Witch(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Veteran":
             players[index] = new Veteran(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Escort":
             players[index] = new Escort(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Consort":
             players[index] = new Consort(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Doctor":
             players[index] = new Doctor(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Janitor":
             players[index] = new Janitor(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Retributionist":
             players[index] = new Retributionist(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Forger":
             players[index] = new Forger(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Consigliere":
             players[index] = new Consigliere(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Blackmailer":
             players[index] = new Blackmailer(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Framer":
             players[index] = new Framer(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Bodyguard":
             players[index] = new Bodyguard(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Godfather":
             players[index] = new Godfather(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Mafioso":
             players[index] = new Mafioso(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "SerialKiller":
             players[index] = new SerialKiller(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "VampireHunter":
             players[index] = new VampireHunter(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Jester":
             players[index] = new Jester(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Vigilante":
             players[index] = new Vigilante(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Disguiser":
             players[index] = new Disguiser(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Amnesiac":
             players[index] = new Amnesiac(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Arsonist":
             players[index] = new Arsonist(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Survivor":
             players[index] = new Survivor(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Sheriff":
             players[index] = new Sheriff(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Lookout":
             players[index] = new Lookout(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Investigator":
             players[index] = new Investigator(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Vampire":
             players[index] = new Vampire(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Werewolf":
             players[index] = new Werewolf(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Executioner":
             players[index] = new Executioner(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
         case "Spy":
             players[index] = new Spy(temp_uid, temp_socketid, temp_usrname);
+            players[index].username = _username;
             break;
     }//TODO: add troll
 }
 
-Array.prototype.shuffle = function() {
+Array.prototype.shuffle = function () {
     var input = this;
     for (var i = input.length - 1; i >= 0; i--) {
 
@@ -1386,6 +1426,7 @@ class VoteInfo {
 function goingToKill(killerUN, targetUN) {
     var bgs = [];
     var docs = [];
+
     for (var i = 0; i < players.length; i++) {
         if (players[i].role.name == roles.Bodyguard.name) {
             if (players[i].targetPlayer == targetUN && players[i].usingAbility) {
@@ -1421,6 +1462,7 @@ function goingToKill(killerUN, targetUN) {
         }
         if (bg_docs.length == 0) {
             players[bgs[rand_bg_indx]].diedTonight = true;
+            players[bgs[rand_bg_indx]].howIDied = players[getIndexByUsername(killerUN)].deathnote;
             alertMessage("You were attacked protecting your target", players[bgs[rand_bg_indx]].socketid);
         }
         else {
@@ -1430,6 +1472,7 @@ function goingToKill(killerUN, targetUN) {
         }
         if (attacker_docs.length == 0) {
             players[attacker_index].diedTonight = true;
+            players[attacker_index].howIDied = players[bgs[rand_bg_indx]].deathnote;
             alertMessage("You were killed by a Bodyguard!", players[getIndexByUsername(killerUN)].socketid);
         }
         else {
@@ -1444,8 +1487,11 @@ function goingToKill(killerUN, targetUN) {
         }
         alertMessage("You were attacked but someone nursed you back to health!", players[getIndexByUsername(targetUN)].socketid);
     }
-    else
+    else {
         players[getIndexByUsername(targetUN)].diedTonight = true;
+        players[getIndexByUsername(targetUN)].howIDied = players[getIndexByUsername(killerUN)].deathnote;
+    }
+
 }
 
 class Player {
@@ -1498,10 +1544,12 @@ class Jailor extends Player {
     }
     useAbility(): void {
         var jailedTargetIndex = getJailedIndex();
-        if (jailedTargetIndex != -1 && players[jailedTargetIndex].role.name != "Troll") {
+        if (jailedTargetIndex != -1 && players[jailedTargetIndex].role.name != "Troll" && dayCounter > 1) {
             if (players[jailedTargetIndex].username == this.targetPlayer && !this.roleBlocked && this.abilityCounter < this.role.abilitylimit) {
+                alertMessage("You were executed by the Jailor", players[jailedTargetIndex].socketid);
                 this.usingAbility = true;
-                players[getIndexByUsername(this.targetPlayer)].isded = true;
+                players[getIndexByUsername(this.targetPlayer)].diedTonight = true;
+                players[getIndexByUsername(this.targetPlayer)].howIDied = this.deathnote;
                 this.abilityCounter++;
                 if (players[getIndexByUsername(this.targetPlayer)].role.team == "town") {
                     this.abilityCounter = 3;
@@ -1656,6 +1704,7 @@ class Veteran extends Player {
                     }
                     if (current_docs.length == 0) {
                         players[i].diedTonight = true;
+                        players[i].howIDied = this.deathnote;
                     }
                     else {
                         for (var k = 0; k < current_docs.length; k++) {
@@ -1964,7 +2013,6 @@ class VampireHunter extends Player {
 }
 
 class Jester extends Player {
-
     constructor(_uid: string, _socketid: string, usrname: string = "") {
         super(_uid, _socketid);
     }
@@ -2049,7 +2097,7 @@ class Arsonist extends Player {
         super(_uid, _socketid);
     }
     useAbility(): void {
-        if (!this.roleBlocked && !this.inJail) {
+        if (!this.roleBlocked) {
             this.usingAbility = true;
             if (this.targetPlayer == "") {
                 this.cleanYourself = true;
@@ -2073,7 +2121,6 @@ class Arsonist extends Player {
                     var attacker_index = getIndexByUsername(this.username);
                     players[bgs[rand_bg_indx]].usingAbility = false;
                     alertMessage("You were attacked last night but a Bodyguard fought off your attacker!", players[bgs[rand_bg_indx]].socketid);
-
                     for (var i = 0; i < players.length; i++) {
                         if (players[i].role.name == roles.Doctor.name && players[i].usingAbility && players[i].targetPlayer == players[bgs[rand_bg_indx]].username) {
                             bg_docs.push[i];
@@ -2084,6 +2131,7 @@ class Arsonist extends Player {
                     }
                     if (bg_docs.length == 0) {
                         players[bgs[rand_bg_indx]].diedTonight = true;
+                        players[bgs[rand_bg_indx]].howIDied = this.deathnote;
                         alertMessage("You were attacked protecting your target", players[bgs[rand_bg_indx]].socketid);
                     }
                     else {
@@ -2093,6 +2141,7 @@ class Arsonist extends Player {
                     }
                     if (attacker_docs.length == 0) {
                         players[attacker_index].diedTonight = true;
+                        players[attacker_index].howIDied = players[bgs[rand_bg_indx]].deathnote;
                         alertMessage("You were killed by a Bodyguard!", players[getIndexByUsername(this.username)].socketid);
                     }
                     else {
@@ -2215,13 +2264,6 @@ class Werewolf extends Player {
         else {
             if (this.targetPlayer == "" || this.roleBlocked) {
                 this.targetPlayer = this.username;
-                if (this.roleBlocked) {
-                    for (var i = 0; i < players.length; i++) {
-                        if (players[i].targetPlayer == this.username && (players[i].role.name == roles.Escort.name || players[i].role.name == roles.Consort.name)) {
-                            goingToKill(this.username, players[i].username);
-                        }
-                    }
-                }
             }
             if (this.targetPlayer == this.username) {
                 for (var i = 0; i < players.length; i++) {
@@ -2294,8 +2336,8 @@ function checkUserName(data) {
             });
             return false;
         }
-        for (var uid2 in players) {
-            var player2 = players[uid2];
+        for (var i = 0; i < players.length; i++) {
+            var player2 = players[i];
             if (player2.username == data.usr) {
                 sendEmit("requestUserNCallBack", {
                     flag: true,
